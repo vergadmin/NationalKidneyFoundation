@@ -1,0 +1,40 @@
+video {
+    width: 99%;
+}
+
+.title {
+    font-size: 35px !important;
+    color: navy;
+    text-align: center;
+}
+
+.video-controls {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+button{
+    margin: 5px !important;
+    color: white !important;
+    background-color: navy !important;
+}
+
+.next{
+    background-color: #F15E22 !important;
+    position: fixed;
+    right: 5px;
+    bottom: 5px !important;
+    display: none;
+}
+
+.back{
+    background-color: #F15E22 !important;
+    position: fixed;
+    left: 5px;
+    bottom: 5px !important;
+}
+.container{
+    height: 100vh !important;
+}
+
