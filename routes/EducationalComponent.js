@@ -154,6 +154,12 @@ router.get('/:type/endOfOurMeetingResponse2', getInfo, updateDatabase, (req, res
 })
 
 
+router.get('/:type/summaryTopics', getInfo, updateDatabase, (req, res) => { 
+    type=req.params.type
+    console.log('Hiel: ',type)
+    res.render("pages/type/EducationalComponent/summaryTopics", {id: id, type: type, url: 'summaryTopics'})  
+})
+
 function getInfo(req, res, next) {
     // console.log("IN MIDDLEWARE OF EDUCATIONAL COMPONENT - REQUEST PARAMS:")
     id = req.id

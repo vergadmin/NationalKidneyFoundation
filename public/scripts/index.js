@@ -9,6 +9,24 @@ window.addEventListener("load", () => {
     sessionStorage.setItem("id", id)
     sessionStorage.setItem("type", type)
 
+    additionalInformationTopics = {
+        "Benefits of kidney transplant": false,
+        "Who can get a Kidney transplant": false,
+        "The transplant work-up": false,
+        "Overview - the waiting list": false,
+        "Living donor transplant": false,
+        "Getting a transplant sooner": false,
+        "How long do kidney transplants last": false,
+        "The risks of kidney transplant": false,
+        "Choosing a transplant center": false,
+        "Who can be a living kidney donor": false,
+        "Talking to your doctor": false
+      };
+      
+    sessionStorage.setItem('additionalInformationTopics', JSON.stringify(additionalInformationTopics));
+
+
+
     // (B1) PARSE USER AGENT
     browserInfo = navigator.userAgent;
     // console.log(browserInfo)

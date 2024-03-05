@@ -38,3 +38,28 @@ button{
     height: 100vh !important;
 }
 
+.checkbox-area{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 25px;
+}
+
+#selected-topics{
+    padding: 15px;
+    margin: 15px;
+    border: 0px;
+    border-radius: 35px;
+    background-color: navy;
+    color: white;
+}
+
+.checkboxdiv{
+    display: flex;
+    justify-content: flex-start;
+    margin: 5px;
+
+}
+
+

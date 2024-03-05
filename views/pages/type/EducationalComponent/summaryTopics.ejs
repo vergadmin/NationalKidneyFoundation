@@ -3,20 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="icon" href="data:,">
+    <link rel="icon" href="data:,">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;900&display=swap" rel="stylesheet">
     <link href="/css/master.css" rel="stylesheet" type="text/css">
-    <link href="/css/header.css" rel="stylesheet" type="text/css">
+    <link href="/css/educationalComponent.css" rel="stylesheet" type="text/css">
+    <title>NKF</title>
 </head>
-<body>
-    <div class="navbar">
-        
-        <img class="NKFLogo" src="https://national-kidney-foundation.s3.amazonaws.com/Assets/UPENN+Logo.png" />
-        <img class="NKFLogo" src="https://national-kidney-foundation.s3.amazonaws.com/Assets/UF+Logo.png" />
-        <img class="NKFLogo" src="https://national-kidney-foundation.s3.amazonaws.com/Assets/NKFLogo.png" />
+<body id-variable="<%=id%>" type-variable="<%=type%>" url="<%=url%>">
+    <header>
+        <%- include('../../../partials/header'); %>
+    </header>
+    <br/>
+    <div class="container">
+        <h1>Selected Topics</h1>
+            <div id="selected-topics"></div>
+    
+    
+     
+
     </div>
-         
+    <script src="/scripts/summaryTopics.js"></script>
 </body>
 </html>

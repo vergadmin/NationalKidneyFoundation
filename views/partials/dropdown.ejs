@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="data:,">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;900&display=swap" rel="stylesheet">
@@ -12,23 +13,24 @@
 <body>
     <div class="dropdown">
         <!-- Dropdown button -->
-        <button class="dropbtn"><%=pageName%> ▾</button>
+        <button id="dropbtn" class="dropbtn"><%=pageName%> ▾</button>
         
         <!-- Dropdown content -->
-        <div class="dropdown-content">
-          <a href="#" onclick="executeFunction('Item 1')">Benefits of kidney transplant</a>
-          <a href="#" onclick="executeFunction('Item 2')">Who can get a Kidney transplant</a>
-          <a href="#" onclick="executeFunction('Item 3')">The transplant work-up</a>
-          <a href="#" onclick="executeFunction('Item 3')">Overwiew - the waiting list</a>
-          <a href="#" onclick="executeFunction('Item 3')">Living donor transplant</a>
-          <a href="#" onclick="executeFunction('Item 3')">Getting a transplant sooner</a>
-          <a href="#" onclick="executeFunction('Item 3')">How long do kidney transplants last</a>
-          <a href="#" onclick="executeFunction('Item 3')">The risks of kidney transplant</a>
-          <a href="#" onclick="executeFunction('Item 3')">Choosing a transplant center</a>
-          <a href="#" onclick="executeFunction('Item 3')">Who can be a living kidney donor</a>
-          <a href="#" onclick="executeFunction('Item 3')">Talking to your doctor</a>
+        <div id="dropdown-content" class="dropdown-content">
+            <a href="/<%=id%>/EducationalComponent/<%=type%>/transplantBenefits">Benefits of kidney transplant</a>
+            <a href="/<%=id%>/EducationalComponent/<%=type%>/transplantEligibility">Who can get a Kidney transplant</a>
+            <a href="/<%=id%>/EducationalComponent/<%=type%>/transplantWorkup">The transplant work-up</a>
+            <a href="/<%=id%>/EducationalComponent/<%=type%>/overviewTransplantWaitingList">Overwiew - the waiting list</a>
+            <a href="/<%=id%>/EducationalComponent/<%=type%>/livingDonorTransplant">Living donor transplant</a>
+            <a href="/<%=id%>/EducationalComponent/<%=type%>/transplantSooner">Getting a transplant sooner</a>
+            <a href="/<%=id%>/EducationalComponent/<%=type%>/transplantLifeSpan">How long do kidney transplants last</a>
+            <a href="/<%=id%>/EducationalComponent/<%=type%>/transplantRisks">The risks of kidney transplant</a>
+            <a href="/<%=id%>/EducationalComponent/<%=type%>/choosingTransplantCenter">Choosing a transplant center</a>
+            <a href="/<%=id%>/EducationalComponent/<%=type%>/donorEligibility">Who can be a living kidney donor</a>
+            <a href="/<%=id%>/EducationalComponent/<%=type%>/talkingToYourDoctor">Talking to your doctor</a>
         </div>
     </div>
 
 </body>
+<script src="/scripts/dropdownControls.js"></script>
 </html>

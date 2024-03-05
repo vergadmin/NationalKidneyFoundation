@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="data:,">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;900&display=swap" rel="stylesheet">
@@ -30,6 +31,10 @@
         <button id="pause">| |</button>
     </div>
         
+    <div class="checkbox-area">
+        <input type="checkbox" id="checkboxItem" name="checkboxItem" value="Choosing a Transplant Center">
+        <label for="checkboxItem">Check this box for additional information</label><br>
+    </div>
     <a href="/<%=id%>">
         <button class="back">Go Back</button>
     </a>
@@ -41,5 +46,6 @@
 
     </div>
     <script src="/scripts/videoControls.js"></script>
+    <script src="/scripts/checkBox.js"></script>
 </body>
 </html>
