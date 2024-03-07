@@ -3,7 +3,9 @@ additionalInformationTopics = JSON.parse(sessionStorage.getItem('additionalInfor
 
 console.log(additionalInformationTopics);
 var checkbox=document.getElementById("checkboxItem");
-
+console.log(checkbox.value);
+console.log(additionalInformationTopics[checkbox.value]);
+checkbox.checked=additionalInformationTopics[checkbox.value];
 checkbox.addEventListener('click', function() {
 
    console.log(checkbox.value)
