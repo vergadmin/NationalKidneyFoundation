@@ -31,8 +31,6 @@
 .selection-area {
     display: flex;
     flex-direction: column;
-    border: 3px solid navy;
-    border-radius: 35px;
     
 }
 
@@ -46,6 +44,8 @@
     height: 250px;
     object-fit: cover;
     width: 250px;
+    border: 3px solid navy;
+    border-radius: 35px;
 }
 
 /* -- Comments on August Release -- 

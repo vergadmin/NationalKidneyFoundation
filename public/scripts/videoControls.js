@@ -28,6 +28,10 @@ var currentPage=document.body.getAttribute("url");
 
   rewindButton.addEventListener("click", function() {
     myVideo.currentTime -= 10;
+    if (myVideo.paused) {
+      myVideo.play();
+      pauseButton.textContent = "| |";
+    }
 });
 
 myVideo.onended=function(e){

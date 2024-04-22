@@ -1,5 +1,5 @@
 video {
-    width: 99%;
+    width: 100vw;
 }
 
 .title {
@@ -26,6 +26,8 @@ button{
     right: 5px;
     bottom: 5px !important;
     display: none;
+    border-radius: 50px;
+    padding: 10px 25px;
 }
 
 .back{
@@ -33,6 +35,8 @@ button{
     position: fixed;
     left: 5px;
     bottom: 5px !important;
+    border-radius: 50px;
+    padding: 10px 25px;
 }
 .container{
     height: 100vh !important;

@@ -10,8 +10,9 @@
   }
 
   #slider-value {
-    margin-top: 10px;
     font-size: 18px;
+    margin: 10px 25px;
+    text-align: center;
   }
 
   .labels{
@@ -22,4 +23,5 @@
 
   .leftAnchor, .rightAnchor {
     margin: 11px !important;
+    font-size: 1em;
   }
