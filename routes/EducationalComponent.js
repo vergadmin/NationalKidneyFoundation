@@ -150,13 +150,13 @@ router.get('/:type/talkingToYourDoctor', getInfo, updateDatabase, (req, res) => 
 router.get('/:type/endOfMeetingResponse2', getInfo, updateDatabase, (req, res) => { 
     type=req.params.type
     console.log('Hiel: ',type)
-    res.render("pages/type/EducationalComponent/endOfMeetingResponse2", {id: id, type: type, nextPageURL: 'endOfMeetingResponse1', url: 'endOfMeetingResponse2'})  //remove next page url
+    res.render("pages/type/EducationalComponent/endOfMeetingResponse2", {id: id, type: type, nextPageURL: 'summaryTopics', url: 'endOfMeetingResponse2'})  //remove next page url
 })
 
 router.get('/:type/endOfMeetingResponse1', getInfo, updateDatabase, (req, res) => { 
     type=req.params.type
     console.log('Hiel: ',type)
-    res.render("pages/type/EducationalComponent/endOfMeetingResponse1", {id: id, type: type, nextPageURL: 'endOfMeetingResponse2', url: 'endOfMeetingResponse1'})  //remove next page url
+    res.render("pages/type/EducationalComponent/endOfMeetingResponse1", {id: id, type: type, nextPageURL: 'summaryTopics', url: 'endOfMeetingResponse1'})  //remove next page url
 })
 
 

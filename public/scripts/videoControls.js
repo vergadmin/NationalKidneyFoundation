@@ -3,6 +3,8 @@ var id=document.body.getAttribute("id-variable");
 var type=document.body.getAttribute("type-variable");
 var nextPage=document.body.getAttribute("next-page-variable");
 var currentPage=document.body.getAttribute("url");
+console.log("WE ARE I VIDEO CONTROLS")
+console.log(currentPage)
 
   // Get the button element by its ID
   var rewindButton = document.getElementById("rewind");
@@ -35,7 +37,23 @@ var currentPage=document.body.getAttribute("url");
 });
 
 myVideo.onended=function(e){
-  if(currentPage==="quickAssessment"){
+  if(currentPage==="talkingToYourDoctor")
+  {
+    var sliderValueForEndPage = parseInt(sessionStorage.getItem("sliderResponse"))
+    console.log("in talking to doc",sliderValueForEndPage )
+    if(sliderValueForEndPage>=70){
+      console.log('IS GREATER THAN 70')
+      window.location.href=`/${id}/EducationalComponent/${type}/endOfMeetingResponse1`
+    }
+  
+    else{
+      console.log('IS LESS THAN 70')
+      window.location.href=`/${id}/EducationalComponent/${type}/endOfMeetingResponse2`
+    }
+  } 
+  
+
+  else if(currentPage==="quickAssessment"){
     nextButton.style.display="block";
   }
     
@@ -43,3 +61,4 @@ myVideo.onended=function(e){
     window.location.href="/"+id+"/EducationalComponent/"+type+"/"+nextPage;
   }
 }
+

@@ -3,6 +3,10 @@ var slider = document.getElementById("slider");
 // Get the span element that will display the slider value
 var sliderNumber = document.getElementById("slider-number");
 
+var sliderValueForEndPage = parseInt(sessionStorage.getItem("sliderResponse"));
+  console.log("it is: ",sliderValueForEndPage)
+  console.log(typeof sliderValueForEndPage)
+
 var sliderValue;
 // Update the slider value display when the slider is moved
 slider.oninput = function() {
@@ -39,4 +43,17 @@ function redirectBasedOnSliderValue(id,type){
     else{
       window.location.href=`/${id}/EducationalComponent/${type}/quickAssessmentResponse3`
     }
+}
+
+function redirectBasedOnSliderValueForEndPage(id,type){
+  var sliderValueForEndPage = parseInt(sessionStorage.getItem("sliderResponse"));
+  console.log("it is: ",sliderValueForEndPage)
+  console.log(typeof sliderValueForEndPage)
+  if(sliderValueForEndPage>=70){
+    window.location.href=`/${id}/EducationalComponent/${type}/endOfMeetingResponse1`
+  }
+
+  else{
+      window.location.href=`/${id}/EducationalComponent/${type}/endOfMeetingResponse2`
+  }
 }
