@@ -144,13 +144,19 @@ router.get('/:type/donorEligibility', getInfo, updateDatabase, (req, res) => {
 router.get('/:type/talkingToYourDoctor', getInfo, updateDatabase, (req, res) => { 
     type=req.params.type
     console.log('Hiel: ',type)
-    res.render("pages/type/EducationalComponent/talkingToYourDoctor", {id: id, type: type, nextPageURL: 'endOfOurMeetingResponse2', url: 'talkingToYourDoctor', pageName: 'Talking to your doctor'})  //remove next page url
+    res.render("pages/type/EducationalComponent/talkingToYourDoctor", {id: id, type: type, nextPageURL: 'endOfMeetingResponse1', url: 'talkingToYourDoctor', pageName: 'Talking to your doctor'})  //remove next page url
 })
 
-router.get('/:type/endOfOurMeetingResponse2', getInfo, updateDatabase, (req, res) => { 
+router.get('/:type/endOfMeetingResponse2', getInfo, updateDatabase, (req, res) => { 
     type=req.params.type
     console.log('Hiel: ',type)
-    res.render("pages/type/EducationalComponent/endOfOurMeetingResponse2", {id: id, type: type, url: 'endOfOurMeetingResponse2'})  //remove next page url
+    res.render("pages/type/EducationalComponent/endOfMeetingResponse2", {id: id, type: type, nextPageURL: 'endOfMeetingResponse1', url: 'endOfMeetingResponse2'})  //remove next page url
+})
+
+router.get('/:type/endOfMeetingResponse1', getInfo, updateDatabase, (req, res) => { 
+    type=req.params.type
+    console.log('Hiel: ',type)
+    res.render("pages/type/EducationalComponent/endOfMeetingResponse1", {id: id, type: type, nextPageURL: 'endOfMeetingResponse2', url: 'endOfMeetingResponse1'})  //remove next page url
 })
 
 
