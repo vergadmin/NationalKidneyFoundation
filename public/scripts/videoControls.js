@@ -33,7 +33,7 @@ myVideo.onloadstart = function() {
       myVideo.pause();
       pauseButton.textContent = "▶";
       playButton.style.display = "flex";
-      playButton.parentElement.style.backgroundColor = "rgba(0, 0, 0, 0.5)";
+      playButton.parentElement.style.backgroundColor = "rgba(0, 0, 0, 0.75)";
     }
   });
 
@@ -72,7 +72,7 @@ myVideo.onended=function(e){
 
   pauseButton.textContent = "▶";
   playButton.style.display = "flex";
-  playButton.parentElement.style.backgroundColor = "rgba(0, 0, 0, 0.5)";
+  playButton.parentElement.style.backgroundColor = "rgba(0, 0, 0, 0.75)";
 }
 
 myVideo.onplaying=function(e){
