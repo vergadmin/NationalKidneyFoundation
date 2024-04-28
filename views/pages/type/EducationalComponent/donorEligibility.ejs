@@ -20,15 +20,19 @@
     <br/>
     <div class="container">
         <!-- <h1 class="title">Goals of our Meeting</h1> -->
-        <video autoplay id="myvideo" playsinline >
+               <div class="video-wrapper">
+            <video autoplay id="myvideo" playsinline >
             <source src="https://national-kidney-foundation.s3.amazonaws.com/<%=type%>/donorEligibility.mp4" type="video/mp4">
-        </video>
+        </video>            <div class="play-overlay">
+            <button id="playButton">▶</button>
+            </div>
+        </div>
         <br/> 
         <br/> 
         <br/>
     <div class="video-controls">
         <button id="rewind">Repeat that</button>
-        <button id="pause">| |</button>
+        <button id="pause">▶</button>
     </div>
 
     <div class="checkbox-area">

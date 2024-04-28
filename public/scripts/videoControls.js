@@ -3,8 +3,13 @@ var id=document.body.getAttribute("id-variable");
 var type=document.body.getAttribute("type-variable");
 var nextPage=document.body.getAttribute("next-page-variable");
 var currentPage=document.body.getAttribute("url");
-console.log("WE ARE I VIDEO CONTROLS")
-console.log(currentPage)
+var playButton = document.getElementById("playButton");
+console.log("WE ARE I VIDEO CONTROLS");
+console.log(currentPage);
+
+myVideo.onloadstart = function() {
+  myVideo.play();
+};
 
   // Get the button element by its ID
   var rewindButton = document.getElementById("rewind");
@@ -22,9 +27,13 @@ console.log(currentPage)
     if (myVideo.paused) {
       myVideo.play();
       pauseButton.textContent = "| |";
+      playButton.style.display = "none";
+      playButton.parentElement.style.backgroundColor = "transparent";
     } else {
       myVideo.pause();
       pauseButton.textContent = "▶";
+      playButton.style.display = "flex";
+      playButton.parentElement.style.backgroundColor = "rgba(0, 0, 0, 0.5)";
     }
   });
 
@@ -60,5 +69,23 @@ myVideo.onended=function(e){
   else{
     window.location.href="/"+id+"/EducationalComponent/"+type+"/"+nextPage;
   }
+
+  pauseButton.textContent = "▶";
+  playButton.style.display = "flex";
+  playButton.parentElement.style.backgroundColor = "rgba(0, 0, 0, 0.5)";
 }
 
+myVideo.onplaying=function(e){
+  pauseButton.textContent = "| |";
+  playButton.style.display = "none";
+  playButton.parentElement.style.backgroundColor = "transparent";
+}
+
+
+playButton.addEventListener("click", function() {
+  if (myVideo.paused) {
+      myVideo.play();
+      playButton.style.display = "none";
+      playButton.parentElement.style.backgroundColor = "transparent";
+  }
+});
