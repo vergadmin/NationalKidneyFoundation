@@ -7,10 +7,6 @@ var playButton = document.getElementById("playButton");
 console.log("WE ARE I VIDEO CONTROLS");
 console.log(currentPage);
 
-myVideo.onloadstart = function() {
-  myVideo.play();
-};
-
   // Get the button element by its ID
   var rewindButton = document.getElementById("rewind");
   var pauseButton = document.getElementById("pause");
@@ -79,6 +75,12 @@ myVideo.onplaying=function(e){
   pauseButton.textContent = "| |";
   playButton.style.display = "none";
   playButton.parentElement.style.backgroundColor = "transparent";
+}
+
+myVideo.onpause=function(e){
+  pauseButton.textContent = "▶";
+  playButton.style.display = "flex";
+  playButton.parentElement.style.backgroundColor = "rgba(0, 0, 0, 0.75)";
 }
 
 
