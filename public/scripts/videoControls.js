@@ -2,30 +2,25 @@ var myVideo = document.getElementById("myvideo");
 var id=document.body.getAttribute("id-variable");
 var type=document.body.getAttribute("type-variable");
 var nextPage=document.body.getAttribute("next-page-variable");
-var PageName = "Introduction";
 var playButton = document.getElementById("playButton");
+var VideoArrayIndex = 1;
 
-if(sessionStorage.getItem("VideoArrIndex") === null){
-  var VideoArrayIndex = 1;
-  sessionStorage.setItem("VideoArrIndex", VideoArrayIndex);
-}
-else{
-  var VideoArrayIndex = sessionStorage.getItem("VideoArrIndex");
-}
-
-window.onload = function(e){
-  if(VideoArrayIndex > 1){
-  VideoArrayIndex = VideoArrayIndex - 1
-  }
-  PreviousNextButtonFunction(1)
-}
+// if(sessionStorage.getItem("VideoArrIndex") === null){
+//   var VideoArrayIndex = 1;
+//   sessionStorage.setItem("VideoArrIndex", VideoArrayIndex);
+// }
+// else{
+//   var VideoArrayIndex = sessionStorage.getItem("VideoArrIndex");
+// }
 
 //Remove this line later, just for timebeing when chnages to VideoArray Format are still being made.
 sessionStorage.removeItem("VideoArr")
 
 if(sessionStorage.getItem("VideoArr") === null){
 //Format is, pageName, Video URL, Whether Page Visited, Whether More information requested (Where applicable)
-var VideoArrNames = ["Homepage", "Introduction", "quickAssessment", "subTopics"]
+var VideoArrNames = ["Homepage", "Introduction", "quickAssessment", "subTopics", "summary", ]
+
+var PageName = VideoArrNames[VideoArrayIndex];
 
 var VideoArray = {
   'Homepage' : {
@@ -57,7 +52,8 @@ var VideoArray = {
       "NumberOfTimesPageVisited": 0,
       "TimeSpentOnPage": null,
       "ActiveOrPassiveRedirectionToPage": null,
-    },"response1" : {
+    },
+    "response1" : {
       "VideURL" : `https://national-kidney-foundation.s3.amazonaws.com/${type}/quickAssessmentResponse1.mp4`, 
       "PageVisited" : false,
       "PageFirstVisitedTimeStamp" : null,
@@ -66,7 +62,8 @@ var VideoArray = {
       "NumberOfTimesPageVisited": 0,
       "TimeSpentOnPage": null,
       "ActiveOrPassiveRedirectionToPage": null,
-    },"response2" : {
+    },
+    "response2" : {
       "VideURL" : `https://national-kidney-foundation.s3.amazonaws.com/${type}/quickAssessmentResponse2.mp4`, 
       "PageVisited" : false,
       "PageFirstVisitedTimeStamp" : null,
@@ -75,7 +72,8 @@ var VideoArray = {
       "NumberOfTimesPageVisited": 0,
       "TimeSpentOnPage": null,
       "ActiveOrPassiveRedirectionToPage": null,
-    },"response3" : {
+    },
+    "response3" : {
       "VideURL" : `https://national-kidney-foundation.s3.amazonaws.com/${type}/quickAssessmentResponse3.mp4`, 
       "PageVisited" : false,
       "PageFirstVisitedTimeStamp" : null,
@@ -86,8 +84,119 @@ var VideoArray = {
       "ActiveOrPassiveRedirectionToPage": null,
     }
   },
-  "subTopics" : { "response3" : {
-      "VideURL" : `https://national-kidney-foundation.s3.amazonaws.com/${type}/quickAssessmentResponse3.mp4`, 
+  "subTopics" : { "Benefits of kidney transplant" : {
+      "VideURL" : `https://national-kidney-foundation.s3.amazonaws.com/${type}/transplantBenefits.mp4`, 
+      "PageVisited" : false,
+      "PageFirstVisitedTimeStamp" : null,
+      "PageFirstExitedTimeStamp": null,
+      "PageLastVisitedTimeStamp":null,
+      "NumberOfTimesPageVisited": 0,
+      "TimeSpentOnPage": null,
+      "ActiveOrPassiveRedirectionToPage": null,
+    },
+    "Who can get a kidney transplant" : {
+      "VideURL" : `https://national-kidney-foundation.s3.amazonaws.com/${type}/donorEligibility.mp4`, 
+      "PageVisited" : false,
+      "PageFirstVisitedTimeStamp" : null,
+      "PageFirstExitedTimeStamp": null,
+      "PageLastVisitedTimeStamp":null,
+      "NumberOfTimesPageVisited": 0,
+      "TimeSpentOnPage": null,
+      "ActiveOrPassiveRedirectionToPage": null,
+    },
+    "The transplant work-up" : {
+      "VideURL" : `https://national-kidney-foundation.s3.amazonaws.com/${type}/transplantWorkup.mp4`, 
+      "PageVisited" : false,
+      "PageFirstVisitedTimeStamp" : null,
+      "PageFirstExitedTimeStamp": null,
+      "PageLastVisitedTimeStamp":null,
+      "NumberOfTimesPageVisited": 0,
+      "TimeSpentOnPage": null,
+      "ActiveOrPassiveRedirectionToPage": null,
+    },
+    "Overview - The waiting list" : {
+      "VideURL" : `https://national-kidney-foundation.s3.amazonaws.com/${type}/overviewTransplantWaitingList.mp4`, 
+      "PageVisited" : false,
+      "PageFirstVisitedTimeStamp" : null,
+      "PageFirstExitedTimeStamp": null,
+      "PageLastVisitedTimeStamp":null,
+      "NumberOfTimesPageVisited": 0,
+      "TimeSpentOnPage": null,
+      "ActiveOrPassiveRedirectionToPage": null,
+    },
+    "Living donor transplant" : {
+      "VideURL" : `https://national-kidney-foundation.s3.amazonaws.com/${type}/livingDonorTransplant.mp4`, 
+      "PageVisited" : false,
+      "PageFirstVisitedTimeStamp" : null,
+      "PageFirstExitedTimeStamp": null,
+      "PageLastVisitedTimeStamp":null,
+      "NumberOfTimesPageVisited": 0,
+      "TimeSpentOnPage": null,
+      "ActiveOrPassiveRedirectionToPage": null,
+    },
+    "Getting a transplant sooner" : {
+      "VideURL" : `https://national-kidney-foundation.s3.amazonaws.com/${type}/transplantSooner.mp4`, 
+      "PageVisited" : false,
+      "PageFirstVisitedTimeStamp" : null,
+      "PageFirstExitedTimeStamp": null,
+      "PageLastVisitedTimeStamp":null,
+      "NumberOfTimesPageVisited": 0,
+      "TimeSpentOnPage": null,
+      "ActiveOrPassiveRedirectionToPage": null,
+    },
+    "How long do kidney transplants last" : {
+      "VideURL" : `https://national-kidney-foundation.s3.amazonaws.com/${type}/transplantLifeSpan.mp4`, 
+      "PageVisited" : false,
+      "PageFirstVisitedTimeStamp" : null,
+      "PageFirstExitedTimeStamp": null,
+      "PageLastVisitedTimeStamp":null,
+      "NumberOfTimesPageVisited": 0,
+      "TimeSpentOnPage": null,
+      "ActiveOrPassiveRedirectionToPage": null,
+    },
+    "The risks of kidney transplant" : {
+      "VideURL" : `https://national-kidney-foundation.s3.amazonaws.com/${type}/transplantRisks.mp4`, 
+      "PageVisited" : false,
+      "PageFirstVisitedTimeStamp" : null,
+      "PageFirstExitedTimeStamp": null,
+      "PageLastVisitedTimeStamp":null,
+      "NumberOfTimesPageVisited": 0,
+      "TimeSpentOnPage": null,
+      "ActiveOrPassiveRedirectionToPage": null,
+    },
+    "Choosing a transplant center" : {
+      "VideURL" : `https://national-kidney-foundation.s3.amazonaws.com/${type}/choosingTransplantCenter.mp4`, 
+      "PageVisited" : false,
+      "PageFirstVisitedTimeStamp" : null,
+      "PageFirstExitedTimeStamp": null,
+      "PageLastVisitedTimeStamp":null,
+      "NumberOfTimesPageVisited": 0,
+      "TimeSpentOnPage": null,
+      "ActiveOrPassiveRedirectionToPage": null,
+    },
+    "Who can be a living kidney donor" : {
+      "VideURL" : `https://national-kidney-foundation.s3.amazonaws.com/${type}/transplantLifeSpan.mp4`, 
+      "PageVisited" : false,
+      "PageFirstVisitedTimeStamp" : null,
+      "PageFirstExitedTimeStamp": null,
+      "PageLastVisitedTimeStamp":null,
+      "NumberOfTimesPageVisited": 0,
+      "TimeSpentOnPage": null,
+      "ActiveOrPassiveRedirectionToPage": null,
+    },
+    "Talking to your doctor" : {
+      "VideURL" : `https://national-kidney-foundation.s3.amazonaws.com/${type}/talkingToYourDoctor.mp4`, 
+      "PageVisited" : false,
+      "PageFirstVisitedTimeStamp" : null,
+      "PageFirstExitedTimeStamp": null,
+      "PageLastVisitedTimeStamp":null,
+      "NumberOfTimesPageVisited": 0,
+      "TimeSpentOnPage": null,
+      "ActiveOrPassiveRedirectionToPage": null,
+    },
+  },
+    "summary" : { "response3" : {
+      "VideURL" : ``, 
       "PageVisited" : false,
       "PageFirstVisitedTimeStamp" : null,
       "PageFirstExitedTimeStamp": null,
@@ -104,9 +213,9 @@ else{
   VideoArray = JSON.parse(sessionStorage.getItem("VideoArr"))
 }
 
-  // Get the button element by its ID
-  var rewindButton = document.getElementById("rewind");
-  var pauseButton = document.getElementById("pause");
+// Get the button element by its ID
+var rewindButton = document.getElementById("rewind");
+var pauseButton = document.getElementById("pause");
 
 
   var nextButton = document.querySelector(".next");
@@ -228,6 +337,9 @@ function PreviousNextButtonFunction(action){
     }
     document.getElementsByClassName('slider-container')[0].style.display="none";
   }
+  else if(PageName === "subTopics" && action === 1){
+    //Code Later
+  }
   else{
     if(VideoArrayIndex + action < 0){
       VideoArrayIndex = 0;
@@ -238,7 +350,9 @@ function PreviousNextButtonFunction(action){
     else{
       VideoArrayIndex = VideoArrayIndex + action;
     }
+
     PageName = VideoArrNames[VideoArrayIndex]
+
     if(PageName === "Homepage"){
       window.location.href=`/${id}/`
     }
@@ -248,8 +362,15 @@ function PreviousNextButtonFunction(action){
     else if(PageName === "quickAssessment"){
       UpdateVideo(VideoArray[PageName]['main'].VideURL)
     }
+    else if(PageName === "subTopics"){
+      UpdateVideo(VideoArray[PageName]['Benefits of kidney transplant'].VideURL)
+    }
     else{
       UpdateVideo(VideoArray[PageName].VideURL)
+    }
+
+    if(PageName === "Introduction"){
+      UpdateTitle("Goals of our Meeting");
     }
 
     if(PageName === "quickAssessment"){
@@ -262,8 +383,14 @@ function PreviousNextButtonFunction(action){
       document.getElementsByClassName('slider-container')[0].style.display="none";
     }
 
-    if(PageName === "Introduction"){
-      UpdateTitle("Goals of our Meeting");
+    if(PageName === "subTopics"){
+      document.getElementsByClassName('title')[0].style.display = "none";
+      document.getElementsByClassName('dropdown')[0].style.display = "block";
+    }
+    else{
+      document.getElementsByClassName('title')[0].style.display = "block";
+      document.getElementsByClassName('dropdown')[0].style.display = "none";
+
     }
 
     if(PageName === "Homepage"){
@@ -274,7 +401,6 @@ function PreviousNextButtonFunction(action){
     }
     VideoArray[PageName].PageVisited = true;
     sessionStorage.setItem("VideoArr", JSON.stringify(VideoArray))
-    UpdateVideoArrIndex();
     }
 }
 
@@ -282,8 +408,4 @@ function UpdateTitle(TitleString){
   if(document.getElementsByClassName('title').length>0){
     document.getElementsByClassName('title')[0].innerHTML=TitleString;
   }
-}
-
-function UpdateVideoArrIndex(){
-  sessionStorage.setItem("VideoArrIndex", VideoArrayIndex);
 }

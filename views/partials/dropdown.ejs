@@ -11,24 +11,27 @@
     <link href="/css/dropdown.css" rel="stylesheet" type="text/css">
 </head>
 <body>
-    <div class="dropdown">
+    
+    <div class="dropdown" style="display: none;">
         <!-- Dropdown button -->
-        <button id="dropbtn" class="dropbtn"><%=pageName%> ▾</button>
+        <button id="dropbtn" class="dropbtn"></button>
         
         <!-- Dropdown content -->
         <div id="dropdown-content" class="dropdown-content">
-            <a href="/<%=id%>/EducationalComponent/<%=type%>/transplantBenefits">Benefits of kidney transplant</a>
-            <a href="/<%=id%>/EducationalComponent/<%=type%>/transplantEligibility">Who can get a Kidney transplant</a>
-            <a href="/<%=id%>/EducationalComponent/<%=type%>/transplantWorkup">The transplant work-up</a>
-            <a href="/<%=id%>/EducationalComponent/<%=type%>/overviewTransplantWaitingList">Overview - the waiting list</a>
-            <a href="/<%=id%>/EducationalComponent/<%=type%>/livingDonorTransplant">Living donor transplant</a>
-            <a href="/<%=id%>/EducationalComponent/<%=type%>/transplantSooner">Getting a transplant sooner</a>
-            <a href="/<%=id%>/EducationalComponent/<%=type%>/transplantLifeSpan">How long do kidney transplants last</a>
-            <a href="/<%=id%>/EducationalComponent/<%=type%>/transplantRisks">The risks of kidney transplant</a>
-            <a href="/<%=id%>/EducationalComponent/<%=type%>/choosingTransplantCenter">Choosing a transplant center</a>
-            <a href="/<%=id%>/EducationalComponent/<%=type%>/donorEligibility">Who can be a living kidney donor</a>
-            <a href="/<%=id%>/EducationalComponent/<%=type%>/talkingToYourDoctor">Talking to your doctor</a>
+            <a onclick="UpdateDropdown('Benefits of kidney transplant')">Benefits of kidney transplant</a>
+            <a onclick="UpdateDropdown('Who can get a kidney transplant')">Who can get a Kidney transplant</a>
+            <a onclick="UpdateDropdown('The transplant work-up')">The transplant work-up</a>
+            <a onclick="UpdateDropdown('Overview - The waiting list')">Overview - the waiting list</a>
+            <a onclick="UpdateDropdown('Living donor transplant')">Living donor transplant</a>
+            <a onclick="UpdateDropdown('Getting a transplant sooner')">Getting a transplant sooner</a>
+            <a onclick="UpdateDropdown('How long do kidney transplants last')">How long do kidney transplants last</a>
+            <a onclick="UpdateDropdown('The risks of kidney transplant')">The risks of kidney transplant</a>
+            <a onclick="UpdateDropdown('Choosing a transplant center')">Choosing a transplant center</a>
+            <a onclick="UpdateDropdown('Who can be a living kidney donor')">Who can be a living kidney donor</a>
+            <a onclick="UpdateDropdown('Talking to your doctor')">Talking to your doctor</a>
         </div>
+        <br/>
+        <br/>
     </div>
 
 </body>
