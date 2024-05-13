@@ -2,12 +2,8 @@
 var slider = document.getElementById("slider");
 // Get the span element that will display the slider value
 var sliderNumber = document.getElementById("slider-number");
+var sliderValue = parseInt(sessionStorage.getItem("sliderResponse"));
 
-var sliderValueForEndPage = parseInt(sessionStorage.getItem("sliderResponse"));
-  console.log("it is: ",sliderValueForEndPage)
-  console.log(typeof sliderValueForEndPage)
-
-var sliderValue;
 // Update the slider value display when the slider is moved
 slider.oninput = function() {
   sliderValue=this.value;
@@ -26,8 +22,7 @@ slider.oninput = function() {
   else if(sliderValue>=80 && sliderValue<=100){
     sliderNumber.innerText = "I know a lot";
   }
-sessionStorage.setItem("sliderResponse",this.value);
-
+  sessionStorage.setItem("sliderResponse",this.value);
 };
 
 
@@ -46,13 +41,12 @@ function redirectBasedOnSliderValue(id,type){
 }
 
 function redirectBasedOnSliderValueForEndPage(id,type){
-  var sliderValueForEndPage = parseInt(sessionStorage.getItem("sliderResponse"));
-  console.log("it is: ",sliderValueForEndPage)
-  console.log(typeof sliderValueForEndPage)
-  if(sliderValueForEndPage>=70){
+  var sliderValue = parseInt(sessionStorage.getItem("sliderResponse"));
+  console.log("it is: ",sliderValue)
+  console.log(typeof sliderValue)
+  if(sliderValue>=70){
     window.location.href=`/${id}/EducationalComponent/${type}/endOfMeetingResponse1`
   }
-
   else{
       window.location.href=`/${id}/EducationalComponent/${type}/endOfMeetingResponse2`
   }
