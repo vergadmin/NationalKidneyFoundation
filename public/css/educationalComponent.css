@@ -18,6 +18,8 @@ button{
     margin: 5px !important;
     color: white !important;
     background-color: navy !important;
+    border-radius: 50px !important;
+    padding: 10px 25px !important;
 }
 
 .next{

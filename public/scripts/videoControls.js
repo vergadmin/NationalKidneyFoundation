@@ -262,7 +262,7 @@ myVideo.onended=function(e){
     if(moduleName === "Talking to your doctor"){
       if(myVideo.getElementsByTagName("source")[0].getAttribute('src') !== 
       `https://national-kidney-foundation.s3.amazonaws.com/${type}/talkingToYourDoctor.mp4`){
-        PreviousNextButtonFunction(1);
+        PreviousNextButtonFunction(1);      
       }
       else{
         var sliderValueForEndPage = parseInt(sessionStorage.getItem("sliderResponse"))
@@ -272,6 +272,7 @@ myVideo.onended=function(e){
         else{
           UpdateVideo(`https://national-kidney-foundation.s3.amazonaws.com/${type}/endOfMeetingResponse2.mp4`)
         }
+        nextButton.style.display= "block";
       }
       
     }

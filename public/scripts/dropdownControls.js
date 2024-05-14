@@ -19,10 +19,18 @@ function UpdateDropdown(ModuleString){
     UpdateVideo(VideoArray[PageName][ModuleString].VideURL)
     LoadCheckBoxValue();
     dropdownContent.style.display = 'none';
-    if(moduleName === "Overview - The waiting list"){
+    if(moduleName === "Overview - The waiting list" || moduleName === "Talking to your doctor"){
         nextButton.style.display= "none";
       }
       else{
         nextButton.style.display= "block";
       }
 }
+
+// Add a blur event listener to hide the dropdown content when the button loses focus
+dropdownButton.addEventListener('blur', function() {
+    // Delay the execution of blur event slightly to allow the click event to be handled first
+    setTimeout(() => {
+        dropdownContent.style.display = 'none';
+    }, 200); // Delay in milliseconds
+});
