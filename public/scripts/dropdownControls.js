@@ -28,7 +28,7 @@ function UpdateDropdown(ModuleString){
 }
 
 // Add a blur event listener to hide the dropdown content when the button loses focus
-dropdownButton.addEventListener('blur', function() {
+dropdownButton.addEventListener('mouseout', function() {
     // Delay the execution of blur event slightly to allow the click event to be handled first
     setTimeout(() => {
         dropdownContent.style.display = 'none';
