@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,24 +12,21 @@
     <link href="/css/educationalComponent.css" rel="stylesheet" type="text/css">
     <title>NKF</title>
 </head>
+
 <body id-variable="<%=id%>" type-variable="<%=type%>" url="<%=url%>">
     <header>
         <%- include('../../../partials/header'); %>
     </header>
-    <br/>
+    <br />
     <div class="end-container">
         <h1>Selected Topics</h1>
-            <div id="selected-topics"></div>
-    
-            <a href="https://wharton.qualtrics.com/jfe/form/SV_ah5rKWqpP5xIn78?ID=<%=id%>">
-                <button class="finish">End our meeting</button>
-            </a>
-     
+        <div id="selected-topics"></div>
 
+        <a href="https://wharton.qualtrics.com/jfe/form/SV_ah5rKWqpP5xIn78?ID=<%=id%>">
+            <button class="finish">End our meeting</button>
+        </a>
     </div>
-
-
-
     <script src="/scripts/summaryTopics.js"></script>
 </body>
+
 </html>

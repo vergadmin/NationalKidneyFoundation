@@ -1,8 +1,7 @@
 // Get the dropdown button and dropdown content elements
 var dropdownButton = document.getElementById('dropbtn');
 var dropdownContent = document.getElementById('dropdown-content');
-var moduleName = "Benefits of kidney transplant" + ' ▾';
-dropdownButton.innerText = moduleName;
+var moduleName = "";
 
 // Add a click event listener to the dropdown button
 dropdownButton.addEventListener('click', function() {
@@ -18,5 +17,6 @@ function UpdateDropdown(ModuleString){
     moduleName = ModuleString;
     dropdownButton.innerText = moduleName + ' ▾';
     UpdateVideo(VideoArray[PageName][ModuleString].VideURL)
+    LoadCheckBoxValue();
     dropdownContent.style.display = 'none';
 }

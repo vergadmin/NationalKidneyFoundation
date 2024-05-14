@@ -1,8 +1,6 @@
 // Retrieve the object from sessionStorage
 additionalInformationTopics = JSON.parse(sessionStorage.getItem('additionalInformationTopics'));
 
-console.log(additionalInformationTopics);
-
 // Select the HTML element where you want to add the checkboxes
 var container = document.getElementById('selected-topics');
 

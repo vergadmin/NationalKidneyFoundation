@@ -8,12 +8,13 @@ window.addEventListener("load", () => {
     var id = document.URL.split('/').reverse()[1]
     sessionStorage.setItem("id", id)
     sessionStorage.setItem("type", type)
-
+    
+    if(sessionStorage.getItem("additionalInformationTopics") === null ){
     additionalInformationTopics = {
         "Benefits of kidney transplant": false,
-        "Who can get a Kidney transplant": false,
+        "Who can get a kidney transplant": false,
         "The transplant work-up": false,
-        "Overview - the waiting list": false,
+        "Overview - The waiting list": false,
         "Living donor transplant": false,
         "Getting a transplant sooner": false,
         "How long do kidney transplants last": false,
@@ -22,8 +23,11 @@ window.addEventListener("load", () => {
         "Who can be a living kidney donor": false,
         "Talking to your doctor": false
       };
-      
-    sessionStorage.setItem('additionalInformationTopics', JSON.stringify(additionalInformationTopics));
+      sessionStorage.setItem('additionalInformationTopics', JSON.stringify(additionalInformationTopics));
+    }
+    else{
+        additionalInformationTopics = JSON.parse(sessionStorage.getItem("additionalInformationTopics"));
+    }
 
 
 

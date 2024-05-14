@@ -20,50 +20,65 @@
         <%- include('../../../partials/header'); %>
     </header>
     <%- include('../../../partials/dropdown'); %>
-    <div class="container">
-        <h1 class="title">Goals of our Meeting</h1>
-        <div class="video-wrapper">
+        <div class="container">
+            <h1 class="title">Goals of our Meeting</h1>
             <div class="video-wrapper">
-                <video autoplay id="myvideo" playsinline>
-                    <source src="https://national-kidney-foundation.s3.amazonaws.com/<%=type%>/Introduction.mp4"
-                        type="video/mp4">
-                </video>
-                <div class="play-overlay">
-                    <button id="playButton">▶</button>
+                <div class="video-wrapper">
+                    <video autoplay id="myvideo" playsinline>
+                        <source src="https://national-kidney-foundation.s3.amazonaws.com/<%=type%>/Introduction.mp4"
+                            type="video/mp4">
+                    </video>
+                    <div class="play-overlay">
+                        <button id="playButton">▶</button>
+                    </div>
                 </div>
-            </div>
-            <br />
-            <br />
-            <br />
-            <div class="video-controls">
-                <button id="rewind">Repeat that</button>
-                <button id="pause">▶</button>
-            </div>
-            <br>
-            <br>
-            <div class="slider-container" style="display: none;">
-                <p id="slider-value"><strong>Your Response: </strong><span id="slider-number">I don't know if i need
-                        information or not</span></p>
-                <input type="range" min="0" max="100" value="50" class="slider" id="slider">
-                <div class="labels">
-                    <p class="leftAnchor">0</p>
-                    <p class="rightAnchor">100</p>
+                <br />
+                <br />
+                <br />
+                <div class="video-controls">
+                    <button id="rewind">Repeat that</button>
+                    <button id="pause">▶</button>
+                </div>
+                <br>
+                <br>
+                <div class="slider-container" style="display: none;">
+                    <p id="slider-value"><strong>Your Response: </strong><span id="slider-number">I don't know if i need
+                            information or not</span></p>
+                    <input type="range" min="0" max="100" class="slider" id="slider" onchange="UpdateSliderValue()">
+                    <div class="labels">
+                        <p class="leftAnchor">0</p>
+                        <p class="rightAnchor">100</p>
+                    </div>
+
                 </div>
 
+                <div class="checkbox-area" style="display: none;">
+                    <input type="checkbox" id="checkboxItem" name="checkboxItem" onchange="UpdateCheckbox()">
+                    <label for="checkboxItem">Check this box for additional information</label><br>
+                </div>
+
+                <a>
+                    <button onclick="PreviousNextButtonFunction(-1)" class="back">Go Back</button>
+                </a>
+
+                <a updateVideo>
+                    <button onclick="PreviousNextButtonFunction(1)" class="next">Next</button>
+                </a>
+
+
             </div>
-
-            <a>
-                <button onclick="PreviousNextButtonFunction(-1)" class="back">Go Back</button>
-            </a>
-
-            <a updateVideo>
-                <button onclick="PreviousNextButtonFunction(1)" class="next">Next</button>
-            </a>
-
-
         </div>
-        <script src="/scripts/videoControls.js"></script>
-        <script src="/scripts/sliderControls.js"></script>
+        <div class="end-container">
+            <h1>Selected Topics</h1>
+            <div id="selected-topics"></div>
+    
+            <a href="https://wharton.qualtrics.com/jfe/form/SV_ah5rKWqpP5xIn78?ID=<%=id%>">
+                <button class="finish">End our meeting</button>
+            </a>
+        </div>
+            <script src="/scripts/videoControls.js"></script>
+            <script src="/scripts/sliderControls.js"></script>
+            <script src="/scripts/checkBox.js"></script>
 </body>
 
 </html>

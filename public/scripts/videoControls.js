@@ -254,18 +254,24 @@ var pauseButton = document.getElementById("pause");
 
 //OnEnded Function for autoplay video sequence
 myVideo.onended=function(e){
-  if(PageName==="talkingToYourDoctor")
+  if(PageName==="subTopics")
   {
-    var sliderValueForEndPage = parseInt(sessionStorage.getItem("sliderResponse"))
-    console.log("in talking to doc",sliderValueForEndPage )
-    if(sliderValueForEndPage>=70){
-      console.log('IS GREATER THAN 70')
-      window.location.href=`/${id}/EducationalComponent/${type}/endOfMeetingResponse1`
+    if(moduleName === "Talking to your doctor"){
+      if(myVideo.getElementsByTagName("source")[0].getAttribute('src') != 
+      `https://national-kidney-foundation.s3.amazonaws.com/${type}/talkingToYourDoctor.mp4`){
+        PreviousNextButtonFunction(1)
+      }
+      var sliderValueForEndPage = parseInt(sessionStorage.getItem("sliderResponse"))
+      if(sliderValueForEndPage>=70){
+        UpdateVideo(`https://national-kidney-foundation.s3.amazonaws.com/${type}/endOfMeetingResponse1.mp4`)
+      }
+      else{
+        UpdateVideo(`https://national-kidney-foundation.s3.amazonaws.com/${type}/endOfMeetingResponse2.mp4`)
+      }
+      
     }
-  
     else{
-      console.log('IS LESS THAN 70')
-      window.location.href=`/${id}/EducationalComponent/${type}/endOfMeetingResponse2`
+      SwitchSubTopicVideo();
     }
   } 
   else if(PageName==="quickAssessment"){
@@ -337,8 +343,8 @@ function PreviousNextButtonFunction(action){
     }
     document.getElementsByClassName('slider-container')[0].style.display="none";
   }
-  else if(PageName === "subTopics" && action === 1){
-    //Code Later
+  else if(PageName === "subTopics" && action === 1 && moduleName !== "Talking to your doctor"){
+    SwitchSubTopicVideo();
   }
   else{
     if(VideoArrayIndex + action < 0){
@@ -356,14 +362,18 @@ function PreviousNextButtonFunction(action){
     if(PageName === "Homepage"){
       window.location.href=`/${id}/`
     }
-    else if(PageName.startsWith("SubTopic")){
-      //CodeHere
-    }
     else if(PageName === "quickAssessment"){
       UpdateVideo(VideoArray[PageName]['main'].VideURL)
     }
     else if(PageName === "subTopics"){
-      UpdateVideo(VideoArray[PageName]['Benefits of kidney transplant'].VideURL)
+      //UpdateVideo(VideoArray[PageName]['Benefits of kidney transplant'].VideURL)
+      UpdateDropdown('Benefits of kidney transplant')
+    }
+    else if(PageName === "summary"){
+      console.log("Show Summary Page")
+      myVideo.pause();
+      UpdateTitle("Selected Topics")
+      
     }
     else{
       UpdateVideo(VideoArray[PageName].VideURL)
@@ -386,19 +396,44 @@ function PreviousNextButtonFunction(action){
     if(PageName === "subTopics"){
       document.getElementsByClassName('title')[0].style.display = "none";
       document.getElementsByClassName('dropdown')[0].style.display = "block";
+      document.getElementsByClassName('checkbox-area')[0].style.display = "flex";
     }
     else{
       document.getElementsByClassName('title')[0].style.display = "block";
       document.getElementsByClassName('dropdown')[0].style.display = "none";
-
+      document.getElementsByClassName('checkbox-area')[0].style.display = "none";
+      moduleName = "";
     }
 
-    if(PageName === "Homepage"){
-      //window.history.pushState(PageName, PageName, `/${id}/`)
+    if(PageName === "summary"){
+      document.getElementsByClassName('container')[0].style.display = "none";
+      document.getElementsByClassName('end-container')[0].style.display = "flex";
+
+      var container = document.getElementById('selected-topics');
+
+      // Loop through each key-value pair in the object and create a checkbox for each
+      for (const [key, value] of Object.entries(additionalInformationTopics)) {
+          const checkbox = document.createElement('input');
+          checkbox.type = 'checkbox';
+          checkbox.checked = value; // Set the 'checked' attribute based on the value
+          checkbox.value = key; // Set the 'value' attribute to the key
+          checkbox.onchange = UpdateSpecificCheckBox;
+        
+          const label = document.createElement('label');
+          label.textContent = key;
+        
+          const checkboxdiv = document.createElement('div');
+          checkboxdiv.classList.add('checkboxdiv');
+          checkboxdiv.appendChild(checkbox);
+          checkboxdiv.appendChild(label);
+          container.appendChild(checkboxdiv);
+        }
     }
     else{
-      //window.history.pushState(PageName, PageName, `/${id}/EducationalComponent/${type}/${PageName}`)
+      document.getElementsByClassName('container')[0].style.display = "block";
+      document.getElementsByClassName('end-container')[0].style.display = "none";
     }
+
     VideoArray[PageName].PageVisited = true;
     sessionStorage.setItem("VideoArr", JSON.stringify(VideoArray))
     }
@@ -407,5 +442,22 @@ function PreviousNextButtonFunction(action){
 function UpdateTitle(TitleString){
   if(document.getElementsByClassName('title').length>0){
     document.getElementsByClassName('title')[0].innerHTML=TitleString;
+  }
+}
+
+function SwitchSubTopicVideo(){
+    const tempArr = ["Benefits of kidney transplant",
+    "Who can get a kidney transplant",
+    "The transplant work-up",
+    "Overview - The waiting list",
+    "Living donor transplant",
+    "Getting a transplant sooner",
+    "How long do kidney transplants last",
+    "The risks of kidney transplant",
+    "Choosing a transplant center",
+    "Who can be a living kidney donor",
+    "Talking to your doctor"]
+  if(tempArr.indexOf(moduleName) < tempArr.length - 1){
+    UpdateDropdown(tempArr[tempArr.indexOf(moduleName) + 1])
   }
 }
