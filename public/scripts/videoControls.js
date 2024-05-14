@@ -228,18 +228,17 @@ var pauseButton = document.getElementById("pause");
   
   // Add a click event listener to the button
   pauseButton.addEventListener("click", function() {
-    console.log("clicked");
     // Toggle between pausing and playing the video
     if (myVideo.paused) {
       myVideo.play();
-      pauseButton.textContent = "| |";
+      pauseButton.textContent = "Pause";
       if(PageName === "Introduction"){
       playButton.style.display = "none";
       playButton.parentElement.style.backgroundColor = "transparent";
       }
     } else {
       myVideo.pause();
-      pauseButton.textContent = "▶";
+      pauseButton.textContent = "Play";
       if(PageName === "Introduction"){
       playButton.style.display = "flex";
       playButton.parentElement.style.backgroundColor = "rgba(0, 0, 0, 0.75)";
@@ -252,7 +251,7 @@ var pauseButton = document.getElementById("pause");
     myVideo.currentTime -= 10;
     if (myVideo.paused) {
       myVideo.play();
-      pauseButton.textContent = "| |";
+      pauseButton.textContent = "Pause";
     }
 });
 
@@ -263,18 +262,20 @@ myVideo.onended=function(e){
     if(moduleName === "Talking to your doctor"){
       if(myVideo.getElementsByTagName("source")[0].getAttribute('src') !== 
       `https://national-kidney-foundation.s3.amazonaws.com/${type}/talkingToYourDoctor.mp4`){
-        PreviousNextButtonFunction(1)
-      }
-      var sliderValueForEndPage = parseInt(sessionStorage.getItem("sliderResponse"))
-      if(sliderValueForEndPage>=70){
-        UpdateVideo(`https://national-kidney-foundation.s3.amazonaws.com/${type}/endOfMeetingResponse1.mp4`)
+        PreviousNextButtonFunction(1);
       }
       else{
-        UpdateVideo(`https://national-kidney-foundation.s3.amazonaws.com/${type}/endOfMeetingResponse2.mp4`)
+        var sliderValueForEndPage = parseInt(sessionStorage.getItem("sliderResponse"))
+        if(sliderValueForEndPage>=70){
+          UpdateVideo(`https://national-kidney-foundation.s3.amazonaws.com/${type}/endOfMeetingResponse1.mp4`)
+        }
+        else{
+          UpdateVideo(`https://national-kidney-foundation.s3.amazonaws.com/${type}/endOfMeetingResponse2.mp4`)
+        }
       }
       
     }
-    if(moduleName === "Overview - The waiting list" && myVideo.getElementsByTagName("source")[0].getAttribute('src') === 
+    else if(moduleName === "Overview - The waiting list" && myVideo.getElementsByTagName("source")[0].getAttribute('src') === 
     `https://national-kidney-foundation.s3.amazonaws.com/${type}/overviewTransplantWaitingList.mp4`){
       document.getElementsByClassName('overview-buttons')[0].style.display="block";
       // var sliderValueForEndPage = parseInt(sessionStorage.getItem("sliderResponse"))
@@ -309,7 +310,7 @@ myVideo.onended=function(e){
     PreviousNextButtonFunction(1);
     document.getElementsByClassName('slider-container')[0].style.display="none";
   }
-  pauseButton.textContent = "▶";
+  pauseButton.textContent = "Play";
   // if(PageName === "Introduction"){
   //   playButton.style.display = "flex";
   //   playButton.parentElement.style.backgroundColor = "rgba(0, 0, 0, 0.75)";
@@ -318,14 +319,14 @@ myVideo.onended=function(e){
 
 //Updates the play/pause button.
 myVideo.onplaying=function(e){
-    pauseButton.textContent = "| |";
+    pauseButton.textContent = "Pause";
     playButton.style.display = "none";
     playButton.parentElement.style.backgroundColor = "transparent";
 }
 
 //Updates the play/pause button.
 myVideo.onpause=function(e){
-    pauseButton.textContent = "▶";
+    pauseButton.textContent = "Play";
 }
 
 
@@ -398,8 +399,7 @@ function PreviousNextButtonFunction(action){
       UpdateDropdown('Benefits of kidney transplant')
     }
     else if(PageName === "summary"){
-      console.log("Show Summary Page")
-      UpdateVideo(``)
+      UpdateVideo(`https://national-kidney-foundation.s3.amazonaws.com/${type}/waitingListUsefulnessCheckinResponse1.mp4`)
       UpdateTitle("Selected Topics")
     }
     else{
@@ -490,7 +490,7 @@ function SwitchSubTopicVideo(prevOrNext){
     "Choosing a transplant center",
     "Who can be a living kidney donor",
     "Talking to your doctor"]
-  if(tempArr.indexOf(moduleName) < tempArr.length - 1){
+  if(tempArr.indexOf(moduleName) <= tempArr.length - 1){
     UpdateDropdown(tempArr[tempArr.indexOf(moduleName) + prevOrNext])
   }
 }
