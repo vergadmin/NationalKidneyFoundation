@@ -461,3 +461,7 @@ function SwitchSubTopicVideo(){
     UpdateDropdown(tempArr[tempArr.indexOf(moduleName) + 1])
   }
 }
+
+function ResetSession(){
+  sessionStorage.clear();
+}

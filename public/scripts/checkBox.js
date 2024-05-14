@@ -21,7 +21,6 @@ function UpdateSpecificCheckBox(){
    this.checked = !additionalInformationTopics[this.parentNode.querySelector('label').textContent];
    additionalInformationTopics[this.parentNode.querySelector('label').textContent] = this.checked;
    sessionStorage.setItem('additionalInformationTopics', JSON.stringify(additionalInformationTopics));
-   console.log(additionalInformationTopics);
 }
 
 // checkbox.addEventListener('click', function() {
