@@ -395,9 +395,13 @@ function PreviousNextButtonFunction(action){
     else if(PageName === "quickAssessment"){
       UpdateVideo(VideoArray[PageName]['main'].VideURL)
     }
-    else if(PageName === "subTopics"){
+    else if(PageName === "subTopics" && action === 1){
       //UpdateVideo(VideoArray[PageName]['Benefits of kidney transplant'].VideURL)
       UpdateDropdown('Benefits of kidney transplant')
+    }
+    else if(PageName === "subTopics" && action === -1){
+      //UpdateVideo(VideoArray[PageName]['Benefits of kidney transplant'].VideURL)
+      UpdateDropdown('Talking to your doctor')
     }
     else if(PageName === "summary"){
       UpdateVideo(`https://national-kidney-foundation.s3.amazonaws.com/${type}/waitingListUsefulnessCheckinResponse1.mp4`)
