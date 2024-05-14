@@ -233,13 +233,17 @@ var pauseButton = document.getElementById("pause");
     if (myVideo.paused) {
       myVideo.play();
       pauseButton.textContent = "| |";
+      if(PageName === "Introduction"){
       playButton.style.display = "none";
       playButton.parentElement.style.backgroundColor = "transparent";
+      }
     } else {
       myVideo.pause();
       pauseButton.textContent = "▶";
+      if(PageName === "Introduction"){
       playButton.style.display = "flex";
       playButton.parentElement.style.backgroundColor = "rgba(0, 0, 0, 0.75)";
+      }
     }
   });
 
@@ -257,7 +261,7 @@ myVideo.onended=function(e){
   if(PageName==="subTopics")
   {
     if(moduleName === "Talking to your doctor"){
-      if(myVideo.getElementsByTagName("source")[0].getAttribute('src') != 
+      if(myVideo.getElementsByTagName("source")[0].getAttribute('src') !== 
       `https://national-kidney-foundation.s3.amazonaws.com/${type}/talkingToYourDoctor.mp4`){
         PreviousNextButtonFunction(1)
       }
@@ -270,8 +274,28 @@ myVideo.onended=function(e){
       }
       
     }
+    if(moduleName === "Overview - The waiting list" && myVideo.getElementsByTagName("source")[0].getAttribute('src') === 
+    `https://national-kidney-foundation.s3.amazonaws.com/${type}/overviewTransplantWaitingList.mp4`){
+      document.getElementsByClassName('overview-buttons')[0].style.display="block";
+      // var sliderValueForEndPage = parseInt(sessionStorage.getItem("sliderResponse"))
+      // if(myVideo.getElementsByTagName("source")[0].getAttribute('src') !== 
+      // `https://national-kidney-foundation.s3.amazonaws.com/${type}/overviewTransplantWaitingList.mp4`){
+      //   SwitchSubTopicVideo(1);
+      // }
+      // else{
+      //   if(sliderValueForEndPage<=35){
+      //     UpdateVideo(`https://national-kidney-foundation.s3.amazonaws.com/${type}/waitingListUsefulnessCheckinResponse1.mp4`)
+      //   }
+      //   else if(sliderValueForEndPage>35 && sliderValueForEndPage <= 70){
+      //     UpdateVideo(`https://national-kidney-foundation.s3.amazonaws.com/${type}/waitingListUsefulnessCheckinResponse2.mp4`)
+      //   }
+      //   else{
+      //     UpdateVideo(`https://national-kidney-foundation.s3.amazonaws.com/${type}/waitingListUsefulnessCheckinResponse3.mp4`)
+      //   }
+      // }
+    }
     else{
-      SwitchSubTopicVideo();
+      SwitchSubTopicVideo(1);
     }
   } 
   else if(PageName==="quickAssessment"){
@@ -286,22 +310,22 @@ myVideo.onended=function(e){
     document.getElementsByClassName('slider-container')[0].style.display="none";
   }
   pauseButton.textContent = "▶";
-  playButton.style.display = "flex";
-  playButton.parentElement.style.backgroundColor = "rgba(0, 0, 0, 0.75)";
+  // if(PageName === "Introduction"){
+  //   playButton.style.display = "flex";
+  //   playButton.parentElement.style.backgroundColor = "rgba(0, 0, 0, 0.75)";
+  // }
 }
 
 //Updates the play/pause button.
 myVideo.onplaying=function(e){
-  pauseButton.textContent = "| |";
-  playButton.style.display = "none";
-  playButton.parentElement.style.backgroundColor = "transparent";
+    pauseButton.textContent = "| |";
+    playButton.style.display = "none";
+    playButton.parentElement.style.backgroundColor = "transparent";
 }
 
 //Updates the play/pause button.
 myVideo.onpause=function(e){
-  pauseButton.textContent = "▶";
-  playButton.style.display = "flex";
-  playButton.parentElement.style.backgroundColor = "rgba(0, 0, 0, 0.75)";
+    pauseButton.textContent = "▶";
 }
 
 
@@ -324,7 +348,7 @@ function UpdateVideo(videoUrl){
 function PreviousNextButtonFunction(action){
   if(PageName === 'quickAssessment' && action === 1) {
     var slider = document.getElementById("slider");
-    if(slider.value<=59){
+    if(slider.value<=50){
       UpdateVideo(VideoArray[PageName]["response1"].VideURL)
       //window.history.pushState(PageName, PageName, `/${id}/EducationalComponent/${type}/quickAssessmentResponse1`)
       PageName = 'quickAssessmentResponse1';
@@ -344,7 +368,11 @@ function PreviousNextButtonFunction(action){
     document.getElementsByClassName('slider-container')[0].style.display="none";
   }
   else if(PageName === "subTopics" && action === 1 && moduleName !== "Talking to your doctor"){
-    SwitchSubTopicVideo();
+    SwitchSubTopicVideo(1);
+  }
+  //TBD Function
+  else if(PageName === "subTopics" && action === -1 && moduleName !== "Benefits of kidney transplant"){
+    SwitchSubTopicVideo(-1);
   }
   else{
     if(VideoArrayIndex + action < 0){
@@ -371,9 +399,8 @@ function PreviousNextButtonFunction(action){
     }
     else if(PageName === "summary"){
       console.log("Show Summary Page")
-      myVideo.pause();
+      UpdateVideo(``)
       UpdateTitle("Selected Topics")
-      
     }
     else{
       UpdateVideo(VideoArray[PageName].VideURL)
@@ -413,21 +440,27 @@ function PreviousNextButtonFunction(action){
 
       // Loop through each key-value pair in the object and create a checkbox for each
       for (const [key, value] of Object.entries(additionalInformationTopics)) {
-          const checkbox = document.createElement('input');
-          checkbox.type = 'checkbox';
-          checkbox.checked = value; // Set the 'checked' attribute based on the value
-          checkbox.value = key; // Set the 'value' attribute to the key
-          checkbox.onchange = UpdateSpecificCheckBox;
-        
-          const label = document.createElement('label');
-          label.textContent = key;
-        
-          const checkboxdiv = document.createElement('div');
-          checkboxdiv.classList.add('checkboxdiv');
-          checkboxdiv.appendChild(checkbox);
-          checkboxdiv.appendChild(label);
-          container.appendChild(checkboxdiv);
+        if (!container.querySelector(`input[type="checkbox"][value="${key}"]`)) {
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.checked = value; // Set the 'checked' attribute based on the value
+            checkbox.value = key; // Set the 'value' attribute to the key
+            checkbox.onchange = UpdateSpecificCheckBox;
+          
+            const label = document.createElement('label');
+            label.textContent = key;
+          
+            const checkboxdiv = document.createElement('div');
+            checkboxdiv.classList.add('checkboxdiv');
+            checkboxdiv.appendChild(checkbox);
+            checkboxdiv.appendChild(label);
+            container.appendChild(checkboxdiv);
+          }
+          else{
+            container.querySelector(`input[type="checkbox"][value="${key}"]`).checked = additionalInformationTopics[key];
+          }
         }
+        nextButton.style.display= "none";
     }
     else{
       document.getElementsByClassName('container')[0].style.display = "block";
@@ -445,7 +478,7 @@ function UpdateTitle(TitleString){
   }
 }
 
-function SwitchSubTopicVideo(){
+function SwitchSubTopicVideo(prevOrNext){
     const tempArr = ["Benefits of kidney transplant",
     "Who can get a kidney transplant",
     "The transplant work-up",
@@ -458,10 +491,25 @@ function SwitchSubTopicVideo(){
     "Who can be a living kidney donor",
     "Talking to your doctor"]
   if(tempArr.indexOf(moduleName) < tempArr.length - 1){
-    UpdateDropdown(tempArr[tempArr.indexOf(moduleName) + 1])
+    UpdateDropdown(tempArr[tempArr.indexOf(moduleName) + prevOrNext])
   }
 }
 
 function ResetSession(){
   sessionStorage.clear();
+}
+
+function OverviewResponse(responseString){
+  document.getElementsByClassName('overview-buttons')[0].style.display="none";
+  if(responseString === "Some of it"){
+    UpdateVideo(`https://national-kidney-foundation.s3.amazonaws.com/${type}/waitingListUsefulnessCheckinResponse1.mp4`)
+
+  }
+  else if(responseString ==="Mostly useful"){
+    UpdateVideo(`https://national-kidney-foundation.s3.amazonaws.com/${type}/waitingListUsefulnessCheckinResponse2.mp4`)
+  }
+  else{
+    UpdateVideo(`https://national-kidney-foundation.s3.amazonaws.com/${type}/waitingListUsefulnessCheckinResponse3.mp4`)
+  }
+  nextButton.style.display= "block";
 }

@@ -19,4 +19,10 @@ function UpdateDropdown(ModuleString){
     UpdateVideo(VideoArray[PageName][ModuleString].VideURL)
     LoadCheckBoxValue();
     dropdownContent.style.display = 'none';
+    if(moduleName === "Overview - The waiting list"){
+        nextButton.style.display= "none";
+      }
+      else{
+        nextButton.style.display= "block";
+      }
 }

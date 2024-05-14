@@ -33,11 +33,16 @@
                     </div>
                 </div>
                 <br />
+                <div class="overview-buttons" style="text-align: center;display: none;">
+                    <button onclick="OverviewResponse('Some of it')" style="background-color: #F15E22 !important;">Some of it</button>
+                    <button onclick="OverviewResponse('Mostly useful')" style="background-color: #F15E22 !important;">Mostly useful</button>
+                    <button onclick="OverviewResponse('Very useful')" style="background-color: #F15E22 !important;">Very useful</button>
+                </div>
                 <br />
                 <br />
                 <div class="video-controls">
                     <button id="rewind">Repeat that</button>
-                    <button id="pause">▶</button>
+                    <button id="pause">Play</button>
                 </div>
                 <br>
                 <br>
@@ -57,28 +62,37 @@
                     <label for="checkboxItem">Check this box for additional information</label><br>
                 </div>
 
-                <a>
+                <!-- <a>
                     <button onclick="PreviousNextButtonFunction(-1)" class="back">Go Back</button>
                 </a>
 
                 <a updateVideo>
                     <button onclick="PreviousNextButtonFunction(1)" class="next">Next</button>
-                </a>
+                </a> -->
 
 
             </div>
         </div>
-        <div class="end-container">
-            <h1>Selected Topics</h1>
+        <div class="end-container" style="display: none;">
+            <h1 style="color: navy;">Selected Topics</h1>
             <div id="selected-topics"></div>
-    
+
             <a href="https://wharton.qualtrics.com/jfe/form/SV_ah5rKWqpP5xIn78?ID=<%=id%>">
                 <button class="finish" onclick="ResetSession()">End our meeting</button>
             </a>
         </div>
-            <script src="/scripts/videoControls.js"></script>
-            <script src="/scripts/sliderControls.js"></script>
-            <script src="/scripts/checkBox.js"></script>
+
+        <a>
+            <button onclick="PreviousNextButtonFunction(-1)" class="back">Go Back</button>
+        </a>
+
+        <a updateVideo>
+            <button onclick="PreviousNextButtonFunction(1)" class="next">Next</button>
+        </a>
+        
+        <script src="/scripts/videoControls.js"></script>
+        <script src="/scripts/sliderControls.js"></script>
+        <script src="/scripts/checkBox.js"></script>
 </body>
 
 </html>
