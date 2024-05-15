@@ -432,7 +432,11 @@ function PreviousNextButtonFunction(action){
       document.getElementsByClassName('checkbox-area')[0].style.display = "none";
       moduleName = "";
     }
-
+    
+    if(PageName === 'subTopics' && moduleName === "Talking to your doctor"){
+      nextButton.style.display= "none";
+    }
+    
     if(PageName === "summary"){
       document.getElementsByClassName('container')[0].style.display = "none";
       document.getElementsByClassName('end-container')[0].style.display = "flex";
@@ -503,11 +507,11 @@ function ResetSession(){
 
 function OverviewResponse(responseString){
   document.getElementsByClassName('overview-buttons')[0].style.display="none";
-  if(responseString === "Some of it"){
+  if(responseString === "Not really"){
     UpdateVideo(`https://national-kidney-foundation.s3.amazonaws.com/${type}/waitingListUsefulnessCheckinResponse1.mp4`)
 
   }
-  else if(responseString ==="Mostly useful"){
+  else if(responseString ==="Somewhat useful"){
     UpdateVideo(`https://national-kidney-foundation.s3.amazonaws.com/${type}/waitingListUsefulnessCheckinResponse2.mp4`)
   }
   else{

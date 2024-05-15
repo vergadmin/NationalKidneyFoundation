@@ -25,6 +25,9 @@ function UpdateDropdown(ModuleString){
       else{
         nextButton.style.display= "block";
       }
+    if(moduleName !== "Overview - The waiting list"){
+        document.getElementsByClassName('overview-buttons')[0].style.display = 'none'
+    }
 }
 
 // Add a blur event listener to hide the dropdown content when the button loses focus
