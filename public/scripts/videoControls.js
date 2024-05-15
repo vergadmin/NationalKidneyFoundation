@@ -195,8 +195,8 @@ var VideoArray = {
       "ActiveOrPassiveRedirectionToPage": null,
     },
   },
-    "summary" : { "response3" : {
-      "VideURL" : ``, 
+    "summary" : {
+      "VideURL" : `https://national-kidney-foundation.s3.amazonaws.com/${type}/closingMessage.mp4`, 
       "PageVisited" : false,
       "PageFirstVisitedTimeStamp" : null,
       "PageFirstExitedTimeStamp": null,
@@ -205,7 +205,6 @@ var VideoArray = {
       "TimeSpentOnPage": null,
       "ActiveOrPassiveRedirectionToPage": null,
     }
-  },
 }
 sessionStorage.setItem("VideoArr", JSON.stringify(VideoArray))
 }
@@ -342,6 +341,7 @@ playButton.addEventListener("click", function() {
 //VideoUpdater Function / Autoplay Video
 function UpdateVideo(videoUrl){
   myVideo.getElementsByTagName("source")[0].setAttribute('src', videoUrl);
+  // myVideo.getElementsByTagName("track")[0].setAttribute('src', videoUrl.substr(0, videoUrl.lastIndexOf('.')) + ".vtt")
   myVideo.load();
   myVideo.play();
 }
@@ -403,10 +403,6 @@ function PreviousNextButtonFunction(action){
       //UpdateVideo(VideoArray[PageName]['Benefits of kidney transplant'].VideURL)
       UpdateDropdown('Talking to your doctor')
     }
-    else if(PageName === "summary"){
-      UpdateVideo(`https://national-kidney-foundation.s3.amazonaws.com/${type}/waitingListUsefulnessCheckinResponse1.mp4`)
-      UpdateTitle("Selected Topics")
-    }
     else{
       UpdateVideo(VideoArray[PageName].VideURL)
     }
@@ -440,6 +436,7 @@ function PreviousNextButtonFunction(action){
     if(PageName === "summary"){
       document.getElementsByClassName('container')[0].style.display = "none";
       document.getElementsByClassName('end-container')[0].style.display = "flex";
+      UpdateTitle("Selected Topics")
 
       var container = document.getElementById('selected-topics');
 

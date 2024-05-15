@@ -30,7 +30,7 @@ button {
 
 button:hover {
     cursor: pointer;
-    transform: scale(1.1);
+    /* transform: scale(1.1); */
 }
 
 /* -- Comments on August Release -- 
