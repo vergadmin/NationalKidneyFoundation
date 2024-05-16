@@ -522,3 +522,13 @@ function OverviewResponse(responseString) {
 function UpdateVideoArrData() {
   //Code Later
 }
+
+function TakeToSummaryPage(){
+  while(PageName !== 'summary'){
+    PreviousNextButtonFunction(1);
+  }
+}
+
+function TakeToHomePage(){
+  window.location.href = `/${id}/`;
+}
