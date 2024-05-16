@@ -1,11 +1,11 @@
 // Retrieve the object from sessionStorage
 additionalInformationTopics = JSON.parse(sessionStorage.getItem('additionalInformationTopics'));
 
-var checkbox=document.getElementById("checkboxItem");
+var checkbox = document.getElementById("checkboxItem");
 // console.log(checkbox.value);
 // console.log(additionalInformationTopics[checkbox.value]);
 
-function UpdateCheckbox(){
+function UpdateCheckbox() {
    // this.checked = !VideoArr[PageName][ModuleString].NeedMoreInformation;
    checkbox.checked = !additionalInformationTopics[moduleName];
    additionalInformationTopics[moduleName] = checkbox.checked;
@@ -13,11 +13,11 @@ function UpdateCheckbox(){
    // console.log(additionalInformationTopics);
 }
 
-function LoadCheckBoxValue(){
+function LoadCheckBoxValue() {
    checkbox.checked = additionalInformationTopics[moduleName];
 }
 
-function UpdateSpecificCheckBox(){
+function UpdateSpecificCheckBox() {
    this.checked = !additionalInformationTopics[this.parentNode.querySelector('label').textContent];
    additionalInformationTopics[this.parentNode.querySelector('label').textContent] = this.checked;
    sessionStorage.setItem('additionalInformationTopics', JSON.stringify(additionalInformationTopics));

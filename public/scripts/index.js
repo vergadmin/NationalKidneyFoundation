@@ -6,10 +6,11 @@ window.addEventListener("load", () => {
     let dateTime = ""
     var type = document.URL.split('/').reverse()[0]
     var id = document.URL.split('/').reverse()[1]
+
+    sessionStorage.clear()
     sessionStorage.setItem("id", id)
     sessionStorage.setItem("type", type)
-    
-    if(sessionStorage.getItem("additionalInformationTopics") === null ){
+
     additionalInformationTopics = {
         "Benefits of kidney transplant": false,
         "Who can get a kidney transplant": false,
@@ -22,14 +23,8 @@ window.addEventListener("load", () => {
         "Choosing a transplant center": false,
         "Who can be a living kidney donor": false,
         "Talking to your doctor": false
-      };
-      sessionStorage.setItem('additionalInformationTopics', JSON.stringify(additionalInformationTopics));
-    }
-    else{
-        additionalInformationTopics = JSON.parse(sessionStorage.getItem("additionalInformationTopics"));
-    }
-
-
+    };
+    sessionStorage.setItem('additionalInformationTopics', JSON.stringify(additionalInformationTopics));
 
     // (B1) PARSE USER AGENT
     browserInfo = navigator.userAgent;
@@ -40,7 +35,7 @@ window.addEventListener("load", () => {
     // console.log(dateTime)
     sendGeneralData(browserInfo, dateTime)
 
-    
+
 });
 
 async function sendGeneralData(browserInfo, dateTime) {
@@ -68,3 +63,19 @@ async function sendGeneralData(browserInfo, dateTime) {
     }
 }
 
+// function SessionStorageValidity(){
+//     var hours = 0.001; // to clear the localStorage after 1 hour
+//     // (if someone want to clear after 8hrs simply change hours=8)
+//     var now = new Date().getTime();
+//     var setupTime = sessionStorage.getItem('setupTime');
+//     if (setupTime == null) {
+//     sessionStorage.setItem('setupTime', now)
+//     } else {
+//     if(now-setupTime > hours*60*60*1000) {
+//     sessionStorage.clear()
+//     sessionStorage.setItem('setupTime', now);
+//     window.location.href=`/${id}/`
+//     }
+//     }
+//     console.log("Session Reset!")
+// }

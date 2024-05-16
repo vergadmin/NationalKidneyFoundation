@@ -3,7 +3,7 @@ var slider = document.getElementById("slider");
 // Get the span element that will display the slider value
 var sliderNumber = document.getElementById("slider-number");
 var sliderValue = parseInt(sessionStorage.getItem("sliderResponse"));
-if(sliderValue !== null){
+if (sliderValue !== null) {
   slider.value = sliderValue;
   UpdateSliderValue();
 }
@@ -11,22 +11,22 @@ if(sliderValue !== null){
 // Update the slider value display when the slider is moved
 function UpdateSliderValue() {
   sliderValue = slider.value;
-  if(sliderValue<20){
+  if (sliderValue < 20) {
     sliderNumber.innerText = "I really need information";
   }
-  else if(sliderValue>=20 && sliderValue<40){
+  else if (sliderValue >= 20 && sliderValue < 40) {
     sliderNumber.innerText = "I think I need information";
   }
-  else if(sliderValue>=40 && sliderValue<60){
+  else if (sliderValue >= 40 && sliderValue < 60) {
     sliderNumber.innerText = "I don't know if I need information or not";
   }
-  else if(sliderValue>=60 && sliderValue<=80){
+  else if (sliderValue >= 60 && sliderValue <= 80) {
     sliderNumber.innerText = "I think I know a lot";
   }
-  else if(sliderValue>=80 && sliderValue<=100){
+  else if (sliderValue >= 80 && sliderValue <= 100) {
     sliderNumber.innerText = "I know a lot";
   }
-  sessionStorage.setItem("sliderResponse",sliderValue);
+  sessionStorage.setItem("sliderResponse", sliderValue);
 };
 
 
