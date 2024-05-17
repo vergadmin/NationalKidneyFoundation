@@ -32,10 +32,12 @@ window.addEventListener("load", () => {
 
     // console.log("TIME")
     dateTime = new Date().toLocaleString() + " " + Intl.DateTimeFormat().resolvedOptions().timeZone;
+    sessionStorage.setItem('startTime', Date.now());
+
+    sessionStorage.setItem('TotalTimeSpentOnIntervention', 0)
+
     // console.log(dateTime)
-    sendGeneralData(browserInfo, dateTime)
-
-
+   // sendGeneralData(browserInfo, dateTime)
 });
 
 async function sendGeneralData(browserInfo, dateTime) {

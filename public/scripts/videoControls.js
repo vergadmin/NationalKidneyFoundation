@@ -25,7 +25,6 @@ if (sessionStorage.getItem("VideoArr") === null) {
       "VideURL": null,
       "PageVisited": true,
       "PageFirstVisitedTimeStamp": null,
-      "PageFirstExitedTimeStamp": null,
       "PageLastVisitedTimeStamp": null,
       "NumberOfTimesPageVisited": 0,
       "TimeSpentOnPage": null,
@@ -35,7 +34,6 @@ if (sessionStorage.getItem("VideoArr") === null) {
       "VideURL": `https://national-kidney-foundation.s3.amazonaws.com/${type}/Introduction.mp4`,
       "PageVisited": true,
       "PageFirstVisitedTimeStamp": null,
-      "PageFirstExitedTimeStamp": null,
       "PageLastVisitedTimeStamp": null,
       "NumberOfTimesPageVisited": 0,
       "TimeSpentOnPage": null,
@@ -46,7 +44,6 @@ if (sessionStorage.getItem("VideoArr") === null) {
         "VideURL": `https://national-kidney-foundation.s3.amazonaws.com/${type}/quickAssessment.mp4`,
         "PageVisited": false,
         "PageFirstVisitedTimeStamp": null,
-        "PageFirstExitedTimeStamp": null,
         "PageLastVisitedTimeStamp": null,
         "NumberOfTimesPageVisited": 0,
         "TimeSpentOnPage": null,
@@ -56,7 +53,6 @@ if (sessionStorage.getItem("VideoArr") === null) {
         "VideURL": `https://national-kidney-foundation.s3.amazonaws.com/${type}/quickAssessmentResponse1.mp4`,
         "PageVisited": false,
         "PageFirstVisitedTimeStamp": null,
-        "PageFirstExitedTimeStamp": null,
         "PageLastVisitedTimeStamp": null,
         "NumberOfTimesPageVisited": 0,
         "TimeSpentOnPage": null,
@@ -66,7 +62,6 @@ if (sessionStorage.getItem("VideoArr") === null) {
         "VideURL": `https://national-kidney-foundation.s3.amazonaws.com/${type}/quickAssessmentResponse2.mp4`,
         "PageVisited": false,
         "PageFirstVisitedTimeStamp": null,
-        "PageFirstExitedTimeStamp": null,
         "PageLastVisitedTimeStamp": null,
         "NumberOfTimesPageVisited": 0,
         "TimeSpentOnPage": null,
@@ -76,7 +71,6 @@ if (sessionStorage.getItem("VideoArr") === null) {
         "VideURL": `https://national-kidney-foundation.s3.amazonaws.com/${type}/quickAssessmentResponse3.mp4`,
         "PageVisited": false,
         "PageFirstVisitedTimeStamp": null,
-        "PageFirstExitedTimeStamp": null,
         "PageLastVisitedTimeStamp": null,
         "NumberOfTimesPageVisited": 0,
         "TimeSpentOnPage": null,
@@ -88,7 +82,6 @@ if (sessionStorage.getItem("VideoArr") === null) {
         "VideURL": `https://national-kidney-foundation.s3.amazonaws.com/${type}/transplantBenefits.mp4`,
         "PageVisited": false,
         "PageFirstVisitedTimeStamp": null,
-        "PageFirstExitedTimeStamp": null,
         "PageLastVisitedTimeStamp": null,
         "NumberOfTimesPageVisited": 0,
         "TimeSpentOnPage": null,
@@ -98,7 +91,6 @@ if (sessionStorage.getItem("VideoArr") === null) {
         "VideURL": `https://national-kidney-foundation.s3.amazonaws.com/${type}/donorEligibility.mp4`,
         "PageVisited": false,
         "PageFirstVisitedTimeStamp": null,
-        "PageFirstExitedTimeStamp": null,
         "PageLastVisitedTimeStamp": null,
         "NumberOfTimesPageVisited": 0,
         "TimeSpentOnPage": null,
@@ -108,7 +100,6 @@ if (sessionStorage.getItem("VideoArr") === null) {
         "VideURL": `https://national-kidney-foundation.s3.amazonaws.com/${type}/transplantWorkup.mp4`,
         "PageVisited": false,
         "PageFirstVisitedTimeStamp": null,
-        "PageFirstExitedTimeStamp": null,
         "PageLastVisitedTimeStamp": null,
         "NumberOfTimesPageVisited": 0,
         "TimeSpentOnPage": null,
@@ -118,7 +109,6 @@ if (sessionStorage.getItem("VideoArr") === null) {
         "VideURL": `https://national-kidney-foundation.s3.amazonaws.com/${type}/overviewTransplantWaitingList.mp4`,
         "PageVisited": false,
         "PageFirstVisitedTimeStamp": null,
-        "PageFirstExitedTimeStamp": null,
         "PageLastVisitedTimeStamp": null,
         "NumberOfTimesPageVisited": 0,
         "TimeSpentOnPage": null,
@@ -128,7 +118,6 @@ if (sessionStorage.getItem("VideoArr") === null) {
         "VideURL": `https://national-kidney-foundation.s3.amazonaws.com/${type}/livingDonorTransplant.mp4`,
         "PageVisited": false,
         "PageFirstVisitedTimeStamp": null,
-        "PageFirstExitedTimeStamp": null,
         "PageLastVisitedTimeStamp": null,
         "NumberOfTimesPageVisited": 0,
         "TimeSpentOnPage": null,
@@ -138,7 +127,6 @@ if (sessionStorage.getItem("VideoArr") === null) {
         "VideURL": `https://national-kidney-foundation.s3.amazonaws.com/${type}/transplantSooner.mp4`,
         "PageVisited": false,
         "PageFirstVisitedTimeStamp": null,
-        "PageFirstExitedTimeStamp": null,
         "PageLastVisitedTimeStamp": null,
         "NumberOfTimesPageVisited": 0,
         "TimeSpentOnPage": null,
@@ -148,7 +136,6 @@ if (sessionStorage.getItem("VideoArr") === null) {
         "VideURL": `https://national-kidney-foundation.s3.amazonaws.com/${type}/transplantLifeSpan.mp4`,
         "PageVisited": false,
         "PageFirstVisitedTimeStamp": null,
-        "PageFirstExitedTimeStamp": null,
         "PageLastVisitedTimeStamp": null,
         "NumberOfTimesPageVisited": 0,
         "TimeSpentOnPage": null,
@@ -158,7 +145,6 @@ if (sessionStorage.getItem("VideoArr") === null) {
         "VideURL": `https://national-kidney-foundation.s3.amazonaws.com/${type}/transplantRisks.mp4`,
         "PageVisited": false,
         "PageFirstVisitedTimeStamp": null,
-        "PageFirstExitedTimeStamp": null,
         "PageLastVisitedTimeStamp": null,
         "NumberOfTimesPageVisited": 0,
         "TimeSpentOnPage": null,
@@ -168,7 +154,6 @@ if (sessionStorage.getItem("VideoArr") === null) {
         "VideURL": `https://national-kidney-foundation.s3.amazonaws.com/${type}/choosingTransplantCenter.mp4`,
         "PageVisited": false,
         "PageFirstVisitedTimeStamp": null,
-        "PageFirstExitedTimeStamp": null,
         "PageLastVisitedTimeStamp": null,
         "NumberOfTimesPageVisited": 0,
         "TimeSpentOnPage": null,
@@ -178,7 +163,6 @@ if (sessionStorage.getItem("VideoArr") === null) {
         "VideURL": `https://national-kidney-foundation.s3.amazonaws.com/${type}/transplantLifeSpan.mp4`,
         "PageVisited": false,
         "PageFirstVisitedTimeStamp": null,
-        "PageFirstExitedTimeStamp": null,
         "PageLastVisitedTimeStamp": null,
         "NumberOfTimesPageVisited": 0,
         "TimeSpentOnPage": null,
@@ -188,7 +172,6 @@ if (sessionStorage.getItem("VideoArr") === null) {
         "VideURL": `https://national-kidney-foundation.s3.amazonaws.com/${type}/talkingToYourDoctor.mp4`,
         "PageVisited": false,
         "PageFirstVisitedTimeStamp": null,
-        "PageFirstExitedTimeStamp": null,
         "PageLastVisitedTimeStamp": null,
         "NumberOfTimesPageVisited": 0,
         "TimeSpentOnPage": null,
@@ -199,7 +182,6 @@ if (sessionStorage.getItem("VideoArr") === null) {
       "VideURL": `https://national-kidney-foundation.s3.amazonaws.com/${type}/closingMessage.mp4`,
       "PageVisited": false,
       "PageFirstVisitedTimeStamp": null,
-      "PageFirstExitedTimeStamp": null,
       "PageLastVisitedTimeStamp": null,
       "NumberOfTimesPageVisited": 0,
       "TimeSpentOnPage": null,
@@ -259,7 +241,7 @@ myVideo.onended = function (e) {
     if (moduleName === "Talking to your doctor") {
       if (myVideo.getElementsByTagName("source")[0].getAttribute('src') !==
         `https://national-kidney-foundation.s3.amazonaws.com/${type}/talkingToYourDoctor.mp4`) {
-        PreviousNextButtonFunction(1);
+        PreviousNextButtonFunction(1, false);
       }
       else {
         var sliderValueForEndPage = parseInt(sessionStorage.getItem("sliderResponse"))
@@ -276,36 +258,20 @@ myVideo.onended = function (e) {
     else if (moduleName === "Overview - The waiting list" && myVideo.getElementsByTagName("source")[0].getAttribute('src') ===
       `https://national-kidney-foundation.s3.amazonaws.com/${type}/overviewTransplantWaitingList.mp4`) {
       document.getElementsByClassName('overview-buttons')[0].style.display = "block";
-      // var sliderValueForEndPage = parseInt(sessionStorage.getItem("sliderResponse"))
-      // if(myVideo.getElementsByTagName("source")[0].getAttribute('src') !== 
-      // `https://national-kidney-foundation.s3.amazonaws.com/${type}/overviewTransplantWaitingList.mp4`){
-      //   SwitchSubTopicVideo(1);
-      // }
-      // else{
-      //   if(sliderValueForEndPage<=35){
-      //     UpdateVideo(`https://national-kidney-foundation.s3.amazonaws.com/${type}/waitingListUsefulnessCheckinResponse1.mp4`)
-      //   }
-      //   else if(sliderValueForEndPage>35 && sliderValueForEndPage <= 70){
-      //     UpdateVideo(`https://national-kidney-foundation.s3.amazonaws.com/${type}/waitingListUsefulnessCheckinResponse2.mp4`)
-      //   }
-      //   else{
-      //     UpdateVideo(`https://national-kidney-foundation.s3.amazonaws.com/${type}/waitingListUsefulnessCheckinResponse3.mp4`)
-      //   }
-      // }
     }
     else {
-      SwitchSubTopicVideo(1);
+      SwitchSubTopicVideo(1,false);
     }
   }
   else if (PageName === "quickAssessment") {
     nextButton.style.display = "block";
   }
   else if (PageName === "Introduction") {
-    PreviousNextButtonFunction(1);
+    PreviousNextButtonFunction(1,false);
     document.getElementsByClassName('slider-container')[0].style.display = "flex";
   }
   else if (PageName.startsWith("quickAssessmentResponse")) {
-    PreviousNextButtonFunction(1);
+    PreviousNextButtonFunction(1,false);
     document.getElementsByClassName('slider-container')[0].style.display = "none";
   }
   pauseButton.textContent = "Play";
@@ -341,11 +307,13 @@ function UpdateVideo(videoUrl) {
   myVideo.getElementsByTagName("source")[0].setAttribute('src', videoUrl);
   // myVideo.getElementsByTagName("track")[0].setAttribute('src', videoUrl.substr(0, videoUrl.lastIndexOf('.')) + ".vtt")
   myVideo.load();
-  myVideo.play();
+  myVideo.play().catch(function() {
+    //Ignore the Uncaught (in promise) error.
+});;
 }
 
 //Master Function for the buttons.
-function PreviousNextButtonFunction(action) {
+function PreviousNextButtonFunction(action, activeTrigger = null) {
   if (PageName === 'quickAssessment' && action === 1) {
     var slider = document.getElementById("slider");
     if (slider.value <= 50) {
@@ -368,11 +336,11 @@ function PreviousNextButtonFunction(action) {
     document.getElementsByClassName('slider-container')[0].style.display = "none";
   }
   else if (PageName === "subTopics" && action === 1 && moduleName !== "Talking to your doctor") {
-    SwitchSubTopicVideo(1);
+    SwitchSubTopicVideo(1,activeTrigger);
   }
   //TBD Function
   else if (PageName === "subTopics" && action === -1 && moduleName !== "Benefits of kidney transplant") {
-    SwitchSubTopicVideo(-1);
+    SwitchSubTopicVideo(-1,activeTrigger);
   }
   else {
     if (VideoArrayIndex + action < 0) {
@@ -474,6 +442,7 @@ function PreviousNextButtonFunction(action) {
     // //Needs to be changed.
     // VideoArray[PageName].PageVisited = true;
     // sessionStorage.setItem("VideoArr", JSON.stringify(VideoArray))
+    logActiveTriggerOrNot(PageName, null , activeTrigger)
   }
 }
 
@@ -483,7 +452,7 @@ function UpdateTitle(TitleString) {
   }
 }
 
-function SwitchSubTopicVideo(prevOrNext) {
+function SwitchSubTopicVideo(prevOrNext, activeTrigger = null) {
   const tempArr = ["Benefits of kidney transplant",
     "Who can get a kidney transplant",
     "The transplant work-up",
@@ -496,12 +465,19 @@ function SwitchSubTopicVideo(prevOrNext) {
     "Who can be a living kidney donor",
     "Talking to your doctor"]
   if (tempArr.indexOf(moduleName) <= tempArr.length - 1) {
-    UpdateDropdown(tempArr[tempArr.indexOf(moduleName) + prevOrNext])
+    UpdateDropdown(tempArr[tempArr.indexOf(moduleName) + prevOrNext], activeTrigger)
   }
 }
 
-function ResetSession() {
-  sessionStorage.clear();
+async function ResetSession() {
+  sessionStorage.setItem("EndTime", Date.now())
+  var response = await SendParticipantDataToServer(JSON.parse(sessionStorage.getItem("VideoArr")))
+
+  if(response){
+    console.log("Now Exit",Date.now());
+    sessionStorage.clear();
+    // window.location.href = `https://wharton.qualtrics.com/jfe/form/SV_ah5rKWqpP5xIn78?ID=${id}`;
+  }
 }
 
 function OverviewResponse(responseString) {
@@ -516,6 +492,7 @@ function OverviewResponse(responseString) {
   else {
     UpdateVideo(`https://national-kidney-foundation.s3.amazonaws.com/${type}/waitingListUsefulnessCheckinResponse3.mp4`)
   }
+  sessionStorage.setItem("OverviewUsefulnessCheckInResponse", responseString)
   nextButton.style.display = "block";
 }
 
@@ -527,6 +504,7 @@ function TakeToSummaryPage(){
   while(PageName !== 'summary'){
     PreviousNextButtonFunction(1);
   }
+  logActiveTriggerOrNot(PageName, moduleName = null, activeTrigger = true)
 }
 
 function TakeToHomePage(){

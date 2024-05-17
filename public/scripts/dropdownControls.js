@@ -13,7 +13,7 @@ dropdownButton.addEventListener('click', function () {
     }
 });
 
-function UpdateDropdown(ModuleString) {
+function UpdateDropdown(ModuleString, activeTrigger = null) {
     moduleName = ModuleString;
     dropdownButton.innerText = moduleName + ' ▾';
     UpdateVideo(VideoArray[PageName][ModuleString].VideURL)
@@ -28,6 +28,7 @@ function UpdateDropdown(ModuleString) {
     if (moduleName !== "Overview - The waiting list") {
         document.getElementsByClassName('overview-buttons')[0].style.display = 'none'
     }
+    logActiveTriggerOrNot(PageName, moduleName, activeTrigger);
 }
 
 // Add a blur event listener to hide the dropdown content when the button loses focus

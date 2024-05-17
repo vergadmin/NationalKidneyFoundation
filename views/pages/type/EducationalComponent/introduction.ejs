@@ -81,22 +81,22 @@
             <h1 style="color: navy;">Selected Topics</h1>
             <div id="selected-topics"></div>
 
-            <a href="https://wharton.qualtrics.com/jfe/form/SV_ah5rKWqpP5xIn78?ID=<%=id%>">
-                <button class="finish" onclick="ResetSession()">End our meeting</button>
-            </a>
+            <button class="finish" onclick="ResetSession()">End our meeting</button>
         </div>
 
         <a>
-            <button onclick="PreviousNextButtonFunction(-1)" class="back">Go Back</button>
+            <button onclick="PreviousNextButtonFunction(-1, true)" class="back">Go Back</button>
         </a>
 
         <a>
-            <button onclick="PreviousNextButtonFunction(1)" class="next">Next</button>
+            <button onclick="PreviousNextButtonFunction(1,true)" class="next">Next</button>
         </a>
 
         <script src="/scripts/videoControls.js"></script>
         <script src="/scripts/sliderControls.js"></script>
         <script src="/scripts/checkBox.js"></script>
+        <script src="/scripts/dataLogging.js"></script>
+
 </body>
 
 </html>
