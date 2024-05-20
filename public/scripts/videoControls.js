@@ -18,181 +18,8 @@ var VideoArrNames = ["Homepage", "Introduction", "quickAssessment", "subTopics",
 
 var PageName = VideoArrNames[VideoArrayIndex];
 
-//Remove this line later, just for timebeing when chnages to VideoArray Format are still being made.
-if (sessionStorage.getItem("VideoArr") === null) {
-  var VideoArray = {
-    'Homepage': {
-      "VideURL": null,
-      "PageVisited": true,
-      "PageFirstVisitedTimeStamp": null,
-      "PageLastVisitedTimeStamp": null,
-      "NumberOfTimesPageVisited": 0,
-      "TimeSpentOnPage": null,
-      "ActiveOrPassiveRedirectionToPage": "active",
-    },
-    'Introduction': {
-      "VideURL": `https://national-kidney-foundation.s3.amazonaws.com/${type}/Introduction.mp4`,
-      "PageVisited": true,
-      "PageFirstVisitedTimeStamp": null,
-      "PageLastVisitedTimeStamp": null,
-      "NumberOfTimesPageVisited": 0,
-      "TimeSpentOnPage": null,
-      "ActiveOrPassiveRedirectionToPage": "passive",
-    },
-    'quickAssessment': {
-      "main": {
-        "VideURL": `https://national-kidney-foundation.s3.amazonaws.com/${type}/quickAssessment.mp4`,
-        "PageVisited": false,
-        "PageFirstVisitedTimeStamp": null,
-        "PageLastVisitedTimeStamp": null,
-        "NumberOfTimesPageVisited": 0,
-        "TimeSpentOnPage": null,
-        "ActiveOrPassiveRedirectionToPage": null,
-      },
-      "response1": {
-        "VideURL": `https://national-kidney-foundation.s3.amazonaws.com/${type}/quickAssessmentResponse1.mp4`,
-        "PageVisited": false,
-        "PageFirstVisitedTimeStamp": null,
-        "PageLastVisitedTimeStamp": null,
-        "NumberOfTimesPageVisited": 0,
-        "TimeSpentOnPage": null,
-        "ActiveOrPassiveRedirectionToPage": null,
-      },
-      "response2": {
-        "VideURL": `https://national-kidney-foundation.s3.amazonaws.com/${type}/quickAssessmentResponse2.mp4`,
-        "PageVisited": false,
-        "PageFirstVisitedTimeStamp": null,
-        "PageLastVisitedTimeStamp": null,
-        "NumberOfTimesPageVisited": 0,
-        "TimeSpentOnPage": null,
-        "ActiveOrPassiveRedirectionToPage": null,
-      },
-      "response3": {
-        "VideURL": `https://national-kidney-foundation.s3.amazonaws.com/${type}/quickAssessmentResponse3.mp4`,
-        "PageVisited": false,
-        "PageFirstVisitedTimeStamp": null,
-        "PageLastVisitedTimeStamp": null,
-        "NumberOfTimesPageVisited": 0,
-        "TimeSpentOnPage": null,
-        "ActiveOrPassiveRedirectionToPage": null,
-      }
-    },
-    "subTopics": {
-      "Benefits of kidney transplant": {
-        "VideURL": `https://national-kidney-foundation.s3.amazonaws.com/${type}/transplantBenefits.mp4`,
-        "PageVisited": false,
-        "PageFirstVisitedTimeStamp": null,
-        "PageLastVisitedTimeStamp": null,
-        "NumberOfTimesPageVisited": 0,
-        "TimeSpentOnPage": null,
-        "ActiveOrPassiveRedirectionToPage": null,
-      },
-      "Who can get a kidney transplant": {
-        "VideURL": `https://national-kidney-foundation.s3.amazonaws.com/${type}/donorEligibility.mp4`,
-        "PageVisited": false,
-        "PageFirstVisitedTimeStamp": null,
-        "PageLastVisitedTimeStamp": null,
-        "NumberOfTimesPageVisited": 0,
-        "TimeSpentOnPage": null,
-        "ActiveOrPassiveRedirectionToPage": null,
-      },
-      "The transplant work-up": {
-        "VideURL": `https://national-kidney-foundation.s3.amazonaws.com/${type}/transplantWorkup.mp4`,
-        "PageVisited": false,
-        "PageFirstVisitedTimeStamp": null,
-        "PageLastVisitedTimeStamp": null,
-        "NumberOfTimesPageVisited": 0,
-        "TimeSpentOnPage": null,
-        "ActiveOrPassiveRedirectionToPage": null,
-      },
-      "Overview - The waiting list": {
-        "VideURL": `https://national-kidney-foundation.s3.amazonaws.com/${type}/overviewTransplantWaitingList.mp4`,
-        "PageVisited": false,
-        "PageFirstVisitedTimeStamp": null,
-        "PageLastVisitedTimeStamp": null,
-        "NumberOfTimesPageVisited": 0,
-        "TimeSpentOnPage": null,
-        "ActiveOrPassiveRedirectionToPage": null,
-      },
-      "Living donor transplant": {
-        "VideURL": `https://national-kidney-foundation.s3.amazonaws.com/${type}/livingDonorTransplant.mp4`,
-        "PageVisited": false,
-        "PageFirstVisitedTimeStamp": null,
-        "PageLastVisitedTimeStamp": null,
-        "NumberOfTimesPageVisited": 0,
-        "TimeSpentOnPage": null,
-        "ActiveOrPassiveRedirectionToPage": null,
-      },
-      "Getting a transplant sooner": {
-        "VideURL": `https://national-kidney-foundation.s3.amazonaws.com/${type}/transplantSooner.mp4`,
-        "PageVisited": false,
-        "PageFirstVisitedTimeStamp": null,
-        "PageLastVisitedTimeStamp": null,
-        "NumberOfTimesPageVisited": 0,
-        "TimeSpentOnPage": null,
-        "ActiveOrPassiveRedirectionToPage": null,
-      },
-      "How long do kidney transplants last": {
-        "VideURL": `https://national-kidney-foundation.s3.amazonaws.com/${type}/transplantLifeSpan.mp4`,
-        "PageVisited": false,
-        "PageFirstVisitedTimeStamp": null,
-        "PageLastVisitedTimeStamp": null,
-        "NumberOfTimesPageVisited": 0,
-        "TimeSpentOnPage": null,
-        "ActiveOrPassiveRedirectionToPage": null,
-      },
-      "The risks of kidney transplant": {
-        "VideURL": `https://national-kidney-foundation.s3.amazonaws.com/${type}/transplantRisks.mp4`,
-        "PageVisited": false,
-        "PageFirstVisitedTimeStamp": null,
-        "PageLastVisitedTimeStamp": null,
-        "NumberOfTimesPageVisited": 0,
-        "TimeSpentOnPage": null,
-        "ActiveOrPassiveRedirectionToPage": null,
-      },
-      "Choosing a transplant center": {
-        "VideURL": `https://national-kidney-foundation.s3.amazonaws.com/${type}/choosingTransplantCenter.mp4`,
-        "PageVisited": false,
-        "PageFirstVisitedTimeStamp": null,
-        "PageLastVisitedTimeStamp": null,
-        "NumberOfTimesPageVisited": 0,
-        "TimeSpentOnPage": null,
-        "ActiveOrPassiveRedirectionToPage": null,
-      },
-      "Who can be a living kidney donor": {
-        "VideURL": `https://national-kidney-foundation.s3.amazonaws.com/${type}/transplantLifeSpan.mp4`,
-        "PageVisited": false,
-        "PageFirstVisitedTimeStamp": null,
-        "PageLastVisitedTimeStamp": null,
-        "NumberOfTimesPageVisited": 0,
-        "TimeSpentOnPage": null,
-        "ActiveOrPassiveRedirectionToPage": null,
-      },
-      "Talking to your doctor": {
-        "VideURL": `https://national-kidney-foundation.s3.amazonaws.com/${type}/talkingToYourDoctor.mp4`,
-        "PageVisited": false,
-        "PageFirstVisitedTimeStamp": null,
-        "PageLastVisitedTimeStamp": null,
-        "NumberOfTimesPageVisited": 0,
-        "TimeSpentOnPage": null,
-        "ActiveOrPassiveRedirectionToPage": null,
-      },
-    },
-    "summary": {
-      "VideURL": `https://national-kidney-foundation.s3.amazonaws.com/${type}/closingMessage.mp4`,
-      "PageVisited": false,
-      "PageFirstVisitedTimeStamp": null,
-      "PageLastVisitedTimeStamp": null,
-      "NumberOfTimesPageVisited": 0,
-      "TimeSpentOnPage": null,
-      "ActiveOrPassiveRedirectionToPage": null,
-    }
-  }
-  sessionStorage.setItem("VideoArr", JSON.stringify(VideoArray))
-}
-else {
-  VideoArray = JSON.parse(sessionStorage.getItem("VideoArr"))
-}
+VideoArray = JSON.parse(sessionStorage.getItem("VideoArr"));
+
 
 // Get the button element by its ID
 var rewindButton = document.getElementById("rewind");
@@ -314,23 +141,23 @@ function UpdateVideo(videoUrl) {
 
 //Master Function for the buttons.
 function PreviousNextButtonFunction(action, activeTrigger = null) {
-  if (PageName === 'quickAssessment' && action === 1) {
+  if (PageName === 'quickAssessment' && action === 1 && moduleName === "main") {
     var slider = document.getElementById("slider");
     if (slider.value <= 50) {
-      UpdateVideo(VideoArray[PageName]["response1"].VideURL)
+      UpdateVideo(VideoArray[PageName]["quickAssessmentResponse1"].VideURL)
       //window.history.pushState(PageName, PageName, `/${id}/EducationalComponent/${type}/quickAssessmentResponse1`)
-      PageName = 'quickAssessmentResponse1';
+      moduleName = 'quickAssessmentResponse1';
     }
     else if (slider.value <= 89) {
-      UpdateVideo(VideoArray[PageName]["response2"].VideURL)
+      UpdateVideo(VideoArray[PageName]["quickAssessmentResponse2"].VideURL)
       //window.history.pushState(PageName, PageName, `/${id}/EducationalComponent/${type}/quickAssessmentResponse2`)
-      PageName = 'quickAssessmentResponse2';
+      moduleName = 'quickAssessmentResponse2';
 
     }
     else {
-      UpdateVideo(VideoArray[PageName]["response3"].VideURL)
+      UpdateVideo(VideoArray[PageName]["quickAssessmentResponse3"].VideURL)
       //window.history.pushState(PageName, PageName, `/${id}/EducationalComponent/${type}/quickAssessmentResponse3`)
-      PageName = 'quickAssessmentResponse3';
+      moduleName = 'quickAssessmentResponse3';
 
     }
     document.getElementsByClassName('slider-container')[0].style.display = "none";
@@ -356,18 +183,23 @@ function PreviousNextButtonFunction(action, activeTrigger = null) {
     PageName = VideoArrNames[VideoArrayIndex]
 
     if (PageName === "Homepage") {
+      logActiveTriggerOrNot(PageName, moduleName = null, activeTrigger = true);
       window.location.href = `/${id}/`
     }
     else if (PageName === "quickAssessment") {
       UpdateVideo(VideoArray[PageName]['main'].VideURL)
+      moduleName = "main";
+      
     }
     else if (PageName === "subTopics" && action === 1) {
       //UpdateVideo(VideoArray[PageName]['Benefits of kidney transplant'].VideURL)
-      UpdateDropdown('Benefits of kidney transplant')
+      moduleName = 'Benefits of kidney transplant';
+      UpdateDropdown(moduleName, activeTrigger);
     }
     else if (PageName === "subTopics" && action === -1) {
       //UpdateVideo(VideoArray[PageName]['Benefits of kidney transplant'].VideURL)
-      UpdateDropdown('Talking to your doctor')
+      moduleName = 'Talking to your doctor';
+      UpdateDropdown(moduleName,activeTrigger)
     }
     else {
       UpdateVideo(VideoArray[PageName].VideURL)
@@ -396,6 +228,9 @@ function PreviousNextButtonFunction(action, activeTrigger = null) {
       document.getElementsByClassName('title')[0].style.display = "block";
       document.getElementsByClassName('dropdown')[0].style.display = "none";
       document.getElementsByClassName('checkbox-area')[0].style.display = "none";
+    }
+
+    if(PageName !== "subTopics" && PageName !=="quickAssessment"){
       moduleName = "";
     }
 
@@ -442,7 +277,13 @@ function PreviousNextButtonFunction(action, activeTrigger = null) {
     // //Needs to be changed.
     // VideoArray[PageName].PageVisited = true;
     // sessionStorage.setItem("VideoArr", JSON.stringify(VideoArray))
-    logActiveTriggerOrNot(PageName, null , activeTrigger)
+  }
+  if(moduleName === "" || PageName === 'subTopics'){
+    //do Nothing
+  }
+  else{
+    logActiveTriggerOrNot(PageName, moduleName , activeTrigger)
+
   }
 }
 
@@ -508,5 +349,7 @@ function TakeToSummaryPage(){
 }
 
 function TakeToHomePage(){
-  window.location.href = `/${id}/`;
+  while(PageName !== 'Homepage'){
+    PreviousNextButtonFunction(-1);
+  }
 }

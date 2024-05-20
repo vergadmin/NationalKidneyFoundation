@@ -25,17 +25,26 @@ function logActiveTriggerOrNot(Page, moduleName = null, activeTrigger = null){
                 else{
                     tempArr[Page].ActiveOrPassiveRedirectionToPage = "passive";
                 }
+                LogPageFirstVisitTime(tempArr[Page]);
             }
+            LogPageLastVisitedTime(tempArr[Page]);
+            LogNumberOfTimesPageVisited(tempArr[Page])
         }
-        else if(Page === 'subTopics' && moduleName !== null){
-            if(activeTrigger){
-                tempArr[Page][moduleName].ActiveOrPassiveRedirectionToPage = "active";
+        else if((Page === 'subTopics' || PageName ==='quickAssessment') && moduleName !== null){
+            if(tempArr[Page][moduleName].ActiveOrPassiveRedirectionToPage === null){
+                if(activeTrigger){
+                    tempArr[Page][moduleName].ActiveOrPassiveRedirectionToPage = "active";
+                }
+                else{
+                    tempArr[Page][moduleName].ActiveOrPassiveRedirectionToPage = "passive";
+                }
+                LogPageFirstVisitTime(tempArr[Page][moduleName]);
             }
-            else{
-                tempArr[Page][moduleName].ActiveOrPassiveRedirectionToPage = "passive";
-            }
+            LogPageLastVisitedTime(tempArr[Page][moduleName]);
+            LogNumberOfTimesPageVisited(tempArr[Page][moduleName])
         }
         UpdateStorageArray(tempArr)
+        console.log(GetStorageArray())
     }
 }
 
@@ -45,4 +54,17 @@ function GetStorageArray(){
 
 function UpdateStorageArray(tempArr){
     sessionStorage.setItem("VideoArr", JSON.stringify(tempArr));
+}
+
+function LogNumberOfTimesPageVisited(DataArray){
+    DataArray.NumberOfTimesPageVisited +=1
+}
+
+function LogPageFirstVisitTime(DataArray){
+    DataArray.PageFirstVisitedTimeStamp = Date.now();
+    DataArray.PageVisited = true;
+}
+
+function LogPageLastVisitedTime(DataArray){
+    DataArray.PageLastVisitedTimeStamp = Date.now();
 }
