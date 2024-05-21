@@ -1,4 +1,7 @@
+let HomepageVisitTimeStamp = Date.now();
+
 window.addEventListener("load", () => {
+    clearSessionStorageAfterXHours();
     // console.log("SAVING SESSION INFO LOCALLY")
     // console.log(document.URL)
 
@@ -116,6 +119,7 @@ function ContinueOrResetSession(character){
         sessionStorage.setItem('startTime', Date.now());
 
         sessionStorage.setItem('TotalTimeSpentOnIntervention', 0)
+        setSessionStorageSetupTime();
     }
     CreateVideoDataArray();
     logActiveTriggerOrNot('Introduction', moduleName = null, activeTrigger = true)
@@ -132,8 +136,8 @@ function CreateVideoDataArray(){
         'Homepage': {
         "VideURL": null,
         "PageVisited": true,
-        "PageFirstVisitedTimeStamp": Date.now(),
-        "PageLastVisitedTimeStamp": Date.now(),
+        "PageFirstVisitedTimeStamp": HomepageVisitTimeStamp,
+        "PageLastVisitedTimeStamp": HomepageVisitTimeStamp,
         "NumberOfTimesPageVisited": 1,
         "TimeSpentOnPage": null,
         "ActiveOrPassiveRedirectionToPage": "active",
@@ -196,7 +200,7 @@ function CreateVideoDataArray(){
             "ActiveOrPassiveRedirectionToPage": null,
         },
         "Who can get a kidney transplant": {
-            "VideURL": `https://national-kidney-foundation.s3.amazonaws.com/${type}/donorEligibility.mp4`,
+            "VideURL": `https://national-kidney-foundation.s3.amazonaws.com/${type}/transplantEligibility.mp4`,
             "PageVisited": false,
             "PageFirstVisitedTimeStamp": null,
             "PageLastVisitedTimeStamp": null,
@@ -268,7 +272,7 @@ function CreateVideoDataArray(){
             "ActiveOrPassiveRedirectionToPage": null,
         },
         "Who can be a living kidney donor": {
-            "VideURL": `https://national-kidney-foundation.s3.amazonaws.com/${type}/transplantLifeSpan.mp4`,
+            "VideURL": `https://national-kidney-foundation.s3.amazonaws.com/${type}/donorEligibility.mp4`,
             "PageVisited": false,
             "PageFirstVisitedTimeStamp": null,
             "PageLastVisitedTimeStamp": null,
@@ -301,4 +305,17 @@ function CreateVideoDataArray(){
     else {
     VideoArray = JSON.parse(sessionStorage.getItem("VideoArr"))
     }
+}
+
+function clearSessionStorageAfterXHours(hours = 5){
+    var now = new Date().getTime();
+    var setupTime = sessionStorage.getItem('setupTime');
+    if (setupTime === null || (now-setupTime > hours*60*60*1000)) {
+        sessionStorage.clear();
+    } 
+}
+
+function setSessionStorageSetupTime(){
+    var now = new Date().getTime();
+    sessionStorage.setItem('setupTime', now);
 }

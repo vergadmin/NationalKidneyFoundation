@@ -162,13 +162,13 @@ function PreviousNextButtonFunction(action, activeTrigger = null) {
     }
     document.getElementsByClassName('slider-container')[0].style.display = "none";
   }
-  else if (PageName === "subTopics" && action === 1 && moduleName !== "Talking to your doctor") {
-    SwitchSubTopicVideo(1,activeTrigger);
-  }
-  //TBD Function
-  else if (PageName === "subTopics" && action === -1 && moduleName !== "Benefits of kidney transplant") {
-    SwitchSubTopicVideo(-1,activeTrigger);
-  }
+  // else if (PageName === "subTopics" && action === 1 && moduleName !== "Talking to your doctor") {
+  //   SwitchSubTopicVideo(1,activeTrigger);
+  // }
+  // //TBD Function
+  // else if (PageName === "subTopics" && action === -1 && moduleName !== "Benefits of kidney transplant") {
+  //   SwitchSubTopicVideo(-1,activeTrigger);
+  // }
   else {
     if (VideoArrayIndex + action < 0) {
       VideoArrayIndex = 0;
@@ -198,7 +198,7 @@ function PreviousNextButtonFunction(action, activeTrigger = null) {
     }
     else if (PageName === "subTopics" && action === -1) {
       //UpdateVideo(VideoArray[PageName]['Benefits of kidney transplant'].VideURL)
-      moduleName = 'Talking to your doctor';
+      moduleName = 'Benefits of kidney transplant';
       UpdateDropdown(moduleName,activeTrigger)
     }
     else {
@@ -278,12 +278,11 @@ function PreviousNextButtonFunction(action, activeTrigger = null) {
     // VideoArray[PageName].PageVisited = true;
     // sessionStorage.setItem("VideoArr", JSON.stringify(VideoArray))
   }
-  if(moduleName === "" || PageName === 'subTopics'){
+  if(PageName === 'subTopics'){
     //do Nothing
   }
   else{
     logActiveTriggerOrNot(PageName, moduleName , activeTrigger)
-
   }
 }
 
@@ -317,7 +316,7 @@ async function ResetSession() {
   if(response){
     console.log("Now Exit",Date.now());
     sessionStorage.clear();
-    // window.location.href = `https://wharton.qualtrics.com/jfe/form/SV_ah5rKWqpP5xIn78?ID=${id}`;
+    window.location.href = `https://wharton.qualtrics.com/jfe/form/SV_ah5rKWqpP5xIn78?ID=${id}`;
   }
 }
 
@@ -349,7 +348,7 @@ function TakeToSummaryPage(){
 }
 
 function TakeToHomePage(){
-  while(PageName !== 'Homepage'){
-    PreviousNextButtonFunction(-1);
-  }
+  logActiveTriggerOrNot('Homepage', moduleName = null, activeTrigger = true)
+  window.location.href = `/${id}/`
+
 }
