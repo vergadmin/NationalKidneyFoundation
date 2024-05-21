@@ -5,6 +5,8 @@ var nextPage = document.body.getAttribute("next-page-variable");
 var playButton = document.getElementById("playButton");
 var VideoArrayIndex = 1;
 
+ifInvalidSessionTaketoHomePage();
+
 // if(sessionStorage.getItem("VideoArrIndex") === null){
 //   var VideoArrayIndex = 1;
 //   sessionStorage.setItem("VideoArrIndex", VideoArrayIndex);
@@ -351,4 +353,12 @@ function TakeToHomePage(){
   logActiveTriggerOrNot('Homepage', moduleName = null, activeTrigger = true)
   window.location.href = `/${id}/`
 
+}
+
+function ifInvalidSessionTaketoHomePage(hours = 5){
+  var now = new Date().getTime();
+  var setupTime = sessionStorage.getItem('setupTime');
+  if (setupTime === null || (now-setupTime > hours*60*60*1000)) {
+    window.location.href = `/${id}/`;
+  } 
 }
