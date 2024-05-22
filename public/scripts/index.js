@@ -1,4 +1,5 @@
 let HomepageVisitTimeStamp = Date.now();
+let PageName = "Homepage"
 
 window.addEventListener("load", () => {
     clearSessionStorageAfterXHours();
@@ -139,7 +140,7 @@ function CreateVideoDataArray(){
         "PageFirstVisitedTimeStamp": HomepageVisitTimeStamp,
         "PageLastVisitedTimeStamp": HomepageVisitTimeStamp,
         "NumberOfTimesPageVisited": 1,
-        "TimeSpentOnPage": null,
+        "TimeSpentOnPage":  Math.floor( (Date.now() - HomepageVisitTimeStamp)/1000),
         "ActiveOrPassiveRedirectionToPage": "active",
         },
         'Introduction': {
@@ -318,4 +319,8 @@ function clearSessionStorageAfterXHours(hours = 5){
 function setSessionStorageSetupTime(){
     var now = new Date().getTime();
     sessionStorage.setItem('setupTime', now);
+}
+
+function LogTimeSpendOnPage(){
+    console.log("hello")
 }

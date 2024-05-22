@@ -1,5 +1,7 @@
 var NotRegularPages = ['quickAssessment','subTopics'];
 
+LogTimeSpendOnPage();
+
 async function SendParticipantDataToServer() {
     var i = 0;
     while (i < 10) {
@@ -30,7 +32,7 @@ function logActiveTriggerOrNot(Page, moduleName = null, activeTrigger = null){
             LogPageLastVisitedTime(tempArr[Page]);
             LogNumberOfTimesPageVisited(tempArr[Page])
         }
-        else if((Page === 'subTopics' || PageName ==='quickAssessment') && moduleName !== null){
+        else if((Page === 'subTopics' || Page ==='quickAssessment') && moduleName !== null){
             if(tempArr[Page][moduleName].ActiveOrPassiveRedirectionToPage === null){
                 if(activeTrigger){
                     tempArr[Page][moduleName].ActiveOrPassiveRedirectionToPage = "active";
@@ -67,4 +69,29 @@ function LogPageFirstVisitTime(DataArray){
 
 function LogPageLastVisitedTime(DataArray){
     DataArray.PageLastVisitedTimeStamp = Date.now();
+}
+
+async function LogTimeSpendOnPage(){
+    tempArr = JSON.parse(sessionStorage.getItem("VideoArr"));
+    if(tempArr !== null){
+        if(!NotRegularPages.includes(PageName)){
+            if(tempArr[PageName].TimeSpentOnPage === null){
+                tempArr[PageName].TimeSpentOnPage = 0
+            }
+            else{
+            tempArr[PageName].TimeSpentOnPage += 1;
+            }
+        }
+        else if((PageName === 'subTopics' || PageName ==='quickAssessment') && moduleName !== null){
+            if(tempArr[PageName][moduleName].TimeSpentOnPage === null){
+                tempArr[PageName][moduleName].TimeSpentOnPage = 0
+            }
+            else{
+                tempArr[PageName][moduleName].TimeSpentOnPage += 1;
+            }
+        }
+        UpdateStorageArray(tempArr);
+        await delay(1000);
+        LogTimeSpendOnPage();
+    }
 }

@@ -51,11 +51,12 @@ button{
 }
 
 .checkbox-area{
-    width: 100%;
+    width: 80%;
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-top: 25px;
+    margin: auto;
+    text-align: right;
 }
 
 #selected-topics{

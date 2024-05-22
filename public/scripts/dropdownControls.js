@@ -28,6 +28,7 @@ function UpdateDropdown(ModuleString, activeTrigger = null) {
     if (moduleName !== "Overview - The waiting list") {
         document.getElementsByClassName('overview-buttons')[0].style.display = 'none'
     }
+    ChangeCheckboxText(moduleName);
     logActiveTriggerOrNot(PageName, moduleName, activeTrigger);
 }
 
@@ -38,3 +39,14 @@ dropdownButton.addEventListener('blur', function () {
         dropdownContent.style.display = 'none';
     }, 200); // Delay in milliseconds
 });
+
+function ChangeCheckboxText(moduleName){
+    var labels = document.getElementsByTagName('label');
+    for (var i = 0; i < labels.length; i++) {
+        if (labels[i].htmlFor === 'checkboxItem') {
+            // Update the text content of the label
+            labels[i].innerHTML = `Check the box and I'll send you details about <strong> ${moduleName} </strong> later.`;
+            break;
+        }
+    }
+}

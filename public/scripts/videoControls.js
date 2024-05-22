@@ -338,10 +338,6 @@ function OverviewResponse(responseString) {
   nextButton.style.display = "block";
 }
 
-function UpdateVideoArrData() {
-  //Code Later
-}
-
 function TakeToSummaryPage(){
   while(PageName !== 'summary'){
     PreviousNextButtonFunction(1);
