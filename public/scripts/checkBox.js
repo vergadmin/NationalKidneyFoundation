@@ -1,27 +1,44 @@
 // Retrieve the object from sessionStorage
 additionalInformationTopics = JSON.parse(sessionStorage.getItem('additionalInformationTopics'));
 
-console.log(additionalInformationTopics);
-var checkbox=document.getElementById("checkboxItem");
-console.log(checkbox.value);
-console.log(additionalInformationTopics[checkbox.value]);
-checkbox.checked=additionalInformationTopics[checkbox.value];
-checkbox.addEventListener('click', function() {
+var checkbox = document.getElementById("checkboxItem");
+// console.log(checkbox.value);
+// console.log(additionalInformationTopics[checkbox.value]);
 
-   console.log(checkbox.value)
+function UpdateCheckbox() {
+   // this.checked = !VideoArr[PageName][ModuleString].NeedMoreInformation;
+   checkbox.checked = !additionalInformationTopics[moduleName];
+   additionalInformationTopics[moduleName] = checkbox.checked;
+   sessionStorage.setItem('additionalInformationTopics', JSON.stringify(additionalInformationTopics));
+   // console.log(additionalInformationTopics);
+}
 
-   console.log(checkbox.checked)
+function LoadCheckBoxValue() {
+   checkbox.checked = additionalInformationTopics[moduleName];
+}
 
-   // Add items to the object
-additionalInformationTopics[checkbox.value] = checkbox.checked;
+function UpdateSpecificCheckBox() {
+   this.checked = !additionalInformationTopics[this.parentNode.querySelector('label').textContent];
+   additionalInformationTopics[this.parentNode.querySelector('label').textContent] = this.checked;
+   sessionStorage.setItem('additionalInformationTopics', JSON.stringify(additionalInformationTopics));
+}
 
-console.log(additionalInformationTopics);
+// checkbox.addEventListener('click', function() {
 
-// Update the object in sessionStorage
-sessionStorage.setItem('additionalInformationTopics', JSON.stringify(additionalInformationTopics));
+//    console.log(checkbox.value)
+
+//    console.log(checkbox.checked)
+
+//    // Add items to the object
+// additionalInformationTopics[checkbox.value] = checkbox.checked;
+
+// console.log(additionalInformationTopics);
+
+// // Update the object in sessionStorage
+// sessionStorage.setItem('additionalInformationTopics', JSON.stringify(additionalInformationTopics));
 
 
-})
+// })
 
 
 

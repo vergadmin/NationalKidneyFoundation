@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,41 +10,93 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;900&display=swap" rel="stylesheet">
     <link href="/css/master.css" rel="stylesheet" type="text/css">
     <link href="/css/educationalComponent.css" rel="stylesheet" type="text/css">
+    <link href="/css/slider.css" rel="stylesheet" type="text/css">
+    <link href="/css/dropdown.css" rel="stylesheet" type="text/css">
     <title>NKF</title>
 </head>
+
 <body id-variable="<%=id%>" type-variable="<%=type%>" next-page-variable="<%=nextPageURL%>" url="<%=url%>">
     <header>
-    <%- include('../../../partials/header'); %>
+        <%- include('../../../partials/header_alt'); %>
     </header>
-    <div class="container">
-        <h1 class="title">Goals of our Meeting</h1>
-        <div class="video-wrapper">
-                   <div class="video-wrapper">
-            <video autoplay id="myvideo" playsinline >
-                <source src="https://national-kidney-foundation.s3.amazonaws.com/<%=type%>/Introduction.mp4" type="video/mp4">
-            </video>
-            <div class="play-overlay">
-            <button id="playButton">▶</button>
+    <%- include('../../../partials/dropdown'); %>
+        <div class="container">
+            <h1 class="title">Goals of our Meeting</h1>
+            <div class="video-wrapper">
+                <div class="video-wrapper">
+                    <video autoplay id="myvideo" playsinline>
+                        <source src="https://national-kidney-foundation.s3.amazonaws.com/<%=type%>/Introduction.mp4"
+                            type="video/mp4">
+                        <!-- <track kind="captions" src="" srclang="en" label="English" default> -->
+                    </video>
+                    <div class="play-overlay">
+                        <button id="playButton">Play</button>
+                    </div>
+                </div>
+                <br>
+                <div class="overview-buttons" style="text-align: center;display: none;">
+                    <button onclick="OverviewResponse('Not really')" style="background-color: #F15E22 !important;">Not
+                        really</button>
+                    <button onclick="OverviewResponse('Somewhat useful')"
+                        style="background-color: #F15E22 !important;">Somewhat useful</button>
+                    <button onclick="OverviewResponse('Very useful')" style="background-color: #F15E22 !important;">Very
+                        useful</button>
+                </div>
+                <br>
+                <br>
+                <div class="video-controls">
+                    <button id="rewind">Repeat that</button>
+                    <button id="pause">Play</button>
+                </div>
+                <br>
+                <br>
+                <div class="slider-container" style="display: none;">
+                    <p id="slider-value"><strong>Your Response: </strong><span id="slider-number">I don't know if i need
+                            information or not</span></p>
+                    <input type="range" min="0" max="100" class="slider" id="slider" onchange="UpdateSliderValue()">
+                    <div class="labels">
+                        <p class="leftAnchor">0</p>
+                        <p class="rightAnchor">100</p>
+                    </div>
+
+                </div>
+
+                <div class="checkbox-area" style="display: none;">
+                    <input type="checkbox" id="checkboxItem" name="checkboxItem" onchange="UpdateCheckbox()">
+                    <label for="checkboxItem">Check the box and I’ll email you information about this topic later</label><br>
+                </div>
+
+                <!-- <a>
+                    <button onclick="PreviousNextButtonFunction(-1)" class="back">Go Back</button>
+                </a>
+
+                <a updateVideo>
+                    <button onclick="PreviousNextButtonFunction(1)" class="next">Next</button>
+                </a> -->
+
+
             </div>
         </div>
-        <br/> 
-        <br/> 
-        <br/>
-    <div class="video-controls">
-        <button id="rewind">Repeat that</button>
-        <button id="pause">▶</button>
-    </div>
-        
-    <a href="/<%=id%>">
-        <button class="back">Go Back</button>
-    </a>
+        <div class="end-container" style="display: none;">
+            <h1 style="color: navy;">Selected Topics</h1>
+            <div id="selected-topics"></div>
 
-    <a href="/<%=id%>/EducationalComponent/<%=type%>/<%=nextPageURL%>">
-        <button class="next">Next</button>
-    </a>
-    
+            <button class="finish" onclick="ResetSession()">End our meeting</button>
+        </div>
 
-    </div>
-    <script src="/scripts/videoControls.js"></script>
+        <a>
+            <button onclick="PreviousNextButtonFunction(-1, true)" class="back">Go Back</button>
+        </a>
+
+        <a>
+            <button onclick="PreviousNextButtonFunction(1,true)" class="next">Next</button>
+        </a>
+
+        <script src="/scripts/videoControls.js"></script>
+        <script src="/scripts/sliderControls.js"></script>
+        <script src="/scripts/checkBox.js"></script>
+        <script src="/scripts/dataLogging.js"></script>
+
 </body>
+
 </html>

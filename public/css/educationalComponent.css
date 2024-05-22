@@ -18,6 +18,8 @@ button{
     margin: 5px !important;
     color: white !important;
     background-color: navy !important;
+    border-radius: 50px !important;
+    padding: 10px 25px !important;
 }
 
 .next{
@@ -38,24 +40,31 @@ button{
     border-radius: 50px;
     padding: 10px 25px;
 }
+
+.finish{
+    border-radius: 50px;
+    padding: 10px 25px;
+}
+
 .container{
     height: 100vh !important;
 }
 
 .checkbox-area{
-    width: 100%;
+    width: 80%;
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-top: 25px;
+    margin: auto;
+    text-align: right;
 }
 
 #selected-topics{
     padding: 15px;
     margin: 15px;
     border: 0px;
-    border-radius: 35px;
-    background-color: navy;
+    border-radius: 5px;
+    background-color: #F15E22 !important;
     color: white;
 }
 
