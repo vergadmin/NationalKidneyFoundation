@@ -3,6 +3,12 @@ var NotRegularPages = ['quickAssessment','subTopics'];
 LogTimeSpendOnPage();
 
 async function SendParticipantDataToServer() {
+    document.getElementsByClassName("finish")[0].disabled = true;
+
+    tempArr = JSON.parse(sessionStorage.getItem("VideoArr"));
+    if(tempArr !== null){
+        sessionStorage.setItem('InterventionEndTime', new Date().toISOString().slice(0, 19).replace('T', ' '));
+    }
     var i = 0;
     while (i < 10) {
       await delay(100);  // Wait for 100 milliseconds
@@ -18,35 +24,40 @@ function delay(ms) {
 
 function logActiveTriggerOrNot(Page, moduleName = null, activeTrigger = null){
     tempArr = JSON.parse(sessionStorage.getItem("VideoArr"));
-    if(activeTrigger !== null){
-        if(!NotRegularPages.includes(Page)){
-            if(tempArr[Page].ActiveOrPassiveRedirectionToPage === null){
-                if(activeTrigger){
-                    tempArr[Page].ActiveOrPassiveRedirectionToPage = "active";
+    if(tempArr !== null){
+        if(activeTrigger !== null){
+            if(!NotRegularPages.includes(Page)){
+                if(tempArr[Page].ActiveOrPassiveRedirectionToPage === null){
+                    if(activeTrigger){
+                        tempArr[Page].ActiveOrPassiveRedirectionToPage = "active";
+                    }
+                    else{
+                        tempArr[Page].ActiveOrPassiveRedirectionToPage = "passive";
+                    }
+                    LogPageFirstVisitTime(tempArr[Page]);
                 }
-                else{
-                    tempArr[Page].ActiveOrPassiveRedirectionToPage = "passive";
-                }
-                LogPageFirstVisitTime(tempArr[Page]);
+                LogPageLastVisitedTime(tempArr[Page]);
+                LogNumberOfTimesPageVisited(tempArr[Page])
             }
-            LogPageLastVisitedTime(tempArr[Page]);
-            LogNumberOfTimesPageVisited(tempArr[Page])
-        }
-        else if((Page === 'subTopics' || Page ==='quickAssessment') && moduleName !== null){
-            if(tempArr[Page][moduleName].ActiveOrPassiveRedirectionToPage === null){
-                if(activeTrigger){
-                    tempArr[Page][moduleName].ActiveOrPassiveRedirectionToPage = "active";
+            else if((Page === 'subTopics' || Page ==='quickAssessment') && moduleName !== null){
+                if(tempArr[Page][moduleName].ActiveOrPassiveRedirectionToPage === null){
+                    if(activeTrigger){
+                        tempArr[Page][moduleName].ActiveOrPassiveRedirectionToPage = "active";
+                    }
+                    else{
+                        tempArr[Page][moduleName].ActiveOrPassiveRedirectionToPage = "passive";
+                    }
+                    LogPageFirstVisitTime(tempArr[Page][moduleName]);
                 }
-                else{
-                    tempArr[Page][moduleName].ActiveOrPassiveRedirectionToPage = "passive";
-                }
-                LogPageFirstVisitTime(tempArr[Page][moduleName]);
+                LogPageLastVisitedTime(tempArr[Page][moduleName]);
+                LogNumberOfTimesPageVisited(tempArr[Page][moduleName])
             }
-            LogPageLastVisitedTime(tempArr[Page][moduleName]);
-            LogNumberOfTimesPageVisited(tempArr[Page][moduleName])
+            UpdateStorageArray(tempArr)
+            console.log(GetStorageArray())
         }
-        UpdateStorageArray(tempArr)
-        console.log(GetStorageArray())
+    }
+    else{
+        ifInvalidSessionTaketoHomePage();
     }
 }
 
@@ -63,12 +74,12 @@ function LogNumberOfTimesPageVisited(DataArray){
 }
 
 function LogPageFirstVisitTime(DataArray){
-    DataArray.PageFirstVisitedTimeStamp = Date.now();
+    DataArray.PageFirstVisitedTimeStamp = new Date().toISOString().slice(0, 19).replace('T', ' ');
     DataArray.PageVisited = true;
 }
 
 function LogPageLastVisitedTime(DataArray){
-    DataArray.PageLastVisitedTimeStamp = Date.now();
+    DataArray.PageLastVisitedTimeStamp = new Date().toISOString().slice(0, 19).replace('T', ' ');
 }
 
 async function LogTimeSpendOnPage(){
@@ -90,8 +101,13 @@ async function LogTimeSpendOnPage(){
                 tempArr[PageName][moduleName].TimeSpentOnPage += 1;
             }
         }
+        UpdateTotalTimeSpentOnIntervention();
         UpdateStorageArray(tempArr);
         await delay(1000);
         LogTimeSpendOnPage();
     }
+}
+
+function UpdateTotalTimeSpentOnIntervention(){
+    sessionStorage.setItem("TotalTimeSpentOnIntervention", parseInt(sessionStorage.getItem("TotalTimeSpentOnIntervention")) + 1);
 }

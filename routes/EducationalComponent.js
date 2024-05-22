@@ -24,53 +24,53 @@ const config = {
 }
 
 
-router.get('/:type/Introduction', getInfo, updateDatabase, (req, res) => { // displays  the text "Introduction" in the URL
-    type=req.params.type
-    res.render("pages/type/EducationalComponent/introduction", {id: id, type: type, nextPageURL: 'quickAssessment', url: 'Introduction'})
-})
+// router.get('/:type/Introduction', (req, res) => { // displays  the text "Introduction" in the URL
+//     type=req.params.type
+//     res.render("pages/type/EducationalComponent/introduction", {id: id, type: type, nextPageURL: 'quickAssessment', url: 'Introduction'})
+// })
 
-function getInfo(req, res, next) {
-    // console.log("IN MIDDLEWARE OF EDUCATIONAL COMPONENT - REQUEST PARAMS:")
-    id = req.id
-    userInfo = req.userInfo
-    // console.log("type is " + type);
-    next()
-}
+// function getInfo(req, res, next) {
+//     // console.log("IN MIDDLEWARE OF EDUCATIONAL COMPONENT - REQUEST PARAMS:")
+//     id = req.id
+//     userInfo = req.userInfo
+//     // console.log("type is " + type);
+//     next()
+// }
 
-function updateDatabase(req, res, next) {
-    // console.log("IN UPDATE DATABASE")
-    // console.log(req.url)
-    let dbEntry = req.url.slice(1)
-    // console.log(dbEntry)
-    userInfo = req.userInfo;
-    // BEGIN DATABSAE STUFF:SENDING VERSION (R24 OR U01) AND ID TO DATABASE
-    sql.connect(config, function (err) {
+// function updateDatabase(req, res, next) {
+//     // console.log("IN UPDATE DATABASE")
+//     // console.log(req.url)
+//     let dbEntry = req.url.slice(1)
+//     // console.log(dbEntry)
+//     userInfo = req.userInfo;
+//     // BEGIN DATABSAE STUFF:SENDING VERSION (R24 OR U01) AND ID TO DATABASE
+//     sql.connect(config, function (err) {
 
-        if (err) console.log(err);
+//         if (err) console.log(err);
 
-        // create Request object
-        var request = new sql.Request();
+//         // create Request object
+//         var request = new sql.Request();
 
-        // let queryString = 'UPDATE R24 SET Educational_' + dbEntry + `='clicked' WHERE ID=` + `'` + userInfo.ID + `'`; // UNCOMMENT:`'AND TYPE ='` + type + `'`;
-        let queryString = `
-        UPDATE R24
-        SET Educational_` + dbEntry + `= 'clicked'
-        WHERE ID = '` + userInfo.ID + `' 
-        AND VisitNum = '` + userInfo.visitNum + `'`;
+//         // let queryString = 'UPDATE R24 SET Educational_' + dbEntry + `='clicked' WHERE ID=` + `'` + userInfo.ID + `'`; // UNCOMMENT:`'AND TYPE ='` + type + `'`;
+//         let queryString = `
+//         UPDATE R24
+//         SET Educational_` + dbEntry + `= 'clicked'
+//         WHERE ID = '` + userInfo.ID + `' 
+//         AND VisitNum = '` + userInfo.visitNum + `'`;
 
-        // console.log(queryString)
-        request.query(queryString, function (err, recordset) {
-            if (err) console.log(err)
-            // send records as a response
-            /// console.log("UPDATED! IN R24U01 TABLE:")
-            // console.log(recordset);
-        }); 
-        // res.send("Updated.");
+//         // console.log(queryString)
+//         request.query(queryString, function (err, recordset) {
+//             if (err) console.log(err)
+//             // send records as a response
+//             /// console.log("UPDATED! IN R24U01 TABLE:")
+//             // console.log(recordset);
+//         }); 
+//         // res.send("Updated.");
     
-    });
-    // END DATABASE STUFF
+//     });
+//     // END DATABASE STUFF
 
-    next();
-}
+//     next();
+// }
 
 module.exports = router

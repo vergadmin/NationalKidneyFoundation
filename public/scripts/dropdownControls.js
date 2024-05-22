@@ -16,7 +16,7 @@ dropdownButton.addEventListener('click', function () {
 function UpdateDropdown(ModuleString, activeTrigger = null) {
     moduleName = ModuleString;
     dropdownButton.innerText = moduleName + ' ▾';
-    UpdateVideo(VideoArray[PageName][ModuleString].VideURL)
+    UpdateVideo(VideoArray[PageName][ModuleString].VideoURL)
     LoadCheckBoxValue();
     dropdownContent.style.display = 'none';
     if (moduleName === "Overview - The waiting list" || moduleName === "Talking to your doctor") {

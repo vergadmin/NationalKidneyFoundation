@@ -146,18 +146,18 @@ function PreviousNextButtonFunction(action, activeTrigger = null) {
   if (PageName === 'quickAssessment' && action === 1 && moduleName === "main") {
     var slider = document.getElementById("slider");
     if (slider.value <= 50) {
-      UpdateVideo(VideoArray[PageName]["quickAssessmentResponse1"].VideURL)
+      UpdateVideo(VideoArray[PageName]["quickAssessmentResponse1"].VideoURL)
       //window.history.pushState(PageName, PageName, `/${id}/EducationalComponent/${type}/quickAssessmentResponse1`)
       moduleName = 'quickAssessmentResponse1';
     }
     else if (slider.value <= 89) {
-      UpdateVideo(VideoArray[PageName]["quickAssessmentResponse2"].VideURL)
+      UpdateVideo(VideoArray[PageName]["quickAssessmentResponse2"].VideoURL)
       //window.history.pushState(PageName, PageName, `/${id}/EducationalComponent/${type}/quickAssessmentResponse2`)
       moduleName = 'quickAssessmentResponse2';
 
     }
     else {
-      UpdateVideo(VideoArray[PageName]["quickAssessmentResponse3"].VideURL)
+      UpdateVideo(VideoArray[PageName]["quickAssessmentResponse3"].VideoURL)
       //window.history.pushState(PageName, PageName, `/${id}/EducationalComponent/${type}/quickAssessmentResponse3`)
       moduleName = 'quickAssessmentResponse3';
 
@@ -189,22 +189,22 @@ function PreviousNextButtonFunction(action, activeTrigger = null) {
       window.location.href = `/${id}/`
     }
     else if (PageName === "quickAssessment") {
-      UpdateVideo(VideoArray[PageName]['main'].VideURL)
+      UpdateVideo(VideoArray[PageName]['main'].VideoURL)
       moduleName = "main";
       
     }
     else if (PageName === "subTopics" && action === 1) {
-      //UpdateVideo(VideoArray[PageName]['Benefits of kidney transplant'].VideURL)
+      //UpdateVideo(VideoArray[PageName]['Benefits of kidney transplant'].VideoURL)
       moduleName = 'Benefits of kidney transplant';
       UpdateDropdown(moduleName, activeTrigger);
     }
     else if (PageName === "subTopics" && action === -1) {
-      //UpdateVideo(VideoArray[PageName]['Benefits of kidney transplant'].VideURL)
+      //UpdateVideo(VideoArray[PageName]['Benefits of kidney transplant'].VideoURL)
       moduleName = 'Benefits of kidney transplant';
       UpdateDropdown(moduleName,activeTrigger)
     }
     else {
-      UpdateVideo(VideoArray[PageName].VideURL)
+      UpdateVideo(VideoArray[PageName].VideoURL)
     }
 
     if (PageName === "Introduction") {

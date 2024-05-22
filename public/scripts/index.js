@@ -88,10 +88,9 @@ async function sendGeneralData(browserInfo, dateTime) {
 
 function ContinueOrResetSession(character){
     console.log(character !== sessionStorage.getItem("type"))
-    if(character !== sessionStorage.getItem("type")){
-        var type = document.URL.split('/').reverse()[0]
-        var id = document.URL.split('/').reverse()[1]
-    
+    // var type = document.URL.split('/').reverse()[0]
+    var id = document.URL.split('/').reverse()[1]
+    if(character !== sessionStorage.getItem("type")){    
         sessionStorage.clear()
         sessionStorage.setItem("id", id)
         sessionStorage.setItem("type", character)
@@ -120,6 +119,7 @@ function ContinueOrResetSession(character){
         sessionStorage.setItem('startTime', Date.now());
 
         sessionStorage.setItem('TotalTimeSpentOnIntervention', 0)
+        sessionStorage.setItem('InterventionStartTime', new Date(HomepageVisitTimeStamp).toISOString().slice(0, 19).replace('T', ' '))
         setSessionStorageSetupTime();
     }
     CreateVideoDataArray();
@@ -135,16 +135,16 @@ function CreateVideoDataArray(){
     if (sessionStorage.getItem("VideoArr") === null) {
     var VideoArray = {
         'Homepage': {
-        "VideURL": null,
+        "VideoURL": null,
         "PageVisited": true,
-        "PageFirstVisitedTimeStamp": HomepageVisitTimeStamp,
-        "PageLastVisitedTimeStamp": HomepageVisitTimeStamp,
+        "PageFirstVisitedTimeStamp": new Date(HomepageVisitTimeStamp).toISOString().slice(0, 19).replace('T', ' '),
+        "PageLastVisitedTimeStamp": new Date(HomepageVisitTimeStamp).toISOString().slice(0, 19).replace('T', ' '),
         "NumberOfTimesPageVisited": 1,
         "TimeSpentOnPage":  Math.floor( (Date.now() - HomepageVisitTimeStamp)/1000),
         "ActiveOrPassiveRedirectionToPage": "active",
         },
         'Introduction': {
-        "VideURL": `https://national-kidney-foundation.s3.amazonaws.com/${type}/Introduction.mp4`,
+        "VideoURL": `https://national-kidney-foundation.s3.amazonaws.com/${type}/Introduction.mp4`,
         "PageVisited": false,
         "PageFirstVisitedTimeStamp": null,
         "PageLastVisitedTimeStamp": null,
@@ -154,7 +154,7 @@ function CreateVideoDataArray(){
         },
         'quickAssessment': {
         "main": {
-            "VideURL": `https://national-kidney-foundation.s3.amazonaws.com/${type}/quickAssessment.mp4`,
+            "VideoURL": `https://national-kidney-foundation.s3.amazonaws.com/${type}/quickAssessment.mp4`,
             "PageVisited": false,
             "PageFirstVisitedTimeStamp": null,
             "PageLastVisitedTimeStamp": null,
@@ -163,7 +163,7 @@ function CreateVideoDataArray(){
             "ActiveOrPassiveRedirectionToPage": null,
         },
         "quickAssessmentResponse1": {
-            "VideURL": `https://national-kidney-foundation.s3.amazonaws.com/${type}/quickAssessmentResponse1.mp4`,
+            "VideoURL": `https://national-kidney-foundation.s3.amazonaws.com/${type}/quickAssessmentResponse1.mp4`,
             "PageVisited": false,
             "PageFirstVisitedTimeStamp": null,
             "PageLastVisitedTimeStamp": null,
@@ -172,7 +172,7 @@ function CreateVideoDataArray(){
             "ActiveOrPassiveRedirectionToPage": null,
         },
         "quickAssessmentResponse2": {
-            "VideURL": `https://national-kidney-foundation.s3.amazonaws.com/${type}/quickAssessmentResponse2.mp4`,
+            "VideoURL": `https://national-kidney-foundation.s3.amazonaws.com/${type}/quickAssessmentResponse2.mp4`,
             "PageVisited": false,
             "PageFirstVisitedTimeStamp": null,
             "PageLastVisitedTimeStamp": null,
@@ -181,7 +181,7 @@ function CreateVideoDataArray(){
             "ActiveOrPassiveRedirectionToPage": null,
         },
         "quickAssessmentResponse3": {
-            "VideURL": `https://national-kidney-foundation.s3.amazonaws.com/${type}/quickAssessmentResponse3.mp4`,
+            "VideoURL": `https://national-kidney-foundation.s3.amazonaws.com/${type}/quickAssessmentResponse3.mp4`,
             "PageVisited": false,
             "PageFirstVisitedTimeStamp": null,
             "PageLastVisitedTimeStamp": null,
@@ -192,7 +192,7 @@ function CreateVideoDataArray(){
         },
         "subTopics": {
         "Benefits of kidney transplant": {
-            "VideURL": `https://national-kidney-foundation.s3.amazonaws.com/${type}/transplantBenefits.mp4`,
+            "VideoURL": `https://national-kidney-foundation.s3.amazonaws.com/${type}/transplantBenefits.mp4`,
             "PageVisited": false,
             "PageFirstVisitedTimeStamp": null,
             "PageLastVisitedTimeStamp": null,
@@ -201,7 +201,7 @@ function CreateVideoDataArray(){
             "ActiveOrPassiveRedirectionToPage": null,
         },
         "Who can get a kidney transplant": {
-            "VideURL": `https://national-kidney-foundation.s3.amazonaws.com/${type}/transplantEligibility.mp4`,
+            "VideoURL": `https://national-kidney-foundation.s3.amazonaws.com/${type}/transplantEligibility.mp4`,
             "PageVisited": false,
             "PageFirstVisitedTimeStamp": null,
             "PageLastVisitedTimeStamp": null,
@@ -210,7 +210,7 @@ function CreateVideoDataArray(){
             "ActiveOrPassiveRedirectionToPage": null,
         },
         "The transplant work-up": {
-            "VideURL": `https://national-kidney-foundation.s3.amazonaws.com/${type}/transplantWorkup.mp4`,
+            "VideoURL": `https://national-kidney-foundation.s3.amazonaws.com/${type}/transplantWorkup.mp4`,
             "PageVisited": false,
             "PageFirstVisitedTimeStamp": null,
             "PageLastVisitedTimeStamp": null,
@@ -219,7 +219,7 @@ function CreateVideoDataArray(){
             "ActiveOrPassiveRedirectionToPage": null,
         },
         "Overview - The waiting list": {
-            "VideURL": `https://national-kidney-foundation.s3.amazonaws.com/${type}/overviewTransplantWaitingList.mp4`,
+            "VideoURL": `https://national-kidney-foundation.s3.amazonaws.com/${type}/overviewTransplantWaitingList.mp4`,
             "PageVisited": false,
             "PageFirstVisitedTimeStamp": null,
             "PageLastVisitedTimeStamp": null,
@@ -228,7 +228,7 @@ function CreateVideoDataArray(){
             "ActiveOrPassiveRedirectionToPage": null,
         },
         "Living donor transplant": {
-            "VideURL": `https://national-kidney-foundation.s3.amazonaws.com/${type}/livingDonorTransplant.mp4`,
+            "VideoURL": `https://national-kidney-foundation.s3.amazonaws.com/${type}/livingDonorTransplant.mp4`,
             "PageVisited": false,
             "PageFirstVisitedTimeStamp": null,
             "PageLastVisitedTimeStamp": null,
@@ -237,7 +237,7 @@ function CreateVideoDataArray(){
             "ActiveOrPassiveRedirectionToPage": null,
         },
         "Getting a transplant sooner": {
-            "VideURL": `https://national-kidney-foundation.s3.amazonaws.com/${type}/transplantSooner.mp4`,
+            "VideoURL": `https://national-kidney-foundation.s3.amazonaws.com/${type}/transplantSooner.mp4`,
             "PageVisited": false,
             "PageFirstVisitedTimeStamp": null,
             "PageLastVisitedTimeStamp": null,
@@ -246,7 +246,7 @@ function CreateVideoDataArray(){
             "ActiveOrPassiveRedirectionToPage": null,
         },
         "How long do kidney transplants last": {
-            "VideURL": `https://national-kidney-foundation.s3.amazonaws.com/${type}/transplantLifeSpan.mp4`,
+            "VideoURL": `https://national-kidney-foundation.s3.amazonaws.com/${type}/transplantLifeSpan.mp4`,
             "PageVisited": false,
             "PageFirstVisitedTimeStamp": null,
             "PageLastVisitedTimeStamp": null,
@@ -255,7 +255,7 @@ function CreateVideoDataArray(){
             "ActiveOrPassiveRedirectionToPage": null,
         },
         "The risks of kidney transplant": {
-            "VideURL": `https://national-kidney-foundation.s3.amazonaws.com/${type}/transplantRisks.mp4`,
+            "VideoURL": `https://national-kidney-foundation.s3.amazonaws.com/${type}/transplantRisks.mp4`,
             "PageVisited": false,
             "PageFirstVisitedTimeStamp": null,
             "PageLastVisitedTimeStamp": null,
@@ -264,7 +264,7 @@ function CreateVideoDataArray(){
             "ActiveOrPassiveRedirectionToPage": null,
         },
         "Choosing a transplant center": {
-            "VideURL": `https://national-kidney-foundation.s3.amazonaws.com/${type}/choosingTransplantCenter.mp4`,
+            "VideoURL": `https://national-kidney-foundation.s3.amazonaws.com/${type}/choosingTransplantCenter.mp4`,
             "PageVisited": false,
             "PageFirstVisitedTimeStamp": null,
             "PageLastVisitedTimeStamp": null,
@@ -273,7 +273,7 @@ function CreateVideoDataArray(){
             "ActiveOrPassiveRedirectionToPage": null,
         },
         "Who can be a living kidney donor": {
-            "VideURL": `https://national-kidney-foundation.s3.amazonaws.com/${type}/donorEligibility.mp4`,
+            "VideoURL": `https://national-kidney-foundation.s3.amazonaws.com/${type}/donorEligibility.mp4`,
             "PageVisited": false,
             "PageFirstVisitedTimeStamp": null,
             "PageLastVisitedTimeStamp": null,
@@ -282,7 +282,7 @@ function CreateVideoDataArray(){
             "ActiveOrPassiveRedirectionToPage": null,
         },
         "Talking to your doctor": {
-            "VideURL": `https://national-kidney-foundation.s3.amazonaws.com/${type}/talkingToYourDoctor.mp4`,
+            "VideoURL": `https://national-kidney-foundation.s3.amazonaws.com/${type}/talkingToYourDoctor.mp4`,
             "PageVisited": false,
             "PageFirstVisitedTimeStamp": null,
             "PageLastVisitedTimeStamp": null,
@@ -292,7 +292,7 @@ function CreateVideoDataArray(){
         },
         },
         "summary": {
-        "VideURL": `https://national-kidney-foundation.s3.amazonaws.com/${type}/closingMessage.mp4`,
+        "VideoURL": `https://national-kidney-foundation.s3.amazonaws.com/${type}/closingMessage.mp4`,
         "PageVisited": false,
         "PageFirstVisitedTimeStamp": null,
         "PageLastVisitedTimeStamp": null,

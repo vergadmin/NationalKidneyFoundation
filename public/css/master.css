@@ -33,6 +33,10 @@ button:hover {
     /* transform: scale(1.1); */
 }
 
+button:disabled{
+    opacity: 50%;
+}
+
 /* -- Comments on August Release -- 
     Creating a separate set of css in index.css for August Release
     Separate css files created as well, but this felt appropriate for index.css
