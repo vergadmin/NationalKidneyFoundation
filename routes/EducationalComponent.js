@@ -24,10 +24,10 @@ const config = {
 }
 
 
-// router.get('/:type/Introduction', (req, res) => { // displays  the text "Introduction" in the URL
-//     type=req.params.type
-//     res.render("pages/type/EducationalComponent/introduction", {id: id, type: type, nextPageURL: 'quickAssessment', url: 'Introduction'})
-// })
+router.get('/:type/Introduction', (req, res) => { // displays  the text "Introduction" in the URL
+    type=req.params.type
+    res.render("pages/type/EducationalComponent/introduction", {id: id, type: type, nextPageURL: 'quickAssessment', url: 'Introduction'})
+})
 
 // function getInfo(req, res, next) {
 //     // console.log("IN MIDDLEWARE OF EDUCATIONAL COMPONENT - REQUEST PARAMS:")
