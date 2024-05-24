@@ -164,13 +164,13 @@ function PreviousNextButtonFunction(action, activeTrigger = null) {
     }
     document.getElementsByClassName('slider-container')[0].style.display = "none";
   }
-  // else if (PageName === "subTopics" && action === 1 && moduleName !== "Talking to your doctor") {
-  //   SwitchSubTopicVideo(1,activeTrigger);
-  // }
-  // //TBD Function
-  // else if (PageName === "subTopics" && action === -1 && moduleName !== "Benefits of kidney transplant") {
-  //   SwitchSubTopicVideo(-1,activeTrigger);
-  // }
+  else if (PageName === "subTopics" && action === 1 && moduleName !== "Talking to your doctor") {
+    SwitchSubTopicVideo(1,activeTrigger);
+  }
+  //TBD Function
+  else if (PageName === "subTopics" && action === -1 && moduleName !== "Benefits of kidney transplant") {
+    SwitchSubTopicVideo(-1,activeTrigger);
+  }
   else {
     if (VideoArrayIndex + action < 0) {
       VideoArrayIndex = 0;
@@ -348,7 +348,6 @@ function TakeToSummaryPage(){
 function TakeToHomePage(){
   logActiveTriggerOrNot('Homepage', moduleName = null, activeTrigger = true)
   window.location.href = `/${id}/`
-
 }
 
 function ifInvalidSessionTaketoHomePage(hours = 5){
