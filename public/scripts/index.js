@@ -62,7 +62,6 @@ async function ContinueOrResetSession(character){
     var id = document.URL.split('/').reverse()[1]
     if(character !== sessionStorage.getItem("type")){    
         if(sessionStorage.getItem('setupTime') !== null){
-            sessionStorage.setItem('InterventionEndTime', new Date().toISOString().slice(0, 19).replace('T', ' '));
             await fetch('/submitData', {
                 method: 'POST',
                 headers: {
@@ -295,7 +294,6 @@ async function clearSessionStorageAfterXHours(hours = 5){
     var setupTime = sessionStorage.getItem('setupTime');
     if (setupTime === null || (now-setupTime > hours*60*60*1000)) {
         if(setupTime !== null){
-            sessionStorage.setItem('InterventionEndTime', new Date().toISOString().slice(0, 19).replace('T', ' '));
             const response = await fetch('/submitData', {
                 method: 'POST',
                 headers: {
