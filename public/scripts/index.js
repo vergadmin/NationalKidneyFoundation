@@ -284,15 +284,17 @@ async function clearSessionStorageAfterXHours(hours = 5){
     var now = new Date().getTime();
     var setupTime = sessionStorage.getItem('setupTime');
     if (setupTime === null || (now-setupTime > hours*60*60*1000)) {
-        const response = await fetch('/submitData', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json' // Specify content type as JSON
-            },
-            body: JSON.stringify(sessionStorage)
-        });
+        if(setupTime !== null){
+            const response = await fetch('/submitData', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json' // Specify content type as JSON
+                },
+                body: JSON.stringify(sessionStorage)
+            });
+            return response
+        }
         sessionStorage.clear();
-        return response
     } 
     return -1
 }
