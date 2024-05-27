@@ -241,7 +241,7 @@ function PreviousNextButtonFunction(action, activeTrigger = null) {
     }
 
     if (PageName === "summary") {
-      document.getElementsByClassName('container')[0].style.display = "none";
+      // document.getElementsByClassName('container')[0].style.display = "none";
       document.getElementsByClassName('end-container')[0].style.display = "flex";
       UpdateTitle("Selected Topics")
 
@@ -272,7 +272,7 @@ function PreviousNextButtonFunction(action, activeTrigger = null) {
       nextButton.style.display = "none";
     }
     else {
-      document.getElementsByClassName('container')[0].style.display = "block";
+      // document.getElementsByClassName('container')[0].style.display = "block";
       document.getElementsByClassName('end-container')[0].style.display = "none";
     }
 
