@@ -1,22 +1,30 @@
 var NotRegularPages = ['quickAssessment','subTopics'];
-
 LogTimeSpendOnPage();
 
 async function SendParticipantDataToServer() {
-    document.getElementsByClassName("finish")[0].disabled = true;
+    try {
+        document.getElementsByClassName("finish")[0].disabled = true;
 
-    tempArr = JSON.parse(sessionStorage.getItem("VideoArr"));
-    if(tempArr !== null){
-        sessionStorage.setItem('InterventionEndTime', new Date().toISOString().slice(0, 19).replace('T', ' '));
+        const tempArr = JSON.parse(sessionStorage.getItem("VideoArr"));
+        if (tempArr !== null) {
+            sessionStorage.setItem('InterventionEndTime', new Date().toISOString().slice(0, 19).replace('T', ' '));
+        }
+
+        const response = await fetch('/submitData', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json' // Specify content type as JSON
+            },
+            body: JSON.stringify(sessionStorage)
+        });
+
+        const data = await response.text();
+        console.log(data);
+        return response
+    } catch (error) {
+        console.error('Error:', error);
     }
-    var i = 0;
-    while (i < 10) {
-      await delay(100);  // Wait for 100 milliseconds
-      console.log("hey", Date.now());
-      i += 1;
-    }
-    return 1;
-  }
+}
 
 function delay(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
@@ -48,6 +56,7 @@ function logActiveTriggerOrNot(Page, moduleName = null, activeTrigger = null){
                         tempArr[Page][moduleName].ActiveOrPassiveRedirectionToPage = "passive";
                     }
                     LogPageFirstVisitTime(tempArr[Page][moduleName]);
+                    LogSubTopicsModulesVisited(Page);
                 }
                 LogPageLastVisitedTime(tempArr[Page][moduleName]);
                 LogNumberOfTimesPageVisited(tempArr[Page][moduleName])
@@ -80,6 +89,12 @@ function LogPageFirstVisitTime(DataArray){
 
 function LogPageLastVisitedTime(DataArray){
     DataArray.PageLastVisitedTimeStamp = new Date().toISOString().slice(0, 19).replace('T', ' ');
+}
+
+function LogSubTopicsModulesVisited(Page){
+    if(Page === "subTopics"){
+        sessionStorage.setItem("NumberOfModulesInteracted", parseInt(sessionStorage.getItem("NumberOfModulesInteracted")) + 1)
+    }
 }
 
 async function LogTimeSpendOnPage(){

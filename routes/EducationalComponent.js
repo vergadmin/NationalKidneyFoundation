@@ -1,6 +1,7 @@
 const express = require('express')
 const router = express.Router()
 var sql = require("mssql");
+const app = express();
 
 var id = ''
 var vh = ''
@@ -23,7 +24,6 @@ const config = {
     }
 }
 
-
 router.get('/:type/Introduction', getInfo, (req, res) => { // displays  the text "Introduction" in the URL
     type=req.params.type
     res.render("pages/type/EducationalComponent/introduction", {id: id, type: type, nextPageURL: 'quickAssessment', url: 'Introduction'})
@@ -37,40 +37,51 @@ function getInfo(req, res, next) {
     next()
 }
 
-// function updateDatabase(req, res, next) {
-//     // console.log("IN UPDATE DATABASE")
-//     // console.log(req.url)
-//     let dbEntry = req.url.slice(1)
-//     // console.log(dbEntry)
-//     userInfo = req.userInfo;
-//     // BEGIN DATABSAE STUFF:SENDING VERSION (R24 OR U01) AND ID TO DATABASE
-//     sql.connect(config, function (err) {
+// async function connectToDatabase() {
+//     try {
+//         await sql.connect(config);
+//         console.log('Connected to the database.');
+//     } catch (err) {
+//         console.error('Database connection failed: ', err);
+//     }
+// }
 
-//         if (err) console.log(err);
+// async function addParticipantVisit(data) {
+//     const { ParticipantID, Platform, OperatingSystem, Browser, CharacterSelected, InterventionStartTime, InterventionEndTime, TotalTimeSpentOnIntervention, NumberOfModulesInteracted, KidneyTransplantResponse, OverviewUsefulnessCheckinResponse } = data;
 
-//         // create Request object
-//         var request = new sql.Request();
+//     const getNextVisitIDQuery = `SELECT COUNT(*) AS visitCount FROM ParticipantVisits WHERE ParticipantID = @ParticipantID`;
 
-//         // let queryString = 'UPDATE R24 SET Educational_' + dbEntry + `='clicked' WHERE ID=` + `'` + userInfo.ID + `'`; // UNCOMMENT:`'AND TYPE ='` + type + `'`;
-//         let queryString = `
-//         UPDATE R24
-//         SET Educational_` + dbEntry + `= 'clicked'
-//         WHERE ID = '` + userInfo.ID + `' 
-//         AND VisitNum = '` + userInfo.visitNum + `'`;
+//     try {
+//         const request = new sql.Request();
+//         request.input('ParticipantID', sql.VarChar, ParticipantID);
+        
+//         const result = await request.query(getNextVisitIDQuery);
+//         const VisitID = result.recordset[0].visitCount + 1;
 
-//         // console.log(queryString)
-//         request.query(queryString, function (err, recordset) {
-//             if (err) console.log(err)
-//             // send records as a response
-//             /// console.log("UPDATED! IN R24U01 TABLE:")
-//             // console.log(recordset);
-//         }); 
-//         // res.send("Updated.");
-    
-//     });
-//     // END DATABASE STUFF
+//         const insertQuery = `
+//         INSERT INTO ParticipantVisits 
+//         (ParticipantID, VisitID, Platform, OperatingSystem, Browser, CharacterSelected, InterventionStartTime, InterventionEndTime, TotalTimeSpentOnIntervention, NumberOfModulesInteracted, KidneyTransplantResponse, OverviewUsefulnessCheckinResponse) 
+//         VALUES (@ParticipantID, @VisitID, @Platform, @OperatingSystem, @Browser, @CharacterSelected, @InterventionStartTime, @InterventionEndTime, @TotalTimeSpentOnIntervention, @NumberOfModulesInteracted, @KidneyTransplantResponse, @OverviewUsefulnessCheckinResponse)`;
 
-//     next();
+//         request.input('VisitID', sql.Int, VisitID);
+//         request.input('Platform', sql.VarChar, Platform);
+//         request.input('OperatingSystem', sql.VarChar, OperatingSystem);
+//         request.input('Browser', sql.VarChar, Browser);
+//         request.input('CharacterSelected', sql.VarChar, CharacterSelected);
+//         request.input('InterventionStartTime', sql.DateTime, InterventionStartTime);
+//         request.input('InterventionEndTime', sql.DateTime, InterventionEndTime);
+//         request.input('TotalTimeSpentOnIntervention', sql.Int, TotalTimeSpentOnIntervention);
+//         request.input('NumberOfModulesInteracted', sql.Int, NumberOfModulesInteracted);
+//         request.input('KidneyTransplantResponse', sql.Int, KidneyTransplantResponse);
+//         request.input('OverviewUsefulnessCheckinResponse', sql.VarChar, OverviewUsefulnessCheckinResponse);
+
+//         await request.query(insertQuery);
+//         return VisitID;
+//     } catch (err) {
+//         console.error('Error inserting participant visit data: ', err);
+//         throw err;
+//     }
 // }
 
 module.exports = router
+// app.listen(process.env.PORT || 3000);

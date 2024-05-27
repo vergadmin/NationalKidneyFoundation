@@ -13,18 +13,6 @@ app.use(express.static(__dirname + '/public'));
 app.use(express.json())
 var sql = require("mssql");
 
-var vh = ''
-var type = ''
-var visitNum = -1;
-
-const columnNames = ['diseases', 'synonym1', 'synonym2', 'synonym3', 'synonym4', 'synonym5', 'synonym6', 'synonym7', 'synonym8', 'synonym9', 'synonym10', 'synonym11', 'synonym12', 'synonym13', 'synonym14', 'synonym15', 'synonym16', 'synonym17', 'synonym18', 'synonym19', 'synonym20', 'synonym21', 'synonym22', 'synonym23', 'synonym24', 'synonym25', 'synonym26', 'synonym27', 'synonym28', 'synonym29', 'synonym30', 'synonym31', 'synonym32', 'synonym33', 'synonym34', 'synonym35', 'synonym36', 'synonym37', 'synonym38', 'synonym39', 'synonym40', 'synonym41', 'synonym42', 'synonym43', 'synonym44', 'synonym45', 'synonym46', 'synonym47', 'synonym48', 'synonym49', 'synonym50', 'synonym51'];
-const vhTypes = ["bfe", "bme", "wfe", "wme", "hfe", "hme", "hfs", "hms"];
-// Modify based on Miriam/Emma's Qualtrics:
-const orderOfInfo =  ["I", "G", "E", "R"];
-const columnsInAG = 369
-const columnsInHO = 305
-const columnsInPZ = 355
-
 var userInfo = []
 
 const config = {
@@ -44,6 +32,24 @@ const config = {
     }
 }
 
+async function connectToDatabase() {
+    try {
+      await sql.connect(config);
+      console.log('Connected to the database.');
+    } catch (err) {
+      console.error('Database connection failed: ', err);
+    }
+}
+  
+  async function closeDatabaseConnection() {
+    try {
+      await sql.close();
+      console.log('Database connection closed.');
+    } catch (err) {
+      console.error('Error closing database connection: ', err);
+    }
+}
+
 app.use(session({
     secret: process.env.SESSION_KEY,
     resave: false,
@@ -55,293 +61,10 @@ app.use(session({
     }
 }))
 
-app.post('/updateDatabase', async (req, res) => {
-    let setList = ''
-    console.log(userInfo)
-    console.log(req.session.visitedIndex);
-    for (const [key, value] of Object.entries(req.body)) {
-        if (key==="VHType") {
-            vh = value
-        }
-        setList += key + `='` + value + `', `
-    }
-    setList = setList.slice(0, -2); 
-    // console.log(setList);
-
-    // BEGIN DATABSAE STUFF:SENDING VERSION (R24 OR U01) AND ID TO DATABASE
-    sql.connect(config, function (err) {
-    
-        if (err) console.log(err);
-
-        // create Request object
-        var request = new sql.Request();
-
-        let queryString = `
-        UPDATE R24
-        SET ` + setList + 
-        ` WHERE ID = '` + userInfo.ID + `' 
-        AND VisitNum = '` + userInfo.visitNum + `'`;
-        request.query(queryString, function (err, recordset) {
-            if (err) console.log(err) 
-
-            res.send("Updated.");
-        }); 
-    
-    });
-    // END DATABASE STUFF
-})
-
-app.post("/:id/:type/RetrieveConditions", (req, res) => {
-    let searchValue = (Object.entries(req.body)[0][1])
-    // console.log(searchValue);
-    const columnConditions = columnNames.map(column => `${column} LIKE '%${searchValue}%'`).join(' OR ')
-    // const finalConditions = columnConditions.slice(0, -3);
-    let queryString = `
-    SELECT TOP 10 diseases FROM Diseases
-    WHERE ${columnConditions}
-    `;
-
-    // console.log(queryString)
-
-    sql.connect(config, function (err) {
-        if (err) console.log(err)
-
-        var request = new sql.Request();
-        request.query(queryString, function (err, recordset) {
-            if (err) console.log(err)
-            // send records as a response
-            // console.log(recordset.recordset[0]);
-            let conditions = recordset.recordset;
-              // Sort items based on similarity score (higher score means more similar)
-            const sortedItems = conditions.sort((a, b) => stringSimilarity.compareTwoStrings(searchValue, b.diseases) - stringSimilarity.compareTwoStrings(searchValue, a.diseases));
-              
-              // Get the top 10 most similar items
-            res.json(sortedItems);    
-        }); 
-    })
-})
-
-app.get('/:id', checkPreviousVisit, addVisitToDatabase, (req, res) => {
+app.get('/:id', (req, res) => {
     id = req.params.id
     res.render('pages/index',{id: id})
 })
-
-
-app.get('/:id/:type/Discover', (req, res) => {
-    id = req.params.id
-    type = req.params.type
-
-    sql.connect(config, function (err) {
-
-        if (err) console.log(err);
-
-        // create Request object
-        var request = new sql.Request();
-
-        let queryString = `
-        UPDATE R24
-        SET Discover = 'clicked'
-        WHERE ID = '` + userInfo.ID + `' 
-        AND VisitNum = '` + userInfo.visitNum + `'`;
-        
-        // console.log(queryString)
-        request.query(queryString, function (err, recordset) {
-            if (err) console.log(err)
-            // send records as a response
-            // console.log("UPDATED! IN R24 TABLE:")
-            // console.log(recordset);
-        }); 
-    
-    });
-
-    res.render('pages/discover', {id: id, type: type})
-})
-
-function checkPreviousVisit(req, res, next) {
-    if (req.session.visitedIndex) {
-        next();
-        return;
-    }
-    var visitN = -1;
-    // console.log(userInfo);
-    sql.connect(config, function (err) {
-        var request = new sql.Request();
-        
-        // Query Check for Existing Entry In Table
-        let checkString = `
-        SELECT VisitNum FROM R24
-        WHERE ID = '` + req.params.id + `'
-        AND DateTime = (
-                SELECT max(DateTime)
-                FROM R24
-                WHERE ID = '` + req.params.id + `' 
-        )`
-        request.query(checkString, function(err, recordset) {
-            if (err) console.log(err);
-            // console.log("HERE")
-            // console.log(recordset.recordset);
-            // console.log(recordset.recordset.length);
-            if (recordset.recordset.length === 0) {
-                visitN = 0;
-            }
-            else {
-                visitN = recordset.recordset[0].VisitNum + 1;
-            }
-            visitNum = visitN;
-            userInfo['visitNum'] = visitNum;
-            next();
-        })
-    })
-
-}
-
-function addVisitToDatabase(req, res, next) {
-    // After first time, we mark visitedIndex as true, and then we don't want to do it again.
-    if (!req.session.visitedIndex) {
-        req.session.visitedIndex = true;
-    }
-    else {
-        next();
-        return;
-    }
-    id = req.params.id
-    type = req.params.type
-    if (!userInfo["ID"])
-        userInfo["ID"] = id;
-    if (!userInfo["VHType"])
-        userInfo["VHType"] = type;
-    sql.connect(config, function (err) {
-        var request = new sql.Request();
-        let queryString = `INSERT INTO R24 (ID, VisitNum, VHType) VALUES ('` + userInfo.ID + `',` + userInfo.visitNum + `,'` + userInfo.VHType + `')`;
-        // console.log(queryString);
-        request.query(queryString, function (err, recordset) {
-            if (err) console.log(err)
-        })
-    })
-    next()
-}
-
-
-// Potentially Deprecated
-function setVHType(req, res, next) {
-    if (req.session.visitedIndex) {
-        next();
-        return;
-    }
-    if (userInfo.P ===  'Text') {
-        userInfo['VHType'] = 'text';
-    }
-    else {
-        // Change Black/White to contains Black/White potentially (based on answers for Survey Item)
-        if (userInfo.G === 'Female' && userInfo.R ==='Black') {
-            userInfo['VHType'] = 'bfe'
-        }
-        else if (userInfo.G === 'Male' && userInfo.R ==='Black') {
-            userInfo['VHType'] = 'bme'
-        }
-        else if (userInfo.G === 'Female' && userInfo.R ==='White') {
-            userInfo['VHType'] = 'wfe'
-        }
-        else if (userInfo.G === 'Male' && userInfo.R ==='White') {
-            userInfo['VHType'] = 'wme'
-        } else {
-            userInfo['VHType'] = 'bfe'
-        }
-    }
-    next()
-}
-app.post('/:id/:type/RetrieveCities', (req, res) => {
-    // console.log("REQUEST PARAMS:")
-    // console.log(req.params)
-    id = req.params.id
-    type = req.params.type
-    let stateVal = (Object.entries(req.body)[0][1])
-    let cityVal =(Object.entries(req.body)[1][1])
-    // console.log(stateVal)
-    // console.log(cityVal)
-    // console.log(Object.entries(req.body)[1])
-    // console.log(searchValue);
-    const code = cityVal.charCodeAt(0)
-    let database = "StatesAndCitiesAG"
-    if ((code >= 97 && code <= 103) || (code >= 65 && code <= 71)) {
-        database = "StatesAndCitiesAG"
-    }
-    else if ((code >= 104 && code <= 111) || (code >= 72 && code <= 79)) {
-        database = "StatesAndCitiesHO"
-    }
-    else {
-        database = "StatesAndCitiesPZ"
-    }
-    
-    const queryString = `
-    SELECT * FROM ${database}
-    WHERE State = '${stateVal}' 
-    `;
-
-    sql.connect(config, function (err) {
-        if (err) console.log(err)
-
-        var request = new sql.Request();
-        request.query(queryString, function (err, recordset) {
-            if (err) console.log(err)
-            // send records as a response
-            // console.log(recordset.recordset[0]);
-            res.json(recordset.recordset);    
-        }); 
-    })
-});
-
-
-// Potentially Deprecated
-function extractInformation(req, res, next) {
-    if (req.session.visitedIndex) {
-        next();
-        return;
-    }
-    // fields is an array of objects formatted as such...
-    // {"ID" : id, "Gender" : gender, ... "Pref" : video}
-    var id = req.params.id;
-    var bytes = CryptoJS.AES.decrypt(id, process.env.DECRYPTION_KEY);
-    var fixedID = id.replaceAll("-","/");
-    var bytes = CryptoJS.AES.decrypt(fixedID, process.env.DECRYPTION_KEY);
-    var info = bytes.toString(CryptoJS.enc.Utf8);
-    var fields = [];
-
-    var numberOfStrings = 0;
-    var previousLocation = 0;
-    while (true) {
-        // Find "_" -- 3 cases.
-        let currentLocation = info.indexOf("_", previousLocation);
-        // Case 1: We're at the end of the string, in that case insert
-        // the remaining substring. This also accounts for if a user
-        // did not answer the question.
-        if (currentLocation === -1) {
-            let item = info.substring(previousLocation);
-            let field = orderOfInfo[numberOfStrings];
-            fields[field] = item;
-            break;
-        }
-        // Case 2: Two _'s next to each other -- the user skipped a question.
-        // Simply insert the proper field and a blank ""        
-        else if (currentLocation == previousLocation + 1) {
-            let field = orderOfInfo[numberOfStrings];
-            fields[field] = "";
-            numberOfStrings++;
-        }
-        // Case 3: Base case. User properly entered an answer for the field
-        // Grab the substring and insert into fields list.
-        else {
-            let item = info.substring(previousLocation, currentLocation);
-            let field = orderOfInfo[numberOfStrings];
-            fields[field] = item;
-            numberOfStrings++;
-        }
-        previousLocation = currentLocation + 1;
-    }
-    userInfo = fields;
-    userInfo['originalID'] = req.params.id
-    next();
-}
 
 // Virtual Human Types
 const EducationalComponentRouter = require('./routes/EducationalComponent');
@@ -353,5 +76,145 @@ app.use('/:id/EducationalComponent', function(req,res,next) {
 }, EducationalComponentRouter)
 
 
+async function UploadToDatabase(data) {
+
+    await connectToDatabase() ;
+
+    var participantData = {
+        ParticipantID: data.id,
+        Platform: data.platform,
+        OperatingSystem: data.operatingSystem,
+        Browser: data.browser,
+        CharacterSelected: data.type,
+        InterventionStartTime: data.InterventionStartTime,
+        InterventionEndTime: data.InterventionEndTime,
+        TotalTimeSpentOnIntervention: data.TotalTimeSpentOnIntervention,
+        NumberOfModulesInteracted: data.NumberOfModulesInteracted,
+        KidneyTransplantResponse: data.sliderResponse,
+        OverviewUsefulnessCheckinResponse: data.OverviewUsefulnessCheckInResponse,
+    };
+    
+    try {
+        var visitID = await addParticipantVisit(participantData);
+        console.log(participantData)
+        console.log(`Participant visit inserted with VisitID: ${visitID}`);
+
+        for (const [outerKey, outerValue] of Object.entries(JSON.parse(data.VideoArr))) {
+            if(outerKey == "subTopics" || outerKey === "quickAssessment"){
+                for(const [innerKey, innerValue] of Object.entries(outerValue)){
+                    tempData = innerValue;
+                    var pageVisitData = {
+                        PageName: innerKey,
+                        ParticipantID: data.id,
+                        VisitID: visitID,
+                        PageVisited: tempData.PageVisited,
+                        PageFirstVisitedTimeStamp: tempData.PageFirstVisitedTimeStamp,
+                        PageLastVisitedTimeStamp: tempData.PageLastVisitedTimeStamp,
+                        NumberOfTimesPageVisited: tempData.NumberOfTimesPageVisited,
+                        TimeSpentOnPage: tempData.TimeSpentOnPage,
+                        ActiveOrPassiveRedirectionToPage: tempData.ActiveOrPassiveRedirectionToPage,
+                        };
+                    await addPageVisit(pageVisitData);
+                }
+            }
+            else{
+                tempData = outerValue;
+                var pageVisitData = {
+                    PageName: outerKey,
+                    ParticipantID: data.id,
+                    VisitID: visitID,
+                    PageVisited: tempData.PageVisited,
+                    PageFirstVisitedTimeStamp: tempData.PageFirstVisitedTimeStamp,
+                    PageLastVisitedTimeStamp: tempData.PageLastVisitedTimeStamp,
+                    NumberOfTimesPageVisited: tempData.NumberOfTimesPageVisited,
+                    TimeSpentOnPage: tempData.TimeSpentOnPage,
+                    ActiveOrPassiveRedirectionToPage: tempData.ActiveOrPassiveRedirectionToPage,
+                    };
+                await addPageVisit(pageVisitData);
+            }
+        }
+        console.log('Page visit data inserted successfully.');
+    } catch (err) {
+        console.error('Error during data insertion: ', err);
+    } finally {
+        await closeDatabaseConnection();
+    }
+}
+
+// Set up an endpoint to trigger this function
+app.post('/submitData', (req, res) => {
+    try {
+        const requestData = req.body; // Access the data sent from the client
+        UploadToDatabase(requestData); // Pass the data to your function
+        res.send('Function executed successfully');
+    } catch (error) {
+        console.error('Error processing request:', error);
+        res.status(400).send('Error processing request');
+    }
+});
+
+async function addParticipantVisit(data) {
+    const { ParticipantID, Platform, OperatingSystem, Browser, CharacterSelected, InterventionStartTime, InterventionEndTime, TotalTimeSpentOnIntervention, NumberOfModulesInteracted, KidneyTransplantResponse, OverviewUsefulnessCheckinResponse } = data;
+  
+    const getNextVisitIDQuery = `SELECT COUNT(*) AS visitCount FROM ParticipantVisits WHERE ParticipantID = @ParticipantID`;
+  
+    try {
+      const request = new sql.Request();
+      request.input('ParticipantID', sql.VarChar, ParticipantID);
+      
+      const result = await request.query(getNextVisitIDQuery);
+      const VisitID = result.recordset[0].visitCount + 1;
+  
+      const insertQuery = `
+        INSERT INTO ParticipantVisits 
+        (ParticipantID, VisitID, Platform, OperatingSystem, Browser, CharacterSelected, InterventionStartTime, InterventionEndTime, TotalTimeSpentOnIntervention, NumberOfModulesInteracted, KidneyTransplantResponse, OverviewUsefulnessCheckinResponse) 
+        VALUES (@ParticipantID, @VisitID, @Platform, @OperatingSystem, @Browser, @CharacterSelected, @InterventionStartTime, @InterventionEndTime, @TotalTimeSpentOnIntervention, @NumberOfModulesInteracted, @KidneyTransplantResponse, @OverviewUsefulnessCheckinResponse)`;
+  
+      request.input('VisitID', sql.Int, VisitID);
+      request.input('Platform', sql.VarChar, Platform);
+      request.input('OperatingSystem', sql.VarChar, OperatingSystem);
+      request.input('Browser', sql.VarChar, Browser);
+      request.input('CharacterSelected', sql.VarChar, CharacterSelected);
+      request.input('InterventionStartTime', sql.DateTime, InterventionStartTime);
+      request.input('InterventionEndTime', sql.DateTime, InterventionEndTime);
+      request.input('TotalTimeSpentOnIntervention', sql.Int, TotalTimeSpentOnIntervention);
+      request.input('NumberOfModulesInteracted', sql.Int, NumberOfModulesInteracted);
+      request.input('KidneyTransplantResponse', sql.Int, KidneyTransplantResponse || null);
+      request.input('OverviewUsefulnessCheckinResponse', sql.VarChar, OverviewUsefulnessCheckinResponse || null);
+  
+      await request.query(insertQuery);
+      return VisitID;
+    } catch (err) {
+      console.error('Error inserting participant visit data: ', err);
+      throw err;
+    }
+  }
+  
+async function addPageVisit(data) {
+    const { ParticipantID, VisitID, PageName, PageVisited, PageFirstVisitedTimeStamp, PageLastVisitedTimeStamp, NumberOfTimesPageVisited, TimeSpentOnPage, ActiveOrPassiveRedirectionToPage } = data;
+
+    const insertQuery = `
+        INSERT INTO PageVisits 
+        (ParticipantID, VisitID, PageName, PageVisited, PageFirstVisitedTimeStamp, PageLastVisitedTimeStamp, NumberOfTimesPageVisited, TimeSpentOnPage, ActiveOrPassiveRedirectionToPage) 
+        VALUES (@ParticipantID, @VisitID, @PageName, @PageVisited, @PageFirstVisitedTimeStamp, @PageLastVisitedTimeStamp, @NumberOfTimesPageVisited, @TimeSpentOnPage, @ActiveOrPassiveRedirectionToPage)`;
+
+    try {
+        const request = new sql.Request();
+        request.input('ParticipantID', sql.VarChar, ParticipantID);
+        request.input('VisitID', sql.Int, VisitID);
+        request.input('PageName', sql.VarChar, PageName);
+        request.input('PageVisited', sql.Bit, PageVisited);
+        request.input('PageFirstVisitedTimeStamp', sql.DateTime, PageFirstVisitedTimeStamp || null);
+        request.input('PageLastVisitedTimeStamp', sql.DateTime, PageLastVisitedTimeStamp || null);
+        request.input('NumberOfTimesPageVisited', sql.Int, NumberOfTimesPageVisited);
+        request.input('TimeSpentOnPage', sql.Int, TimeSpentOnPage || null);
+        request.input('ActiveOrPassiveRedirectionToPage', sql.VarChar, ActiveOrPassiveRedirectionToPage || null);
+
+        await request.query(insertQuery);
+    } catch (err) {
+        console.error('Error inserting page visit data: ', err);
+        throw err;
+    }
+}
 
 app.listen(process.env.PORT || 3000);

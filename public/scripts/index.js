@@ -1,8 +1,10 @@
 let HomepageVisitTimeStamp = Date.now();
-let PageName = "Homepage"
+let PageName = "Homepage";
 
-window.addEventListener("load", () => {
-    clearSessionStorageAfterXHours();
+
+
+ window.addEventListener("load", async() => {
+    await clearSessionStorageAfterXHours();
     // console.log("SAVING SESSION INFO LOCALLY")
     // console.log(document.URL)
 
@@ -10,38 +12,6 @@ window.addEventListener("load", () => {
     let dateTime = ""
     // var type = document.URL.split('/').reverse()[0]
     // var id = document.URL.split('/').reverse()[1]
-
-    // sessionStorage.clear()
-    // sessionStorage.setItem("id", id)
-    // sessionStorage.setItem("type", type)
-
-    // additionalInformationTopics = {
-    //     "Benefits of kidney transplant": false,
-    //     "Who can get a kidney transplant": false,
-    //     "The transplant work-up": false,
-    //     "Overview - The waiting list": false,
-    //     "Living donor transplant": false,
-    //     "Getting a transplant sooner": false,
-    //     "How long do kidney transplants last": false,
-    //     "The risks of kidney transplant": false,
-    //     "Choosing a transplant center": false,
-    //     "Who can be a living kidney donor": false,
-    //     "Talking to your doctor": false
-    // };
-    // sessionStorage.setItem('additionalInformationTopics', JSON.stringify(additionalInformationTopics));
-
-    // // (B1) PARSE USER AGENT
-    // browserInfo = navigator.userAgent;
-    // // console.log(browserInfo)
-
-    // // console.log("TIME")
-    // dateTime = new Date().toLocaleString() + " " + Intl.DateTimeFormat().resolvedOptions().timeZone;
-    // sessionStorage.setItem('startTime', Date.now());
-
-    // sessionStorage.setItem('TotalTimeSpentOnIntervention', 0)
-
-    // console.log(dateTime)
-   // sendGeneralData(browserInfo, dateTime)
 });
 
 async function sendGeneralData(browserInfo, dateTime) {
@@ -118,8 +88,10 @@ function ContinueOrResetSession(character){
         dateTime = new Date().toLocaleString() + " " + Intl.DateTimeFormat().resolvedOptions().timeZone;
         sessionStorage.setItem('startTime', Date.now());
 
-        sessionStorage.setItem('TotalTimeSpentOnIntervention', 0)
+        sessionStorage.setItem('TotalTimeSpentOnIntervention', 0);
         sessionStorage.setItem('InterventionStartTime', new Date(HomepageVisitTimeStamp).toISOString().slice(0, 19).replace('T', ' '))
+        sessionStorage.setItem('NumberOfModulesInteracted', 0);
+        setDeviceDetails();
         setSessionStorageSetupTime();
     }
     CreateVideoDataArray();
@@ -308,12 +280,21 @@ function CreateVideoDataArray(){
     }
 }
 
-function clearSessionStorageAfterXHours(hours = 5){
+async function clearSessionStorageAfterXHours(hours = 5){
     var now = new Date().getTime();
     var setupTime = sessionStorage.getItem('setupTime');
     if (setupTime === null || (now-setupTime > hours*60*60*1000)) {
+        const response = await fetch('/submitData', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json' // Specify content type as JSON
+            },
+            body: JSON.stringify(sessionStorage)
+        });
         sessionStorage.clear();
+        return response
     } 
+    return -1
 }
 
 function setSessionStorageSetupTime(){
@@ -323,4 +304,12 @@ function setSessionStorageSetupTime(){
 
 function LogTimeSpendOnPage(){
     console.log("hello")
+}
+
+function setDeviceDetails(){
+    const userAgent = navigator.userAgent;
+    const { platform, operatingSystem, browser } = parseUserAgent(userAgent);
+    sessionStorage.setItem("platform", platform);
+    sessionStorage.setItem("operatingSystem", operatingSystem);
+    sessionStorage.setItem("browser", browser);
 }

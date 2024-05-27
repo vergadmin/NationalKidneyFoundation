@@ -315,10 +315,13 @@ async function ResetSession() {
   sessionStorage.setItem("EndTime", Date.now())
   var response = await SendParticipantDataToServer(JSON.parse(sessionStorage.getItem("VideoArr")))
 
-  if(response){
+  if(response.status === 200){
     console.log("Now Exit",Date.now());
     sessionStorage.clear();
     window.location.href = `https://wharton.qualtrics.com/jfe/form/SV_ah5rKWqpP5xIn78?ID=${id}`;
+  }
+  else{
+    document.getElementsByClassName("finish")[0].disabled = false;
   }
 }
 
