@@ -56,11 +56,21 @@ async function sendGeneralData(browserInfo, dateTime) {
 //     console.log("Session Reset!")
 // }
 
-function ContinueOrResetSession(character){
+async function ContinueOrResetSession(character){
     console.log(character !== sessionStorage.getItem("type"))
     // var type = document.URL.split('/').reverse()[0]
     var id = document.URL.split('/').reverse()[1]
     if(character !== sessionStorage.getItem("type")){    
+        if(sessionStorage.getItem('setupTime') !== null){
+            sessionStorage.setItem('InterventionEndTime', new Date().toISOString().slice(0, 19).replace('T', ' '));
+            await fetch('/submitData', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json' // Specify content type as JSON
+                },
+                body: JSON.stringify(sessionStorage)
+            });
+        }
         sessionStorage.clear()
         sessionStorage.setItem("id", id)
         sessionStorage.setItem("type", character)
@@ -285,6 +295,7 @@ async function clearSessionStorageAfterXHours(hours = 5){
     var setupTime = sessionStorage.getItem('setupTime');
     if (setupTime === null || (now-setupTime > hours*60*60*1000)) {
         if(setupTime !== null){
+            sessionStorage.setItem('InterventionEndTime', new Date().toISOString().slice(0, 19).replace('T', ' '));
             const response = await fetch('/submitData', {
                 method: 'POST',
                 headers: {
