@@ -3,7 +3,8 @@ var slider = document.getElementById("slider");
 // Get the span element that will display the slider value
 var sliderNumber = document.getElementById("slider-number");
 var sliderValue = parseInt(sessionStorage.getItem("sliderResponse"));
-if (sliderValue !== null) {
+
+if (sessionStorage.getItem("sliderResponse")) {
   slider.value = sliderValue;
   UpdateSliderValue();
 }
