@@ -100,7 +100,7 @@ async function UploadToDatabase(data) {
         console.log(`Participant visit inserted with VisitID: ${visitID}`);
 
         for (const [outerKey, outerValue] of Object.entries(JSON.parse(data.VideoArr))) {
-            if(outerKey == "subTopics" || outerKey === "quickAssessment"){
+            if(outerKey === "subTopics" || outerKey === "quickAssessment"){
                 for(const [innerKey, innerValue] of Object.entries(outerValue)){
                     tempData = innerValue;
                     var pageVisitData = {
@@ -114,6 +114,9 @@ async function UploadToDatabase(data) {
                         TimeSpentOnPage: tempData.TimeSpentOnPage,
                         ActiveOrPassiveRedirectionToPage: tempData.ActiveOrPassiveRedirectionToPage,
                         };
+                    if(outerKey === "subTopics"){
+                        pageVisitData.MoreInformationRequested = data.additionalInformationTopics[innerKey];
+                    }
                     await addPageVisit(pageVisitData);
                 }
             }
@@ -189,14 +192,13 @@ async function addParticipantVisit(data) {
       throw err;
     }
   }
-  
-async function addPageVisit(data) {
-    const { ParticipantID, VisitID, PageName, PageVisited, PageFirstVisitedTimeStamp, PageLastVisitedTimeStamp, NumberOfTimesPageVisited, TimeSpentOnPage, ActiveOrPassiveRedirectionToPage } = data;
+  async function addPageVisit(data) {
+    const { ParticipantID, VisitID, PageName, PageVisited, PageFirstVisitedTimeStamp, PageLastVisitedTimeStamp, NumberOfTimesPageVisited, TimeSpentOnPage, ActiveOrPassiveRedirectionToPage, MoreInformationRequested } = data;
 
     const insertQuery = `
         INSERT INTO PageVisits 
-        (ParticipantID, VisitID, PageName, PageVisited, PageFirstVisitedTimeStamp, PageLastVisitedTimeStamp, NumberOfTimesPageVisited, TimeSpentOnPage, ActiveOrPassiveRedirectionToPage) 
-        VALUES (@ParticipantID, @VisitID, @PageName, @PageVisited, @PageFirstVisitedTimeStamp, @PageLastVisitedTimeStamp, @NumberOfTimesPageVisited, @TimeSpentOnPage, @ActiveOrPassiveRedirectionToPage)`;
+        (ParticipantID, VisitID, PageName, PageVisited, PageFirstVisitedTimeStamp, PageLastVisitedTimeStamp, NumberOfTimesPageVisited, TimeSpentOnPage, ActiveOrPassiveRedirectionToPage, MoreInformationRequested) 
+        VALUES (@ParticipantID, @VisitID, @PageName, @PageVisited, @PageFirstVisitedTimeStamp, @PageLastVisitedTimeStamp, @NumberOfTimesPageVisited, @TimeSpentOnPage, @ActiveOrPassiveRedirectionToPage, @MoreInformationRequested)`;
 
     try {
         const request = new sql.Request();
@@ -204,11 +206,12 @@ async function addPageVisit(data) {
         request.input('VisitID', sql.Int, VisitID);
         request.input('PageName', sql.VarChar, PageName);
         request.input('PageVisited', sql.Bit, PageVisited);
-        request.input('PageFirstVisitedTimeStamp', sql.DateTime, PageFirstVisitedTimeStamp || null);
-        request.input('PageLastVisitedTimeStamp', sql.DateTime, PageLastVisitedTimeStamp || null);
+        request.input('PageFirstVisitedTimeStamp', sql.DateTime, PageFirstVisitedTimeStamp);
+        request.input('PageLastVisitedTimeStamp', sql.DateTime, PageLastVisitedTimeStamp);
         request.input('NumberOfTimesPageVisited', sql.Int, NumberOfTimesPageVisited);
-        request.input('TimeSpentOnPage', sql.Int, TimeSpentOnPage || null);
-        request.input('ActiveOrPassiveRedirectionToPage', sql.VarChar, ActiveOrPassiveRedirectionToPage || null);
+        request.input('TimeSpentOnPage', sql.Int, TimeSpentOnPage);
+        request.input('ActiveOrPassiveRedirectionToPage', sql.VarChar, ActiveOrPassiveRedirectionToPage);
+        request.input('MoreInformationRequested', sql.Bit, MoreInformationRequested || null);
 
         await request.query(insertQuery);
     } catch (err) {
