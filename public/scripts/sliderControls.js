@@ -3,10 +3,10 @@ var slider = document.getElementById("slider");
 // Get the span element that will display the slider value
 var sliderNumber = document.getElementById("slider-number");
 var sliderValue = parseInt(sessionStorage.getItem("sliderResponse"));
-// if (sliderValue !== null) {
-//   slider.value = sliderValue;
-//   UpdateSliderValue();
-// }
+if (sliderValue !== null) {
+  slider.value = sliderValue;
+  UpdateSliderValue();
+}
 
 // Update the slider value display when the slider is moved
 function UpdateSliderValue() {
