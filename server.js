@@ -115,7 +115,7 @@ async function UploadToDatabase(data) {
                         ActiveOrPassiveRedirectionToPage: tempData.ActiveOrPassiveRedirectionToPage,
                         };
                     if(outerKey === "subTopics"){
-                        pageVisitData.MoreInformationRequested = data.additionalInformationTopics[innerKey];
+                        pageVisitData.MoreInformationRequested = JSON.parse(data.additionalInformationTopics)[innerKey];
                     }
                     await addPageVisit(pageVisitData);
                 }
