@@ -1,5 +1,6 @@
 const express = require('express')
 const session = require('express-session');
+const cors = require('cors');
 const stringSimilarity = require('string-similarity');
 
 const app = express()
@@ -10,6 +11,7 @@ require('dotenv').config()
 
 app.set('view engine', 'ejs')
 app.use(express.static(__dirname + '/public'));
+app.use(cors());
 app.use(express.json())
 var sql = require("mssql");
 
