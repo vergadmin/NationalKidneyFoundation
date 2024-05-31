@@ -93,15 +93,17 @@ myVideo.onended = function (e) {
     }
   }
   else if (PageName === "quickAssessment") {
-    nextButton.style.display = "block";
+    if(moduleName === "main"){
+      nextButton.style.display = "block";
+    }
+    else{
+      PreviousNextButtonFunction(1,false);
+      document.getElementsByClassName('slider-container')[0].style.display = "none";
+    }
   }
   else if (PageName === "Introduction") {
     PreviousNextButtonFunction(1,false);
     document.getElementsByClassName('slider-container')[0].style.display = "flex";
-  }
-  else if (PageName.startsWith("quickAssessmentResponse")) {
-    PreviousNextButtonFunction(1,false);
-    document.getElementsByClassName('slider-container')[0].style.display = "none";
   }
   pauseButton.textContent = "Play";
   // if(PageName === "Introduction"){
@@ -244,6 +246,7 @@ function PreviousNextButtonFunction(action, activeTrigger = null) {
       // document.getElementsByClassName('container')[0].style.display = "none";
       document.getElementsByClassName('end-container')[0].style.display = "flex";
       UpdateTitle("Selected Topics")
+      document.getElementsByClassName('video-controls')[0].style.display = "none";
 
       var container = document.getElementById('selected-topics');
 
@@ -274,6 +277,7 @@ function PreviousNextButtonFunction(action, activeTrigger = null) {
     else {
       // document.getElementsByClassName('container')[0].style.display = "block";
       document.getElementsByClassName('end-container')[0].style.display = "none";
+      document.getElementsByClassName('video-controls')[0].style.display = "flex";
     }
 
     // //Needs to be changed.
