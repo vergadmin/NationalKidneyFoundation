@@ -136,7 +136,7 @@ playButton.addEventListener("click", function () {
 //VideoUpdater Function / Autoplay Video
 function UpdateVideo(videoUrl) {
   myVideo.getElementsByTagName("source")[0].setAttribute('src', videoUrl);
-  // myVideo.getElementsByTagName("track")[0].setAttribute('src', videoUrl.substr(0, videoUrl.lastIndexOf('.')) + ".vtt")
+  myVideo.getElementsByTagName("track")[0].setAttribute('src', videoUrl.substr(0, videoUrl.lastIndexOf('.')) + ".vtt")
   myVideo.load();
   myVideo.play().catch(function() {
     //Ignore the Uncaught (in promise) error.
