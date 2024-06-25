@@ -68,6 +68,8 @@ app.get('/:id', (req, res) => {
     res.render('pages/index',{id: id})
 })
 
+app.get('/favicon.ico', (req, res) => res.status(204));
+
 // Virtual Human Types
 const EducationalComponentRouter = require('./routes/EducationalComponent');
 app.use('/:id/EducationalComponent', function(req,res,next) {
