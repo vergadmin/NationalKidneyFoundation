@@ -321,8 +321,9 @@ async function ResetSession() {
 
   if(response.status === 200){
     console.log("Now Exit",Date.now());
+    var participantID = sessionStorage.getItem("id")
     sessionStorage.clear();
-    window.location.href = `https://wharton.qualtrics.com/jfe/form/SV_ah5rKWqpP5xIn78?ID=${id}`;
+    window.location.href = `https://wharton.qualtrics.com/jfe/form/SV_ah5rKWqpP5xIn78?ID=${participantID}`;
   }
   else{
     document.getElementsByClassName("finish")[0].disabled = false;
