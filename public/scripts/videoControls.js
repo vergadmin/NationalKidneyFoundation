@@ -323,7 +323,12 @@ async function ResetSession() {
     console.log("Now Exit",Date.now());
     var participantID = sessionStorage.getItem("id")
     sessionStorage.clear();
+    if(participantID === "testid"){
+      window.location.href = `https://google.com/`;
+    }
+    else{
     window.location.href = `https://wharton.qualtrics.com/jfe/form/SV_ah5rKWqpP5xIn78?ID=${participantID}`;
+    }
   }
   else{
     document.getElementsByClassName("finish")[0].disabled = false;
