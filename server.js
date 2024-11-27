@@ -79,6 +79,9 @@ app.use('/:id/EducationalComponent', function(req,res,next) {
     next();
 }, EducationalComponentRouter)
 
+const downloadRouter = require('./routes/DataDownloadComponent');
+app.use('/download', downloadRouter);
+
 
 async function UploadToDatabase(data) {
 
