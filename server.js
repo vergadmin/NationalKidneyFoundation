@@ -63,7 +63,7 @@ app.use(session({
     }
 }))
 
-app.get('/:id', (req, res) => {
+app.get('/', (req, res) => {
     id = req.params.id
     res.render('pages/index',{id: id})
 })
@@ -72,7 +72,7 @@ app.get('/favicon.ico', (req, res) => res.status(204));
 
 // Virtual Human Types
 const EducationalComponentRouter = require('./routes/EducationalComponent');
-app.use('/:id/EducationalComponent', function(req,res,next) {
+app.use('/EducationalComponent', function(req,res,next) {
     req.id = id;
     //req.type = type
     req.userInfo = userInfo

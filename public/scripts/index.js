@@ -59,7 +59,25 @@ async function sendGeneralData(browserInfo, dateTime) {
 async function ContinueOrResetSession(character){
     console.log(character !== sessionStorage.getItem("type"))
     // var type = document.URL.split('/').reverse()[0]
-    var id = document.URL.split('/').reverse()[1]
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const userLanguage = urlParams.get('language');
+    if(userLanguage){
+        sessionStorage.setItem('language',userLanguage);
+    }
+    else{ 
+        sessionStorage.setItem('language',"EN");
+    }
+
+    const ParticipantID = urlParams.get("ParticipantID");
+    if(ParticipantID){
+        sessionStorage.setItem("id", ParticipantID);
+    }
+    else{
+        sessionStorage.setItem("id", "testid");
+    }
+    var id = sessionStorage.getItem("id");
+
     if(character !== sessionStorage.getItem("type")){    
         if(sessionStorage.getItem('setupTime') !== null){
             await fetch('/submitData', {
@@ -105,7 +123,8 @@ async function ContinueOrResetSession(character){
     }
     CreateVideoDataArray();
     logActiveTriggerOrNot('Introduction', moduleName = null, activeTrigger = true)
-    window.location.href=`/${id}/EducationalComponent/${character}/Introduction`
+
+    window.location.href=`/EducationalComponent/${character}/Introduction/` + (urlParams.toString() ? '?' + urlParams.toString() : '');
 }
 
 function CreateVideoDataArray(){

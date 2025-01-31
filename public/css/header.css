@@ -28,3 +28,28 @@
     }
 }
 
+#home-btn{
+    font-size: 56px !important; 
+    color: navy;
+    text-align: center;
+    cursor: pointer;
+}
+
+#summary-btn{
+    font-size: 56px !important; 
+    color:#F15E22;
+    text-align: center;
+    cursor: pointer;
+}
+
+@media only screen and (max-width: 768px) {
+    #home-btn{
+        font-size: 36px !important; 
+        color: navy;
+    }
+
+    #summary-btn{
+        font-size: 36px !important; 
+        color:#F15E22;
+    }
+  }

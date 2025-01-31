@@ -1,6 +1,12 @@
 video {
-    width: 100vw;
+    width:60vw;
 }
+
+@media only screen and (max-width: 768px) {
+    video {
+        width: 100vw;
+    }
+  }
 
 .title {
     font-size: 35px !important;
@@ -83,9 +89,16 @@ button{
 
 .video-wrapper {
     position: relative;
-    width: 100vw;
+    width: 60vw;
     background-color: rgba(0, 0, 0, 0); /* Adjust the opacity as needed */
+    margin: auto;
 }
+
+@media only screen and (max-width: 768px) {
+    .video-wrapper {
+        width: 100vw;
+    }
+  }
 
 
 #playButton {

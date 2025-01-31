@@ -5,6 +5,8 @@ var nextPage = document.body.getAttribute("next-page-variable");
 var playButton = document.getElementById("playButton");
 var VideoArrayIndex = 1;
 
+const urlParams = new URLSearchParams(window.location.search);
+
 ifInvalidSessionTaketoHomePage();
 
 // if(sessionStorage.getItem("VideoArrIndex") === null){
@@ -188,7 +190,7 @@ function PreviousNextButtonFunction(action, activeTrigger = null) {
 
     if (PageName === "Homepage") {
       logActiveTriggerOrNot(PageName, moduleName = null, activeTrigger = true);
-      window.location.href = `/${id}/`
+      window.location.href = `/` + (urlParams.toString() ? '?' + urlParams.toString() : '');
     }
     else if (PageName === "quickAssessment") {
       UpdateVideo(VideoArray[PageName]['main'].VideoURL)
@@ -360,13 +362,13 @@ function TakeToSummaryPage(){
 
 function TakeToHomePage(){
   logActiveTriggerOrNot('Homepage', moduleName = null, activeTrigger = true)
-  window.location.href = `/${id}/`
+  window.location.href = `/` + (urlParams.toString() ? '?' + urlParams.toString() : '');
 }
 
 function ifInvalidSessionTaketoHomePage(hours = 5){
   var now = new Date().getTime();
   var setupTime = sessionStorage.getItem('setupTime');
   if (setupTime === null || (now-setupTime > hours*60*60*1000)) {
-    window.location.href = `/${id}/`;
+    window.location.href = `/` + (urlParams.toString() ? '?' + urlParams.toString() : '');
   } 
 }
