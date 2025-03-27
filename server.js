@@ -9,6 +9,13 @@ const CryptoJS = require("crypto-js");
 require('dotenv').config()
 // console.log(process.env)
 
+const { OpenAI } = require("openai");
+
+const openai = new OpenAI({
+  // replace your-api-key with your API key from ChatGPT
+  apiKey: process.env.OPENAI_API_KEY
+})
+
 app.set('view engine', 'ejs')
 app.use(express.static(__dirname + '/public'));
 app.use(cors());
@@ -226,5 +233,228 @@ async function addParticipantVisit(data) {
         throw err;
     }
 }
+
+
+
+app.post('/OpenAIRedactedText', async (req, res)=> {
+    try {
+        const completion = await openai.chat.completions.create({
+          model: process.env.COMPLETIONS_MODEL,
+          messages: [
+              { role: "system", 
+                content: 
+                `
+                You are a text processing assistant. Your task is to redact any personally identifiable information (PII) that belongs to the user who wrote the message, and then return the processed text in JSON format. Specifically:
+  
+                What to Redact: Remove (replace with "[redacted]") any PII belonging to the user, including:
+  
+                The user’s own name, email address, phone number, physical address, or any other contact details.
+                The user’s government ID numbers (such as passport or Social Security).
+                The user’s financial information (credit card numbers, bank account information, etc.).
+                What NOT to Redact: Do NOT remove references to other people or other names that are not the user’s. For example, if the text says “Hey John,” and “John” is not the user, do not redact it.
+  
+                Output Format:
+  
+                Return a JSON object with two keys:
+                "redacted_text": the input text but with the user’s PII replaced by "[redacted]".
+                "is_redacted": a boolean that is true if any user PII was redacted, and false otherwise.
+                Examples:
+  
+                If the input is "Hi, my name is Danish.", then the output JSON should be: { "redacted_text": "Hi, my name is [redacted].", "is_redacted": true }
+                If the input is "Hey John, how have you been?", then the output JSON should be: { "redacted_text": "Hey John, how have you been?", "is_redacted": false }
+                If the input is "Here’s my phone number: 123-456-7890.", then the output JSON should be: { "redacted_text": "Here’s my phone number: [redacted].", "is_redacted": true }
+                If the input is "Contact me at [email protected].", then the output JSON should be: { "redacted_text": "Contact me at [redacted].", "is_redacted": true }
+                `
+               },
+              {
+                  role: "user",
+                  content: req.body.TextToBeRedacted,
+              },
+          ],
+          response_format:{ "type": "json_object" },
+      });      
+  
+      res.status(200).json({message: completion.choices[0].message.content})
+    } catch(e) {
+        res.status(400).json({message: e.message})
+    }
+  })
+
+  app.post('/OpenAIChatNephrologist', async (req, res)=> {
+    try {
+          contentMessage = 
+          `
+          You are in a chat with:
+  
+          userMessage (the patient), who has Chronic Kidney Disease (CKD).
+          You (Dr. Alex, the Nephrologist), who works at a local hospital.
+          Your instructions:
+  
+          Use the conversation history (an array of JSON messages) but focus on the most recent userMessage in the last JSON of the array.
+          Provide a concise, accurate answer (under 150 words) as a nephrologist would, addressing the user's latest question.
+          Respond only if the question is clearly addressed to you (Dr. Alex). If it's directed to someone else, do not answer.
+          Write in a casual, chat-like tone (like on iMessage or WhatsApp), but still sound professional enough for your role as a nephrologist.
+          Return your response in the following JSON format:
+          { "answer": "Your answer here (under 150 words).", "sources": [ "https://actual-site-or-article-link.com", "https://another-real-site-or-article-link.com" ], "follow_up_questions": [ "Question 1 (somewhat related)", "Question 2 (somewhat related)", "Question 3 (goes deeper)", "Question 4 (goes deeper)", "Question 5 (different CKD topic)" ] }
+  
+          Details on follow_up_questions:
+  
+          They must all be framed from the user's perspective trying to gain more insight, tips etc that could be of help to them.
+  
+  
+          They should all relate to Chronic Kidney Disease (CKD).
+          The first two questions tie in somewhat with the latest user question.
+          The third and fourth questions explore the same topic in more depth.
+          The fifth question introduces a different CKD topic that may interest the user.
+          Remember:
+  
+          Do not answer if the user's latest message isn't for you.
+          Make sure your sources are legitimate (no fake or placeholder URLs).
+          Keep your “answer” field under 150 words.
+          `
+
+        const completion = await openai.chat.completions.create({
+          model: process.env.COMPLETIONS_MODEL,
+          messages: [
+              { role: "system", 
+                content: contentMessage,
+               },
+              {
+                  role: "user",
+                  content: req.body.conversationHistorySoFar,
+              },
+          ],
+          response_format:{ "type": "json_object" },
+      });      
+  
+      res.status(200).json({message: completion.choices[0].message.content})
+    } catch(e) {
+        res.status(400).json({message: e.message})
+    }
+  })
+
+
+  app.post('/OpenAIPuncatuateText', async (req, res)=> {
+    try {
+        const completion = await openai.chat.completions.create({
+          model: process.env.COMPLETIONS_MODEL,
+          messages: [
+              { role: "system", 
+                content: 
+                `
+                You are a text-processing assistant. Your role is to take the text the user provides, add or correct any punctuation as needed, and then return the result in JSON format. Specifically:
+  
+                Punctuation Rules:
+  
+                Preserve the original meaning, wording, and structure of the text.
+                Only add, remove, or adjust punctuation (for example, periods, commas, question marks, exclamation marks) to ensure the text is properly punctuated.
+                Do not modify the text’s content beyond punctuation changes (i.e., do not add or remove words unless punctuation rules require minor spacing changes).
+                Output Format:
+  
+                Return a JSON object with two fields:
+                "punctuated_text": the text after adding or correcting punctuation.
+                "is_punctuated": a boolean that is true if the text required any punctuation changes, and false otherwise.
+                Examples:
+  
+                Example 1:
+                Input: "Tell me something about kidney transplant"
+                Output JSON: { "punctuated_text": "Tell me something about kidney transplant.", "is_punctuated": true }
+                Example 2:
+                Input: "Hello! How are you doing?"
+                Output JSON: { "punctuated_text": "Hello! How are you doing?", "is_punctuated": false }
+                `
+               },
+              {
+                  role: "user",
+                  content: req.body.TextToBePunctuated,
+              },
+          ],
+          response_format:{ "type": "json_object" },
+      });      
+  
+      res.status(200).json({message: completion.choices[0].message.content})
+    } catch(e) {
+        res.status(400).json({message: e.message})
+    }
+  })
+
+
+  app.get("/OpenAIVoiceNephrologistStream", async (req, res) => {
+    const message = req.query.Message; // Get the message from the query parameter
+  
+    if (!message) {
+      return res.status(400).send("Missing 'Message' parameter");
+    }
+  
+    try {
+      const response = await openai.audio.speech.create({
+        model: "tts-1",
+        voice: "ash",
+        input: message,
+        format: "opus",
+      });
+  
+      res.writeHead(200, {
+        "Content-Type": "audio/ogg",
+        "Transfer-Encoding": "chunked",
+      });
+  
+      const readableStream = response.body;
+      readableStream.pipe(res);
+  
+      readableStream.on("end", () => {
+        // console.log("Stream ended.");
+        res.end();
+      });
+  
+      readableStream.on("error", (e) => {
+        console.error("Error streaming TTS:", e);
+        res.end();
+      });
+    } catch (error) {
+      console.error("Error generating speech:", error);
+      res.status(500).send("Error processing request");
+    }
+  });
+
+  app.post('/OpenAIBoldQuestions', async (req, res)=> {
+    try {
+        const completion = await openai.chat.completions.create({
+          model: process.env.COMPLETIONS_MODEL,
+          messages: [
+              { role: "system", 
+                content: 
+                `
+                You are a transformation assistant. Your goal is to:
+  
+                Take an array of questions (strings).
+                For each question:
+                Identify the core terms or phrases that should be emphasized in bold (using <strong>...</strong>).
+                Wrap the entire question in a <p>...</p> element.
+                Return your result as valid JSON with a top-level key "questions", whose value is an array of these HTML-formatted strings.
+                Example:
+  
+                Input (array of questions):
+                [ "What are the signs of fluid overload?", "How much fluid can I safely drink daily?", "What role does diet play in fluid management?" ]
+  
+                Output:
+                { "questions": [ "<p>What are the signs of <strong>fluid overload</strong>?</p>", "<p>How much <strong>fluid</strong> can I <strong>safely drink</strong> daily?</p>", "<p>What role does <strong>diet</strong> play in <strong>fluid management</strong>?</p>" ] }
+  
+                Only bold the key terms (e.g., “fluid,” “overload,” “safely drink,” “diet,” etc.). If no key terms need emphasis, just wrap the question in <p> tags without adding bold tags. Ensure the returned JSON is valid and properly structured.
+                `
+               },
+              {
+                  role: "user",
+                  content: req.body.QuestionsArray,
+              },
+          ],
+          response_format:{ "type": "json_object" },
+      });      
+  
+      res.status(200).json({message: completion.choices[0].message.content})
+    } catch(e) {
+        res.status(400).json({message: e.message})
+    }
+  })
 
 app.listen(process.env.PORT || 3000);

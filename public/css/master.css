@@ -21,8 +21,7 @@ a {
 button {
     background-color: #015495;
     padding: 15px;
-    border: 0px;
-    border-radius: 11px;
+    border: none;
     color: white;
     font-size: 21px;
     transition: .2s ease-in-out;

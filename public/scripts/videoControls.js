@@ -4,6 +4,23 @@ var type = document.body.getAttribute("type-variable");
 var nextPage = document.body.getAttribute("next-page-variable");
 var playButton = document.getElementById("playButton");
 var VideoArrayIndex = 1;
+var hasPlayedChatbotInitVideo = false;
+var chatbotVideo = document.getElementById("chatgptVideo");
+
+
+const userInput = document.getElementById('user-input');
+const sendButton = document.getElementById('send-btn');
+const micButton = document.getElementById('mic-toggleButton');
+
+function enableInput() {
+    userInput.disabled = false;
+    sendButton.disabled = false;
+    micButton.disabled = false;
+}
+
+function clearUserInput(){
+  userInput.value = ''; // Clear input field after sending message
+}
 
 const urlParams = new URLSearchParams(window.location.search);
 
@@ -43,17 +60,14 @@ pauseButton.addEventListener("click", function () {
   if (myVideo.paused) {
     myVideo.play();
     pauseButton.textContent = "Pause";
-    if (PageName === "Introduction") {
       playButton.style.display = "none";
       playButton.parentElement.style.backgroundColor = "transparent";
-    }
   } else {
     myVideo.pause();
     pauseButton.textContent = "Play";
-    if (PageName === "Introduction") {
       playButton.style.display = "flex";
       playButton.parentElement.style.backgroundColor = "rgba(0, 0, 0, 0.75)";
-    }
+      playButton.innerText="Play"
   }
 });
 
@@ -69,12 +83,8 @@ rewindButton.addEventListener("click", function () {
 //OnEnded Function for autoplay video sequence
 myVideo.onended = function (e) {
   if (PageName === "subTopics") {
-    if (moduleName === "Talking to your doctor") {
-      if (myVideo.getElementsByTagName("source")[0].getAttribute('src') !==
-        `https://national-kidney-foundation.s3.amazonaws.com/${type}/talkingToYourDoctor.mp4`) {
-        PreviousNextButtonFunction(1, false);
-      }
-      else {
+    if (moduleName === "Talking to your doctor" && myVideo.getElementsByTagName("source")[0].getAttribute('src') ===
+    `https://national-kidney-foundation.s3.amazonaws.com/${type}/talkingToYourDoctor.mp4`) {
         var sliderValueForEndPage = parseInt(sessionStorage.getItem("sliderResponse"))
         if (sliderValueForEndPage >= 70) {
           UpdateVideo(`https://national-kidney-foundation.s3.amazonaws.com/${type}/endOfMeetingResponse1.mp4`)
@@ -84,14 +94,12 @@ myVideo.onended = function (e) {
         }
         nextButton.style.display = "block";
       }
-
-    }
     else if (moduleName === "Overview - The waiting list" && myVideo.getElementsByTagName("source")[0].getAttribute('src') ===
       `https://national-kidney-foundation.s3.amazonaws.com/${type}/overviewTransplantWaitingList.mp4`) {
       document.getElementsByClassName('overview-buttons')[0].style.display = "block";
     }
     else {
-      SwitchSubTopicVideo(1,false);
+      showChatInterface(moduleName);
     }
   }
   else if (PageName === "quickAssessment") {
@@ -112,6 +120,65 @@ myVideo.onended = function (e) {
   //   playButton.style.display = "flex";
   //   playButton.parentElement.style.backgroundColor = "rgba(0, 0, 0, 0.75)";
   // }
+
+  playButton.style.display = "flex";
+  playButton.parentElement.style.backgroundColor = "rgba(0, 0, 0, 0.75)";
+  playButton.innerText = "Replay";
+}
+
+function ShowAndPlayChatbotInitVideo(source){
+  HideElement("generatedVideo");
+  ShowElement('chatgptVideo', "flex");
+  chatbotVideo.src = source;
+  chatbotVideo.loop = false;
+  chatbotVideo.play();
+}
+
+function StopAndHideChatbotVideoAndAudio(){
+  const chatbotVideo = document.getElementById("chatgptVideo");
+  chatbotVideo.pause();
+
+  const chatbotAudio = document.getElementById('tts-audio-player');
+  chatbotAudio.pause();
+
+  enableInput();
+  clearUserInput();
+
+  HideElement("chatgptVideo");
+  ShowElement("generatedVideo", "flex");
+}
+
+function showChatInterface(module){
+  var module = String(module);
+
+  if(!hasPlayedChatbotInitVideo || Math.random() <= 0.3){
+    ShowAndPlayChatbotInitVideo(`https://national-kidney-foundation.s3.amazonaws.com/${type}/chatbotVideo.mp4`);
+    hasPlayedChatbotInitVideo = true;
+  }
+
+  document.getElementById("chat-interface").style.display = "block";
+
+  // if(!module.includes("Talking to your doctor") &&  !(module.includes("Overview - The waiting list") && myVideo.getElementsByTagName("source")[0].getAttribute('src') ===
+  // `https://national-kidney-foundation.s3.amazonaws.com/${type}/overviewTransplantWaitingList.mp4`) ){
+  //   PlayAudio(`https://national-kidney-foundation.s3.amazonaws.com/${type}/chatbotVideo.mp4`);
+  // }
+
+  // if(!module.includes("quickAssessment") && 
+  // !(module.includes("Overview - The waiting list") && myVideo.getElementsByTagName("source")[0].getAttribute('src') ===
+  // `https://national-kidney-foundation.s3.amazonaws.com/${type}/overviewTransplantWaitingList.mp4`) 
+  // && !module.includes("main") && !module.includes("Homepage") && !module.includes("Introduction") && !module.includes("summary")){
+  //   document.getElementById("chat-interface").style.display = "block";
+  // }
+}
+
+function closeChat(){
+  document.getElementById("chat-interface").style.display = "none";
+  if(moduleName.includes("Talking to your doctor")){
+      PreviousNextButtonFunction(1, false);
+  }
+  else{
+      SwitchSubTopicVideo(1,true);
+  }
 }
 
 //Updates the play/pause button.
@@ -119,6 +186,7 @@ myVideo.onplaying = function (e) {
   pauseButton.textContent = "Pause";
   playButton.style.display = "none";
   playButton.parentElement.style.backgroundColor = "transparent";
+  document.getElementById("chat-interface").style.display = "none";
 }
 
 //Updates the play/pause button.
@@ -137,8 +205,9 @@ playButton.addEventListener("click", function () {
 
 //VideoUpdater Function / Autoplay Video
 function UpdateVideo(videoUrl) {
+  StopAndHideChatbotVideoAndAudio();
   myVideo.getElementsByTagName("source")[0].setAttribute('src', videoUrl);
-  myVideo.getElementsByTagName("track")[0].setAttribute('src', videoUrl.substr(0, videoUrl.lastIndexOf('.')) + ".vtt")
+  // myVideo.getElementsByTagName("track")[0].setAttribute('src', videoUrl.substr(0, videoUrl.lastIndexOf('.')) + ".vtt")
   myVideo.load();
   myVideo.play().catch(function() {
     //Ignore the Uncaught (in promise) error.
@@ -369,6 +438,15 @@ function ifInvalidSessionTaketoHomePage(hours = 5){
   var now = new Date().getTime();
   var setupTime = sessionStorage.getItem('setupTime');
   if (setupTime === null || (now-setupTime > hours*60*60*1000)) {
+    sessionStorage.clear();
     window.location.href = `/` + (urlParams.toString() ? '?' + urlParams.toString() : '');
   } 
+}
+
+function HideElement(idName){
+  document.getElementById(idName).style.display = "none";
+}
+
+function ShowElement(idName, displayType){
+  document.getElementById(idName).style.display = displayType;
 }
