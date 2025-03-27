@@ -47,7 +47,7 @@ export async function playOnTtsAudioPlayer(InputMessage, WhoIsIt) {
 
         console.log("Audio playback finished.");
         unloadVideo();
-        ShowElement("generatedVideo", "flex");
+        ShowElement("generatedVideo", "block");
         HideElement("chatgptVideo");
         
     } catch (error) {
@@ -67,7 +67,7 @@ async function loadWallaVideo() {
     }
 }
 
-async function unloadVideo(){
+export async function unloadVideo(){
     let VideoPlayer;
     VideoPlayer = document.getElementById("chatgptVideo");
     VideoPlayer.pause();  // Pause the video
@@ -75,19 +75,17 @@ async function unloadVideo(){
     VideoPlayer.load();  // Reset the video
 }
 
-export function MakeAgentListen(){
-    if (WhoIsOther === "Nephrologist") {
-        let VideoPlayer = document.getElementById("Nephrologist-Video");
+export async function MakeAgentListen(){
+    try {
+        let VideoPlayer;
+        VideoPlayer = document.getElementById("chatgptVideo");
         VideoPlayer.src = "/videos/Alex_Listening.mp4";
         VideoPlayer.loop = true;
-        VideoPlayer.play();
-    } else if (WhoIsOther === "Ex-patient") {
-        let VideoPlayer = document.getElementById("Ex-patient-Video");
-        VideoPlayer.src = "/videos/John_Listening.mp4";
-        VideoPlayer.play();
+        await VideoPlayer.play(); // Ensure it starts playing properly
+    } catch (error) {
+        console.error("Error loading or playing video:", error);
     }
 }
-
 
 export function HideElement(idName){
     document.getElementById(idName).style.display = "none";

@@ -73,6 +73,7 @@ button {
     align-items: center;
     margin: auto;
     text-align: right;
+    margin-top: 32px;
 }
 
 #selected-topics {

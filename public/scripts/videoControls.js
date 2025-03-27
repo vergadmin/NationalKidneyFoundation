@@ -145,7 +145,7 @@ function StopAndHideChatbotVideoAndAudio(){
   clearUserInput();
 
   HideElement("chatgptVideo");
-  ShowElement("generatedVideo", "flex");
+  ShowElement("generatedVideo", "block");
 }
 
 function showChatInterface(module){

@@ -1,5 +1,6 @@
 import { sendMessage } from "./message.js";
 import { getPunctuatedText } from "./openAIRequests.js";
+import {MakeAgentListen, unloadVideo, HideElement, ShowElement} from "./audioPlayback.js"
 
 let mediaRecorder;
 let audioChunks = [];
@@ -15,6 +16,10 @@ window.toggleMic = toggleMic;
 export async function toggleMic() {
     const micButton = document.getElementById("mic-toggleButton");
     const params = new URLSearchParams(window.location.search);  
+
+    HideElement("generatedVideo");
+    ShowElement("chatgptVideo", "flex");
+    MakeAgentListen();
 
     if (!isRecording) {
         try {
@@ -44,7 +49,11 @@ export async function toggleMic() {
                 punctuatedText = JSON.parse(punctuatedText.message);
                 document.getElementById('user-input').value = punctuatedText.punctuated_text;
                 
+                unloadVideo();
+                ShowElement("generatedVideo", "block");
+                HideElement("chatgptVideo");
                 sendMessage();
+                
                 liveTranscript = "";
                 document.getElementById('user-input').placeholder = "Type a message...";
             };
@@ -106,6 +115,9 @@ export async function toggleMic() {
         }
     } else {
         stopRecording();
+        unloadVideo();
+        ShowElement("generatedVideo", "block");
+        HideElement("chatgptVideo");
     }
 }
 
@@ -139,6 +151,9 @@ function resetSilenceTimer() {
         const now = Date.now();
         if (now - lastSpeechTime >= 2000) { // Adjust threshold (4000ms = 4 seconds)
             stopRecording();
+            unloadVideo();
+            ShowElement("generatedVideo", "block");
+            HideElement("chatgptVideo");
         }
     }, 2000); // Check every 4 seconds
 }

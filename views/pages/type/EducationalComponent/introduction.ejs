@@ -24,21 +24,23 @@
             <h1 class="title">Goals of our Meeting</h1>
             <div style="display:flex; flex-direction: row;flex-wrap: wrap;">
                 <div class="video-wrapper">
-                    <div style="margin-bottom: 15px;" class="video-wrapper" id="generatedVideo">
-                        <video autoplay id="myvideo" playsinline>
-                            <source src="https://national-kidney-foundation.s3.amazonaws.com/<%=type%>/Introduction.mp4"
-                                type="video/mp4">
-                            <track kind="captions" src="" srclang="en" label="English" default>
-                        </video>
-                        <div class="play-overlay">
-                            <button id="playButton">Play</button>
+                    <div id="generatedVideo">
+                        <div style="margin-bottom: 15px;" class="video-wrapper">
+                            <video autoplay id="myvideo" playsinline>
+                                <source
+                                    src="https://national-kidney-foundation.s3.amazonaws.com/<%=type%>/Introduction.mp4"
+                                    type="video/mp4">
+                                <track kind="captions" src="" srclang="en" label="English" default>
+                            </video>
+                            <div class="play-overlay">
+                                <button id="playButton">Play</button>
+                            </div>
+                        </div>
+                        <div style="margin-bottom: 15px;" class="video-controls">
+                            <button id="rewind">Repeat that</button>
+                            <button id="pause">Play</button>
                         </div>
                     </div>
-                    <video autoplay id="chatgptVideo" playsinline>
-                        <source src=""
-                            type="video/mp4">
-                        <track kind="captions" src="" srclang="en" label="English" default>
-                    </video>
                     <div class="overview-buttons" style="text-align: center;display: none;margin-bottom: 15px;">
                         <button onclick="OverviewResponse('Not really')"
                             style="background-color: #F15E22 !important;">Not
@@ -49,10 +51,10 @@
                             style="background-color: #F15E22 !important;">Very
                             useful</button>
                     </div>
-                    <div style="margin-bottom: 15px;" class="video-controls">
-                        <button id="rewind">Repeat that</button>
-                        <button id="pause">Play</button>
-                    </div>
+                    <video autoplay id="chatgptVideo" playsinline>
+                        <source src="" type="video/mp4">
+                        <track kind="captions" src="" srclang="en" label="English" default>
+                    </video>
                     <div class="slider-container" style="display: none;">
                         <p id="slider-value"><strong>Your Response: </strong><span id="slider-number">I don't know if i
                                 need
