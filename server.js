@@ -11,10 +11,15 @@ require('dotenv').config()
 
 const { OpenAI } = require("openai");
 
+const { ElevenLabsClient } = require("elevenlabs");
+
 const openai = new OpenAI({
   // replace your-api-key with your API key from ChatGPT
   apiKey: process.env.OPENAI_API_KEY
 })
+const elevenLabs = new ElevenLabsClient({ 
+  apiKey: process.env.ELEVENLABS_API_KEY
+});
 
 app.set('view engine', 'ejs')
 app.use(express.static(__dirname + '/public'));
@@ -294,23 +299,104 @@ app.post('/OpenAIRedactedText', async (req, res)=> {
           Provide a concise, accurate answer (under 150 words) as a nephrologist would, addressing the user's latest question.
           Respond only if the question is clearly addressed to you (Dr. Alex). If it's directed to someone else, do not answer.
           Write in a casual, chat-like tone (like on iMessage or WhatsApp), but still sound professional enough for your role as a nephrologist.
-          Return your response in the following JSON format:
-          { "answer": "Your answer here (under 150 words).", "sources": [ "https://actual-site-or-article-link.com", "https://another-real-site-or-article-link.com" ], "follow_up_questions": [ "Question 1 (somewhat related)", "Question 2 (somewhat related)", "Question 3 (goes deeper)", "Question 4 (goes deeper)", "Question 5 (different CKD topic)" ] }
-  
-          Details on follow_up_questions:
-  
-          They must all be framed from the user's perspective trying to gain more insight, tips etc that could be of help to them.
-  
-  
-          They should all relate to Chronic Kidney Disease (CKD).
-          The first two questions tie in somewhat with the latest user question.
-          The third and fourth questions explore the same topic in more depth.
-          The fifth question introduces a different CKD topic that may interest the user.
-          Remember:
   
           Do not answer if the user's latest message isn't for you.
+          If the question asked is not related to CKD, don't answer it.
           Make sure your sources are legitimate (no fake or placeholder URLs).
           Keep your “answer” field under 150 words.
+
+          Do not give me any news articles / Recent Developments.
+          `
+
+        const completion = await openai.chat.completions.create({
+          model: process.env.COMPLETIONS_WEB_SEARCH_MODEL,
+          web_search_options: {},
+          messages: [
+              { role: "system", 
+                content: contentMessage,
+               },
+              {
+                  role: "user",
+                  content: req.body.conversationHistorySoFar,
+              },
+          ],
+          // response_format:{ "type": "json_object" },
+      });      
+
+      // console.log(completion.choices[0].message.content)
+
+      var jsonData = {
+        answer: completion.choices[0].message.content,
+        annotations: completion.choices[0].message.annotations,
+        sources: "",
+        follow_up_questions: ""
+      };
+  
+      res.status(200).json({message: JSON.stringify(jsonData)})
+    } catch(e) {
+        res.status(400).json({message: e.message})
+    }
+  })
+
+
+  app.post('/OpenAIChatCheckTopic', async (req, res)=> {
+    try {
+          contentMessage = 
+          `
+          You are in a chat with:
+  
+          userMessage (the patient), who has Chronic Kidney Disease (CKD).
+          You (Dr. Alex, the Nephrologist), who works at a local hospital.
+          Your instructions:
+
+          Write in a casual, chat-like tone (like on iMessage or WhatsApp), but still sound professional enough for your role as a nephrologist.
+          Use the conversation history (an array of JSON messages) but focus on the most recent userMessage in the last JSON of the array.
+          
+          Return a JSON object with two keys:
+                "isRelated": Yes or No depending on whether the question asked is related to something a Nephrologist would answer. Anything remotely close to CKD or Kidney related should be answered, such as health, diet related stuff. Or a question that someone suffering with CKD may have. Things like food recommendations, dietary/nutrition guidance, healtcare, fitness etc. The whole nine yards. Allow questions where the user is greeting, saying hi, introducting themselves etc.
+                "reply": If isRelated is No, reply with a sentence that says that you cannot answer that since its not related to CKD, but are glad to answer any questions related to CKD. Feel free to rephrase or paraphase this sentence to sound like a Nephrologist.
+          `
+
+        const completion = await openai.chat.completions.create({
+          model: process.env.COMPLETIONS_MODEL,
+          messages: [
+              { role: "system", 
+                content: contentMessage,
+               },
+              {
+                  role: "user",
+                  content: req.body.conversationHistorySoFar,
+              },
+          ],
+          response_format:{ "type": "json_object" },
+      });      
+  
+      res.status(200).json({message: completion.choices[0].message.content})
+    } catch(e) {
+        res.status(400).json({message: e.message})
+    }
+  })
+
+
+
+  app.post('/OpenAINephrologistFormattedMessage', async (req, res)=> {
+    try {
+          contentMessage = 
+          `
+          You are in a chat with:
+  
+          userMessage (the patient), who has Chronic Kidney Disease (CKD).
+          You (Dr. Alex, the Nephrologist), who works at a local hospital.
+
+          Your instructions:
+          Take in the current content and rewrite it to sound like a casual, chat-like tone (like on iMessage or WhatsApp), but still sound professional enough for your role as a nephrologist. NO Emojis.
+          Provide a concise, accurate answer (under 150 words) as a nephrologist would. Rewrite keeping the citations.
+          Keep your “answer” field under 150 words.
+          Return it in the same HTML format like the input was.
+          Do not start EVERY sentence with "So" or other words like it which may sound repetitive.
+
+          Return a JSON object:
+          formattedNephrologistResponse: The valid HTML with rewritten text.
           `
 
         const completion = await openai.chat.completions.create({
@@ -413,6 +499,42 @@ app.post('/OpenAIRedactedText', async (req, res)=> {
       });
     } catch (error) {
       console.error("Error generating speech:", error);
+      res.status(500).send("Error processing request");
+    }
+  });
+
+
+  app.get("/ElevenLabsVoiceNephrologistStream", async (req, res) => {
+    const message = req.query.Message;
+  
+    if (!message) {
+      return res.status(400).send("Missing 'Message' parameter");
+    }
+  
+    try {
+      const stream = await elevenLabs.textToSpeech.convertAsStream("K8Xci0GnZUSchP20TdtO", {
+        text: message,
+        output_format: "mp3_44100_128",
+        model_id: "eleven_multilingual_v2",
+      });
+  
+      res.writeHead(200, {
+        "Content-Type": "audio/mpeg",
+        "Transfer-Encoding": "chunked",
+      });
+  
+      stream.pipe(res);
+  
+      stream.on("end", () => {
+        res.end();
+      });
+  
+      stream.on("error", (err) => {
+        console.error("Streaming error:", err);
+        res.end();
+      });
+    } catch (error) {
+      console.error("Error generating ElevenLabs speech:", error);
       res.status(500).send("Error processing request");
     }
   });

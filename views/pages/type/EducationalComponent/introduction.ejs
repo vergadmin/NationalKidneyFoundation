@@ -15,7 +15,7 @@
     <title>Virtual-Kidney-Doctor</title>
 </head>
 
-<body id-variable="<%=id%>" type-variable="<%=type%>" next-page-variable="<%=nextPageURL%>" url="<%=url%>">
+<body id-variable="<%=id%>" type-variable="<%=type%>" next-page-variable="<%=nextPageURL%>" url="<%=url%>" style="padding-bottom: 80px;">
     <header>
         <%- include('../../../partials/header_alt'); %>
     </header>
@@ -36,11 +36,15 @@
                                 <button id="playButton">Play</button>
                             </div>
                         </div>
-                        <div style="margin-bottom: 15px;" class="video-controls">
+                        <div style="margin-bottom: 15px;" class="video-controls" id="video-controls">
                             <button id="rewind">Repeat that</button>
                             <button id="pause">Play</button>
                         </div>
                     </div>
+                    <video autoplay id="chatgptVideo" playsinline>
+                        <source src="" type="video/mp4">
+                        <track kind="captions" src="" srclang="en" label="English" default>
+                    </video>
                     <div class="overview-buttons" style="text-align: center;display: none;margin-bottom: 15px;">
                         <button onclick="OverviewResponse('Not really')"
                             style="background-color: #F15E22 !important;">Not
@@ -51,10 +55,6 @@
                             style="background-color: #F15E22 !important;">Very
                             useful</button>
                     </div>
-                    <video autoplay id="chatgptVideo" playsinline>
-                        <source src="" type="video/mp4">
-                        <track kind="captions" src="" srclang="en" label="English" default>
-                    </video>
                     <div class="slider-container" style="display: none;">
                         <p id="slider-value"><strong>Your Response: </strong><span id="slider-number">I don't know if i
                                 need
@@ -68,7 +68,7 @@
                     </div>
 
                     <div class="checkbox-area" style="display: none;">
-                        <input type="checkbox" id="checkboxItem" name="checkboxItem" onchange="UpdateCheckbox()">
+                        <input type="checkbox" id="checkboxItem" name="checkboxItem" onchange="UpdateCheckbox()" style="transform: scale(1.5);">
                         <label style="text-align: left;margin-left: 15px;" for="checkboxItem">Check the box and I’ll
                             email you information about this topic later</label><br>
                     </div>
@@ -108,7 +108,7 @@
                         </div>
 
                     </div>
-                    <button id="chat-complete-button" onclick="closeChat()">I am done asking questions</button>
+                    <!-- <button id="chat-complete-button" onclick="closeChat()">I am done asking questions</button> -->
                 </div>
             </div>
 

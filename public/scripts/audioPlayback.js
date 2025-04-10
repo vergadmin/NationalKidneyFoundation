@@ -3,10 +3,18 @@ import {appendAlexMessage} from "./message.js";
 export async function playOnTtsAudioPlayer(InputMessage, WhoIsIt) {
     // Get the source from the provided audio element
     let source;
+
+    function removeParenthesesContent(input) {
+        return input.replace(/<[^>]*>|\[.*?\]/g, '');
+    }
+
+    var MessageStrippedCitations = removeParenthesesContent(InputMessage);
+
     if (WhoIsIt === "Nephrologist") {
-        source = `/OpenAIVoiceNephrologistStream?Message=${encodeURIComponent(InputMessage)}`;
+        // source = `/ElevenLabsVoiceNephrologistStream?Message=${encodeURIComponent(InputMessage)}`;
+        source = `/OpenAIVoiceNephrologistStream?Message=${encodeURIComponent(MessageStrippedCitations)}`;
     } else if (WhoIsIt === "Ex-patient") {
-        source = `/OpenAIVoicePatientStream?Message=${encodeURIComponent(InputMessage)}`;
+        source = `/OpenAIVoicePatientStream?Message=${encodeURIComponent(MessageStrippedCitations)}`;
     }
 
     if (!source) {
@@ -35,9 +43,9 @@ export async function playOnTtsAudioPlayer(InputMessage, WhoIsIt) {
         await loadWallaVideo(WhoIsIt);
         
         if (WhoIsIt === "Nephrologist") {
-            appendAlexMessage(InputMessage, 60, true);
+            appendAlexMessage(InputMessage, 80, true);
         } else if (WhoIsIt === "Ex-patient") {
-            appendJohnMessage(InputMessage, 60, true);
+            appendJohnMessage(InputMessage, 80, true);
         }
 
         // Wait for the audio to finish playing
@@ -47,8 +55,7 @@ export async function playOnTtsAudioPlayer(InputMessage, WhoIsIt) {
 
         console.log("Audio playback finished.");
         unloadVideo();
-        ShowElement("generatedVideo", "block");
-        HideElement("chatgptVideo");
+        PlayIdleVideo();
         
     } catch (error) {
         console.error("Error playing audio:", error);
@@ -59,7 +66,7 @@ async function loadWallaVideo() {
     try {
         let VideoPlayer;
         VideoPlayer = document.getElementById("chatgptVideo");
-        VideoPlayer.src = "/videos/Alex_Walla.mp4";
+        VideoPlayer.src = `https://national-kidney-foundation.s3.amazonaws.com/${type}/Alex_Walla.mp4`;
         VideoPlayer.loop = true;
         await VideoPlayer.play(); // Ensure it starts playing properly
     } catch (error) {
@@ -79,7 +86,7 @@ export async function MakeAgentListen(){
     try {
         let VideoPlayer;
         VideoPlayer = document.getElementById("chatgptVideo");
-        VideoPlayer.src = "/videos/Alex_Listening.mp4";
+        VideoPlayer.src = `https://national-kidney-foundation.s3.amazonaws.com/${type}/Alex_Listening.mp4`;
         VideoPlayer.loop = true;
         await VideoPlayer.play(); // Ensure it starts playing properly
     } catch (error) {
@@ -93,4 +100,12 @@ export function HideElement(idName){
   
 export function ShowElement(idName, displayType){
     document.getElementById(idName).style.display = displayType;
+  }
+
+export function PlayIdleVideo(){
+    HideElement("generatedVideo");
+    ShowElement('chatgptVideo', "flex");
+    chatbotVideo.src = `https://national-kidney-foundation.s3.amazonaws.com/${type}/chatbotIdleVideo.mp4`;
+    chatbotVideo.loop = true;
+    chatbotVideo.play();
   }

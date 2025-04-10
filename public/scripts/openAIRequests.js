@@ -23,6 +23,54 @@ export async function getNephrologistResponse(ConversationLog, InteractionType) 
     }
 }
 
+export async function OpenAIChatCheckTopic(ConversationLog) {
+    try {
+        const res = await fetch('/OpenAIChatCheckTopic', {
+            method: 'POST',
+            headers: {
+                "Content-Type": 'application/json'
+            },
+            body: JSON.stringify({
+                conversationHistorySoFar: JSON.stringify(ConversationLog),
+            })
+        });
+
+        if (!res.ok) {
+            throw new Error('Network response was not ok');
+        }
+
+        const data = await res.json();
+        return data;
+    } catch (error) {
+        console.error('Error during fetch:', error);
+        throw error;  // Rethrow to handle it at the caller level
+    }
+}
+
+export async function OpenAINephrologistFormattedMessage(ConversationLog) {
+    try {
+        const res = await fetch('/OpenAINephrologistFormattedMessage', {
+            method: 'POST',
+            headers: {
+                "Content-Type": 'application/json'
+            },
+            body: JSON.stringify({
+                conversationHistorySoFar: JSON.stringify(ConversationLog),
+            })
+        });
+
+        if (!res.ok) {
+            throw new Error('Network response was not ok');
+        }
+
+        const data = await res.json();
+        return data;
+    } catch (error) {
+        console.error('Error during fetch:', error);
+        throw error;  // Rethrow to handle it at the caller level
+    }
+}
+
 export async function getNeprologistAudio(InputMessage) {
     const response = await fetch("/OpenAIVoiceNephrologist", {
         method: "POST",

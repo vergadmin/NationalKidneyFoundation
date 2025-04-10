@@ -1,5 +1,5 @@
 import { hideQuestionButtons, createQuestionButtons } from "/scripts/suggestedQuestions.js";
-import { getNephrologistResponse, getRedactedText, getBoldedQuestions} from "/scripts/openAIRequests.js"
+import { getNephrologistResponse, getRedactedText, getBoldedQuestions, OpenAIChatCheckTopic, OpenAINephrologistFormattedMessage} from "/scripts/openAIRequests.js"
 import {playOnTtsAudioPlayer} from "/scripts/audioPlayback.js"
 
 window.sendMessage = sendMessage;
@@ -213,16 +213,44 @@ export async function sendMessage(Buttontext) {
         async function AlexReplies(InteractionType) {
                 appendLoadingDots("Alex", "video");
 
-                let data = await getNephrologistResponse(ConversationLog, InteractionType);
-                let NephrologistResponse = JSON.parse(data.message);
+                let IsRelated = await OpenAIChatCheckTopic(ConversationLog);
+                IsRelated = JSON.parse(IsRelated.message)
 
-                removeLoadingDots();
-                await playOnTtsAudioPlayer(NephrologistResponse.answer, "Nephrologist");
+                console.log(IsRelated.isRelated)
 
-                ThisMessageJSON.NephrologistResponse = NephrologistResponse.answer;
-                ConversationLog[ConversationLog.length - 1] = ThisMessageJSON;
-                follow_up_questions = NephrologistResponse.follow_up_questions;
-                sources = NephrologistResponse.sources;
+                if(IsRelated.isRelated === "No"){
+                    removeLoadingDots();
+
+                    var formattedMessage = formatMessageMarkdown(IsRelated.reply);
+
+                    var finalFormattedText = await OpenAINephrologistFormattedMessage(formattedMessage);
+                    var message = JSON.parse(finalFormattedText.message);
+
+                    await playOnTtsAudioPlayer(message.formattedNephrologistResponse, "Nephrologist");
+    
+                    ThisMessageJSON.NephrologistResponse = message.formattedNephrologistResponse;
+                    ConversationLog[ConversationLog.length - 1] = ThisMessageJSON;
+                    follow_up_questions = "";
+                    sources = "";
+                }
+                else{
+
+                    let data = await getNephrologistResponse(ConversationLog, InteractionType);
+                    let NephrologistResponse = JSON.parse(data.message);
+
+                    var formattedMessage = formatMessageMarkdown(NephrologistResponse.answer);
+
+                    var finalFormattedText = await OpenAINephrologistFormattedMessage(formattedMessage);
+                    var message = JSON.parse(finalFormattedText.message);
+
+                    removeLoadingDots();
+                    await playOnTtsAudioPlayer(message.formattedNephrologistResponse, "Nephrologist");
+
+                    ThisMessageJSON.NephrologistResponse = message.formattedNephrologistResponse;
+                    ConversationLog[ConversationLog.length - 1] = ThisMessageJSON;
+                    follow_up_questions = NephrologistResponse.follow_up_questions;
+                    sources = NephrologistResponse.sources;
+                }
         }
     }
 }
@@ -286,67 +314,76 @@ export async function appendAlexMessage(message, typingSpeed = 15, isVideo = fal
 
 function typeWriter(message, element, speed) {
     return new Promise(resolve => {
+        let currentText = '';
         let i = 0;
-        let currentText = ''; // Tracks what has been typed so far
-        let isCorrecting = false; // Tracks if backspacing is occurring
-        const chatBox = document.getElementById('chat-box');
-        let mistakeStartIndex = 0; // Tracks the index where the mistake starts
-        const backspaceLength = Math.floor(Math.random() * 5) + 3; // Random backspace length (3-7 chars)
 
-        function performBackspace(charsToRemove, callback) {
-            if (charsToRemove > 0) {
-                currentText = currentText.slice(0, -1); // Remove the last character
-                element.innerHTML = currentText; // Update the displayed text
-                chatBox.scrollTop = chatBox.scrollHeight; // Scroll to bottom
-                setTimeout(() => performBackspace(charsToRemove - 1, callback), 200); // 300ms delay for each character
-            } else {
-                callback(); // After backspacing, call the callback
+        // Tokenize message into text + tags
+        const tokens = [];
+        const tagRegex = /<\/?[^>]+>/g;
+        let lastIndex = 0;
+        let match;
+
+        while ((match = tagRegex.exec(message)) !== null) {
+            if (match.index > lastIndex) {
+                tokens.push({ type: 'text', content: message.slice(lastIndex, match.index) });
             }
+            tokens.push({ type: 'tag', content: match[0] });
+            lastIndex = tagRegex.lastIndex;
+        }
+        if (lastIndex < message.length) {
+            tokens.push({ type: 'text', content: message.slice(lastIndex) });
         }
 
-        function typing() {
-            if (isCorrecting) {
-                // Perform backspacing with delay
-                const charsToRemove = Math.min(backspaceLength, currentText.length - mistakeStartIndex);
-                performBackspace(charsToRemove, () => {
-                    isCorrecting = false; // Stop backspacing
-                    setTimeout(typing, speed); // Resume typing after correcting
-                });
+        let tokenIndex = 0;
+        let charIndex = 0;
+
+        function type() {
+            if (tokenIndex >= tokens.length) {
+                resolve();
                 return;
             }
 
-            // Introduce mistakes randomly (10% chance to type a wrong character)
-            const randomChance = Math.random();
-            const mistakeChance = 0.005; // 10% chance to make a mistake
+            const token = tokens[tokenIndex];
 
-            if (randomChance < mistakeChance && i < message.length) {
-                // Make a mistake
-                mistakeStartIndex = currentText.length; // Record the start of the mistake
-                for (let j = 0; j < backspaceLength; j++) {
-                    const wrongChar = String.fromCharCode(
-                        Math.floor(Math.random() * 26) + 97
-                    ); // Random lowercase letter
-                    currentText += wrongChar; // Add wrong letters
+            if (token.type === 'tag') {
+                currentText += token.content;
+                element.innerHTML = currentText;
+                tokenIndex++;
+                setTimeout(type, 0); // Continue immediately with next token
+            } else {
+                // Type one character from the current text token
+                currentText += token.content[charIndex];
+                element.innerHTML = currentText;
+                charIndex++;
+
+                if (charIndex >= token.content.length) {
+                    tokenIndex++;
+                    charIndex = 0;
                 }
-                element.innerHTML = currentText; // Update the displayed text
-                chatBox.scrollTop = chatBox.scrollHeight; // Scroll to bottom
-                isCorrecting = true; // Enable backspacing mode
-                setTimeout(typing, 200); // Delay before backspacing the mistake
-                return;
+
+                setTimeout(type, speed);
             }
 
-            if (i < message.length) {
-                // Type the correct letter
-                currentText += message.charAt(i); // Add the correct character
-                element.innerHTML = currentText; // Update the displayed text
-                chatBox.scrollTop = chatBox.scrollHeight; // Scroll to bottom
-                i++;
-                setTimeout(typing, speed); // Delay before typing the next character
-            } else {
-                resolve(); // Resolve when typing is finished
-            }
+            const chatBox = document.getElementById('chat-box');
+            chatBox.scrollTop = chatBox.scrollHeight;
         }
 
-        typing();
+        type();
     });
 }
+
+function formatMessageMarkdown(message) {
+    // Convert **bold** to <strong>
+    let formatted = message.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+
+    formatted = formatted.replace(
+        /\(\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)\)\n*/g,
+        '<a href="$2" target="_blank">[$1]</a><br><br>'
+    );
+
+    // Convert remaining \n to <br>
+    formatted = formatted.replace(/\n/g, '<br>');
+
+    return formatted;
+}
+

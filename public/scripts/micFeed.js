@@ -1,6 +1,6 @@
 import { sendMessage } from "./message.js";
 import { getPunctuatedText } from "./openAIRequests.js";
-import {MakeAgentListen, unloadVideo, HideElement, ShowElement} from "./audioPlayback.js"
+import {MakeAgentListen, unloadVideo, HideElement, ShowElement, PlayIdleVideo} from "./audioPlayback.js"
 
 let mediaRecorder;
 let audioChunks = [];
@@ -50,8 +50,7 @@ export async function toggleMic() {
                 document.getElementById('user-input').value = punctuatedText.punctuated_text;
                 
                 unloadVideo();
-                ShowElement("generatedVideo", "block");
-                HideElement("chatgptVideo");
+                PlayIdleVideo();
                 sendMessage();
                 
                 liveTranscript = "";
@@ -116,8 +115,9 @@ export async function toggleMic() {
     } else {
         stopRecording();
         unloadVideo();
-        ShowElement("generatedVideo", "block");
-        HideElement("chatgptVideo");
+        // ShowElement("generatedVideo", "block");
+        // // HideElement("chatgptVideo");
+        PlayIdleVideo();
     }
 }
 
@@ -152,8 +152,7 @@ function resetSilenceTimer() {
         if (now - lastSpeechTime >= 2000) { // Adjust threshold (4000ms = 4 seconds)
             stopRecording();
             unloadVideo();
-            ShowElement("generatedVideo", "block");
-            HideElement("chatgptVideo");
+            PlayIdleVideo();
         }
     }, 2000); // Check every 4 seconds
 }

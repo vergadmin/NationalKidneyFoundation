@@ -10,6 +10,7 @@ for (const [key, value] of Object.entries(additionalInformationTopics)) {
   checkbox.type = 'checkbox';
   checkbox.checked = value; // Set the 'checked' attribute based on the value
   checkbox.value = key; // Set the 'value' attribute to the key
+  checkbox.classList.add('checkBoxTick');
 
   const label = document.createElement('label');
   label.textContent = key;

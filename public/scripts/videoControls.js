@@ -73,8 +73,17 @@ pauseButton.addEventListener("click", function () {
 
 //Rewinds the Video by 10seconds for the User.
 rewindButton.addEventListener("click", function () {
-  myVideo.currentTime -= 10;
+  if(document.getElementById("generatedVideo").style.display === "none"){
+    myVideo.currentTime = 0;
+  }
+  else{
+    myVideo.currentTime -= 10;
+  }
+  
   if (myVideo.paused) {
+    HideElement("chatgptVideo");
+    StopAndHideChatbotVideoAndAudio();
+    ShowElement("generatedVideo", "block");
     myVideo.play();
     pauseButton.textContent = "Pause";
   }
@@ -124,6 +133,9 @@ myVideo.onended = function (e) {
   playButton.style.display = "flex";
   playButton.parentElement.style.backgroundColor = "rgba(0, 0, 0, 0.75)";
   playButton.innerText = "Replay";
+
+
+  rewindButton.innerText = "Replay Topic";
 }
 
 function ShowAndPlayChatbotInitVideo(source){
@@ -131,6 +143,14 @@ function ShowAndPlayChatbotInitVideo(source){
   ShowElement('chatgptVideo', "flex");
   chatbotVideo.src = source;
   chatbotVideo.loop = false;
+  chatbotVideo.play();
+}
+
+function PlayIdleVideo(){
+  HideElement("generatedVideo");
+  ShowElement('chatgptVideo', "flex");
+  chatbotVideo.src = `https://national-kidney-foundation.s3.amazonaws.com/${type}/chatbotIdleVideo.mp4`;
+  chatbotVideo.loop = true;
   chatbotVideo.play();
 }
 
@@ -154,6 +174,9 @@ function showChatInterface(module){
   if(!hasPlayedChatbotInitVideo || Math.random() <= 0.3){
     ShowAndPlayChatbotInitVideo(`https://national-kidney-foundation.s3.amazonaws.com/${type}/chatbotVideo.mp4`);
     hasPlayedChatbotInitVideo = true;
+  }
+  else{
+    PlayIdleVideo();
   }
 
   document.getElementById("chat-interface").style.display = "block";
@@ -187,6 +210,7 @@ myVideo.onplaying = function (e) {
   playButton.style.display = "none";
   playButton.parentElement.style.backgroundColor = "transparent";
   document.getElementById("chat-interface").style.display = "none";
+  rewindButton.innerText = "Repeat that";
 }
 
 //Updates the play/pause button.
@@ -212,6 +236,14 @@ function UpdateVideo(videoUrl) {
   myVideo.play().catch(function() {
     //Ignore the Uncaught (in promise) error.
 });;
+}
+
+chatbotVideo.onended = function(e) {
+  if(chatbotVideo.src === `https://national-kidney-foundation.s3.amazonaws.com/${type}/chatbotVideo.mp4` ){
+    // HideElement("chatgptVideo");
+    // ShowElement("generatedVideo", "block");
+    PlayIdleVideo();
+  }
 }
 
 //Master Function for the buttons.
@@ -329,6 +361,7 @@ function PreviousNextButtonFunction(action, activeTrigger = null) {
           checkbox.checked = value; // Set the 'checked' attribute based on the value
           checkbox.value = key; // Set the 'value' attribute to the key
           checkbox.onchange = UpdateSpecificCheckBox;
+          checkbox.classList.add('checkBoxTick');
 
           const label = document.createElement('label');
           label.textContent = key;
