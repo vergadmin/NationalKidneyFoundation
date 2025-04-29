@@ -224,3 +224,46 @@ export async function getBoldedQuestions(questions_Array) {
         throw error;  // Rethrow to handle it at the caller level
     }
 }
+
+export async function getChatGPTAssistantThreadID() {
+    try {
+        const res = await fetch('/CreateChatGPTAssistantThread', {
+            method: 'POST',
+        });
+
+        if (!res.ok) {
+            throw new Error('Failed to create a thread');
+        }
+
+        const data = await res.json();
+        return data.threadId;
+    } catch (error) {
+        console.error('Error creating assistant thread:', error);
+        throw error;
+    }
+}
+
+export async function getChatGPTAssistantResponse(threadId, userMessage) {
+    try {
+        const res = await fetch('/ChatGPTAssistantResponse', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                threadId,
+                userMessage,
+            }),
+        });
+
+        if (!res.ok) {
+            throw new Error('Failed to get assistant response');
+        }
+
+        const data = await res.json();
+        return data.messages; // full message array including annotations, etc.
+    } catch (error) {
+        console.error('Error getting assistant response:', error);
+        throw error;
+    }
+}

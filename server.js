@@ -17,6 +17,10 @@ const openai = new OpenAI({
   // replace your-api-key with your API key from ChatGPT
   apiKey: process.env.OPENAI_API_KEY
 })
+
+const assistantId = process.env.OPENAI_ASSISTANT_ID;
+
+
 const elevenLabs = new ElevenLabsClient({ 
   apiKey: process.env.ELEVENLABS_API_KEY
 });
@@ -99,6 +103,8 @@ async function UploadToDatabase(data) {
 
     await connectToDatabase() ;
 
+    console.log(data.ConversationLog);
+
     var participantData = {
         ParticipantID: data.id,
         Platform: data.platform,
@@ -111,6 +117,7 @@ async function UploadToDatabase(data) {
         NumberOfModulesInteracted: data.NumberOfModulesInteracted,
         KidneyTransplantResponse: data.sliderResponse,
         OverviewUsefulnessCheckinResponse: data.OverviewUsefulnessCheckInResponse,
+        ConversationLog: data.ConversationLog
     };
     
     try {
@@ -176,7 +183,7 @@ app.post('/submitData', (req, res) => {
 });
 
 async function addParticipantVisit(data) {
-    const { ParticipantID, Platform, OperatingSystem, Browser, CharacterSelected, InterventionStartTime, InterventionEndTime, TotalTimeSpentOnIntervention, NumberOfModulesInteracted, KidneyTransplantResponse, OverviewUsefulnessCheckinResponse } = data;
+    const { ParticipantID, Platform, OperatingSystem, Browser, CharacterSelected, InterventionStartTime, InterventionEndTime, TotalTimeSpentOnIntervention, NumberOfModulesInteracted, KidneyTransplantResponse, OverviewUsefulnessCheckinResponse, ConversationLog} = data;
   
     const getNextVisitIDQuery = `SELECT COUNT(*) AS visitCount FROM ParticipantVisits WHERE ParticipantID = @ParticipantID`;
   
@@ -189,8 +196,8 @@ async function addParticipantVisit(data) {
   
       const insertQuery = `
         INSERT INTO ParticipantVisits 
-        (ParticipantID, VisitID, Platform, OperatingSystem, Browser, CharacterSelected, InterventionStartTime, InterventionEndTime, TotalTimeSpentOnIntervention, NumberOfModulesInteracted, KidneyTransplantResponse, OverviewUsefulnessCheckinResponse) 
-        VALUES (@ParticipantID, @VisitID, @Platform, @OperatingSystem, @Browser, @CharacterSelected, @InterventionStartTime, @InterventionEndTime, @TotalTimeSpentOnIntervention, @NumberOfModulesInteracted, @KidneyTransplantResponse, @OverviewUsefulnessCheckinResponse)`;
+        (ParticipantID, VisitID, Platform, OperatingSystem, Browser, CharacterSelected, InterventionStartTime, InterventionEndTime, TotalTimeSpentOnIntervention, NumberOfModulesInteracted, KidneyTransplantResponse, OverviewUsefulnessCheckinResponse, ConversationLog) 
+        VALUES (@ParticipantID, @VisitID, @Platform, @OperatingSystem, @Browser, @CharacterSelected, @InterventionStartTime, @InterventionEndTime, @TotalTimeSpentOnIntervention, @NumberOfModulesInteracted, @KidneyTransplantResponse, @OverviewUsefulnessCheckinResponse, @ConversationLog)`;
   
       request.input('VisitID', sql.Int, VisitID);
       request.input('Platform', sql.VarChar, Platform);
@@ -203,6 +210,7 @@ async function addParticipantVisit(data) {
       request.input('NumberOfModulesInteracted', sql.Int, NumberOfModulesInteracted);
       request.input('KidneyTransplantResponse', sql.Int, KidneyTransplantResponse || null);
       request.input('OverviewUsefulnessCheckinResponse', sql.VarChar, OverviewUsefulnessCheckinResponse || null);
+      request.input('ConversationLog',sql.VarChar, ConversationLog || null);
   
       await request.query(insertQuery);
       return VisitID;
@@ -253,7 +261,7 @@ app.post('/OpenAIRedactedText', async (req, res)=> {
   
                 What to Redact: Remove (replace with "[redacted]") any PII belonging to the user, including:
   
-                The user’s own name, email address, phone number, physical address, or any other contact details.
+                The user’s own name, email address, phone number, physical address and location, State Codes like MN , FL etc or any other contact details.
                 The user’s government ID numbers (such as passport or Social Security).
                 The user’s financial information (credit card numbers, bank account information, etc.).
                 What NOT to Redact: Do NOT remove references to other people or other names that are not the user’s. For example, if the text says “Hey John,” and “John” is not the user, do not redact it.
@@ -263,12 +271,13 @@ app.post('/OpenAIRedactedText', async (req, res)=> {
                 Return a JSON object with two keys:
                 "redacted_text": the input text but with the user’s PII replaced by "[redacted]".
                 "is_redacted": a boolean that is true if any user PII was redacted, and false otherwise.
+
                 Examples:
   
                 If the input is "Hi, my name is Danish.", then the output JSON should be: { "redacted_text": "Hi, my name is [redacted].", "is_redacted": true }
                 If the input is "Hey John, how have you been?", then the output JSON should be: { "redacted_text": "Hey John, how have you been?", "is_redacted": false }
                 If the input is "Here’s my phone number: 123-456-7890.", then the output JSON should be: { "redacted_text": "Here’s my phone number: [redacted].", "is_redacted": true }
-                If the input is "Contact me at [email protected].", then the output JSON should be: { "redacted_text": "Contact me at [redacted].", "is_redacted": true }
+                If the input is "Contact me at testemail@gmail.com.", then the output JSON should be: { "redacted_text": "Contact me at [redacted].", "is_redacted": true }
                 `
                },
               {
@@ -287,37 +296,31 @@ app.post('/OpenAIRedactedText', async (req, res)=> {
 
   app.post('/OpenAIChatNephrologist', async (req, res)=> {
     try {
-          contentMessage = 
-          `
-          You are in a chat with:
-  
-          userMessage (the patient), who has Chronic Kidney Disease (CKD).
-          You (Dr. Alex, the Nephrologist), who works at a local hospital.
-          Your instructions:
-  
-          Use the conversation history (an array of JSON messages) but focus on the most recent userMessage in the last JSON of the array.
-          Provide a concise, accurate answer (under 150 words) as a nephrologist would, addressing the user's latest question.
-          Respond only if the question is clearly addressed to you (Dr. Alex). If it's directed to someone else, do not answer.
-          Write in a casual, chat-like tone (like on iMessage or WhatsApp), but still sound professional enough for your role as a nephrologist.
-  
-          Do not answer if the user's latest message isn't for you.
-          If the question asked is not related to CKD, don't answer it.
-          Make sure your sources are legitimate (no fake or placeholder URLs).
-          Keep your “answer” field under 150 words.
+        contentMessage = 
+        `
+        `
 
-          Do not give me any news articles / Recent Developments.
-          `
+        // contentMessage = `ALWAYS reply with query / citations. From here on out whatever question is asked, answer using /query only kidney.org, nih.gov, cdc.gov and kidneyfund.org.
+        // If its not present just don't answer except saying along the lines of you can't help with that topic but are glad to answer any questions related to kidney and ckd, 
+        // don't talk about the source of like "Kidney.org doesn’t specifically talk about this" etc. Feel free to rephrase to make it sound like a nephrologist speaking.`
 
         const completion = await openai.chat.completions.create({
           model: process.env.COMPLETIONS_WEB_SEARCH_MODEL,
-          web_search_options: {},
+          web_search_options: {
+            search_context_size: "high",
+          },
           messages: [
               { role: "system", 
                 content: contentMessage,
                },
               {
                   role: "user",
-                  content: req.body.conversationHistorySoFar,
+                  content: `
+                  ${contentMessage}
+
+                  Conversation History:
+                  ${req.body.conversationHistorySoFar}
+                `
               },
           ],
           // response_format:{ "type": "json_object" },
@@ -344,18 +347,69 @@ app.post('/OpenAIRedactedText', async (req, res)=> {
           contentMessage = 
           `
           You are in a chat with:
-  
-          userMessage (the patient), who has Chronic Kidney Disease (CKD).
-          You (Dr. Alex, the Nephrologist), who works at a local hospital.
-          Your instructions:
 
-          Write in a casual, chat-like tone (like on iMessage or WhatsApp), but still sound professional enough for your role as a nephrologist.
-          Use the conversation history (an array of JSON messages) but focus on the most recent userMessage in the last JSON of the array.
-          
+          - userMessage (the patient), who has Chronic Kidney Disease (CKD).  
+          - You (Dr. Alex, the Nephrologist), who works at a local hospital.
+
+          Instructions:
+          - Write in a casual, chat-like tone (like iMessage or WhatsApp), but still sound professional as a nephrologist.  
+          - Use the **entire conversation history** to understand context, especially the most recent userMessage.  
+          - If the most recent message is vague (e.g., “tell me more”, “how long is that?”, “sweet”), use earlier context to interpret it.
+          - Avoid giving **opinion-based advice** on serious or ethical decisions (e.g., organ donation suitability, major life decisions). Instead, encourage the patient to speak with their in-person doctor.
+
           Return a JSON object with two keys:
-                "isRelated": Yes or No depending on whether the question asked is related to something a Nephrologist would answer. Anything remotely close to CKD or Kidney related should be answered, such as health, diet related stuff. Or a question that someone suffering with CKD may have. Things like food recommendations, dietary/nutrition guidance, healtcare, fitness etc. The whole nine yards. Allow questions where the user is greeting, saying hi, introducting themselves etc.
-                "reply": If isRelated is No, reply with a sentence that says that you cannot answer that since its not related to CKD, but are glad to answer any questions related to CKD. Feel free to rephrase or paraphase this sentence to sound like a Nephrologist.
-          `
+          1. "isRelated": 
+            - "Yes" if the userMessage is related to CKD, kidneys, dialysis, transplants, medications, kidney diet, general health/fitness advice, etc.
+            - "No" if unrelated (e.g., asking about your day, sports, unrelated life events).
+
+          2. "reply": 
+            - If isRelated is "Yes", give a helpful, casually professional response.
+            - If isRelated is "No", politely say you can only answer kidney/CKD-related questions.
+            - If it's a greeting or small talk, reply warmly like a professional nephrologist might.
+            - If it's an ethically sensitive question (like asking if a family member should donate a kidney), say you can’t give personal advice on that and recommend they speak with their doctor.
+
+          EXAMPLES (Few-shot learning):
+
+          ---
+
+          Most recent userMessage: How long have you been doing this?
+
+          {
+            "isRelated": "No",
+            "reply": "Haha, good question! I’ve been in nephrology for quite a few years now. But I’m here to help you with anything kidney-related—feel free to ask!"
+          }
+
+          ---
+
+          Most recent userMessage: Yeah, I’ve also been more short of breath.
+
+          {
+            "isRelated": "Yes",
+            "reply": "Thanks for sharing that—shortness of breath can happen with CKD, especially if fluid builds up. Definitely worth bringing up to your care team if it keeps happening."
+          }
+
+          ---
+
+          Most recent userMessage: Should I ask my daughter to donate a kidney to me?
+
+          {
+            "isRelated": "No",
+            "reply": "That’s such an important and personal decision, and I can’t really give advice on family donor choices. I’d strongly recommend talking this over with your nephrologist and the transplant team—they can guide you properly."
+          }
+
+          ---
+
+          Most recent userMessage: What do you think about the Warriors game last night?
+
+          {
+            "isRelated": "No",
+            "reply": "I try to keep up with sports when I can, but I mostly stick to kidneys. Let me know if you have any CKD or health-related questions!"
+          }
+
+          ---
+
+          Now use the full conversation to generate your JSON response.
+              `;
 
         const completion = await openai.chat.completions.create({
           model: process.env.COMPLETIONS_MODEL,
@@ -397,6 +451,9 @@ app.post('/OpenAIRedactedText', async (req, res)=> {
 
           Return a JSON object:
           formattedNephrologistResponse: The valid HTML with rewritten text.
+          Keep the hyperlinks text as is (DO not change inner text), Also do not make any corrections in the link itself!
+          Make sure the spacing makes sense, not too many <br> or \\n  (new line) where there already is padding or margin, stuff like that.
+          IF there is ANY Recent Advances or news section remove it.
           `
 
         const completion = await openai.chat.completions.create({
@@ -578,5 +635,61 @@ app.post('/OpenAIRedactedText', async (req, res)=> {
         res.status(400).json({message: e.message})
     }
   })
+
+  app.post('/CreateChatGPTAssistantThread', async (req, res) => {
+    try {
+      const thread = await openai.beta.threads.create();
+      res.json({ threadId: thread.id });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: err.message || 'Failed to create thread.' });
+    }
+  });
+
+  app.post('/ChatGPTAssistantResponse', async (req, res) => {
+    const { threadId, userMessage } = req.body;
+  
+    if (!threadId || !userMessage) {
+      return res.status(400).json({ error: 'threadId and userMessage are required.' });
+    }
+  
+    try {
+      // 1. Add user message to existing thread
+      await openai.beta.threads.messages.create(threadId, {
+        role: 'user',
+        content: userMessage,
+      });
+  
+      // 2. Run assistant with forced retrieval
+      const run = await openai.beta.threads.runs.create(threadId, {
+        assistant_id: assistantId,
+        tool_choice: { type: 'file_search' },
+      });
+  
+      // 3. Poll until run completes
+      let runStatus;
+      do {
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        runStatus = await openai.beta.threads.runs.retrieve(threadId, run.id);
+      } while (runStatus.status !== 'completed');
+  
+      // 4. Return full assistant messages (with citations, annotations, etc.)
+      const messagesResponse = await openai.beta.threads.messages.list(threadId);
+      res.json({ messages: messagesResponse.data });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: err.message || 'Assistant failed to respond.' });
+    }
+  });
+  
+  app.get('/api/files/:fileId/name', async (req, res) => {
+    try {
+      const { fileId } = req.params;
+      const file = await openai.files.retrieve(fileId);
+      res.json({ fileName: file.filename });
+    } catch (err) {
+      res.status(500).json({ error: 'Failed to get file name', details: err.message });
+    }
+  });
 
 app.listen(process.env.PORT || 3000);

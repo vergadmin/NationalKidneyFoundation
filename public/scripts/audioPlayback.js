@@ -1,16 +1,24 @@
 import {appendAlexMessage} from "./message.js";
 
+window.playOnTtsAudioPlayer = playOnTtsAudioPlayer;
+
 export async function playOnTtsAudioPlayer(InputMessage, WhoIsIt) {
     // Get the source from the provided audio element
     let source;
 
     function removeParenthesesContent(input) {
-        return input.replace(/<[^>]*>|\[.*?\]/g, '');
+        return input
+            .replace(/<a[^>]*>.*?<\/a>/g, '') // remove anchor tags + their content
+            .replace(/<[^>]*>/g, '')          // remove remaining HTML tags
+            .replace(/\[.*?\]/g, '')          // remove content in square brackets
+            .replace(/【[^】]*】/g, '');       // remove content in 【】
     }
-
+    
     var MessageStrippedCitations = removeParenthesesContent(InputMessage);
 
-    if (WhoIsIt === "Nephrologist") {
+    console.log(MessageStrippedCitations);
+
+    if (WhoIsIt === "Nephrologist" || WhoIsIt === "Other") {
         // source = `/ElevenLabsVoiceNephrologistStream?Message=${encodeURIComponent(InputMessage)}`;
         source = `/OpenAIVoiceNephrologistStream?Message=${encodeURIComponent(MessageStrippedCitations)}`;
     } else if (WhoIsIt === "Ex-patient") {

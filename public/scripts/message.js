@@ -1,6 +1,7 @@
 import { hideQuestionButtons, createQuestionButtons } from "/scripts/suggestedQuestions.js";
-import { getNephrologistResponse, getRedactedText, getBoldedQuestions, OpenAIChatCheckTopic, OpenAINephrologistFormattedMessage} from "/scripts/openAIRequests.js"
-import {playOnTtsAudioPlayer} from "/scripts/audioPlayback.js"
+import { getNephrologistResponse, getRedactedText, getBoldedQuestions, OpenAIChatCheckTopic, 
+    OpenAINephrologistFormattedMessage, getChatGPTAssistantThreadID, getChatGPTAssistantResponse } from "/scripts/openAIRequests.js"
+import { playOnTtsAudioPlayer } from "/scripts/audioPlayback.js"
 
 window.sendMessage = sendMessage;
 
@@ -9,21 +10,28 @@ const sendButton = document.getElementById('send-btn');
 const micButton = document.getElementById('mic-toggleButton');
 const chatBox = document.getElementById('chat-box');
 
-    // JavaScript function to trigger when the user hits Enter after typing in the input field
-    document.getElementById("user-input").addEventListener("keydown", function (event) {
-        if (event.key === "Enter") {
-            event.preventDefault();
-            sendMessage();
-        }
-    });
-  
-  document.getElementById("user-input").addEventListener("input", function() {
+var chatGPTAssistantThreadID = sessionStorage.getItem('chatGPTAssistantThreadID')
+if (chatGPTAssistantThreadID === null) {
+    chatGPTAssistantThreadID = await getChatGPTAssistantThreadID();
+    sessionStorage.setItem('chatGPTAssistantThreadID', chatGPTAssistantThreadID);
+}
+
+
+// JavaScript function to trigger when the user hits Enter after typing in the input field
+document.getElementById("user-input").addEventListener("keydown", function (event) {
+    if (event.key === "Enter") {
+        event.preventDefault();
+        sendMessage();
+    }
+});
+
+document.getElementById("user-input").addEventListener("input", function () {
     if (this.value.trim() === "") {
         sendButton.disabled = true;
     } else {
         sendButton.disabled = false;
     }
-  });
+});
 
 
 function enableInput() {
@@ -38,7 +46,7 @@ function disableInput() {
     micButton.disabled = true;
 }
 
-function clearUserInput(){
+function clearUserInput() {
     userInput.value = ''; // Clear input field after sending message
 }
 
@@ -76,8 +84,11 @@ function appendLoadingDots(name, MessageType) {
     else if (MessageType == "audio") {
         typingText.textContent = `${name} is recording an audio message`;
     }
-    else if(MessageType == "video"){
+    else if (MessageType == "video") {
         typingText.textContent = ``;
+    }
+    else{
+        typingText.textContent = MessageType;
     }
 
     // Wrap the dots and text in a container
@@ -141,7 +152,7 @@ export function appendUserMessage(message) {
 
 
 export async function sendMessage(Buttontext) {
-
+    stopStopwatch();
     let InteractionType = "NephrologistOnly";
 
     var userMessage
@@ -209,48 +220,90 @@ export async function sendMessage(Buttontext) {
 
         enableInput();
         clearUserInput();
+        startStopwatch();
 
         async function AlexReplies(InteractionType) {
-                appendLoadingDots("Alex", "video");
+            appendLoadingDots("Alex", "video");
 
-                let IsRelated = await OpenAIChatCheckTopic(ConversationLog);
-                IsRelated = JSON.parse(IsRelated.message)
+            let IsRelated = await OpenAIChatCheckTopic(ConversationLog);
+            IsRelated = JSON.parse(IsRelated.message)
 
-                console.log(IsRelated.isRelated)
+            console.log(IsRelated.isRelated)
 
-                if(IsRelated.isRelated === "No"){
-                    removeLoadingDots();
+            if (IsRelated.isRelated === "No") {
 
-                    var formattedMessage = formatMessageMarkdown(IsRelated.reply);
+                var formattedMessage = formatMessageMarkdown(IsRelated.reply);
 
-                    var finalFormattedText = await OpenAINephrologistFormattedMessage(formattedMessage);
+                var finalFormattedText = await OpenAINephrologistFormattedMessage(formattedMessage);
+                var message = JSON.parse(finalFormattedText.message);
+
+                removeLoadingDots();
+                await playOnTtsAudioPlayer(message.formattedNephrologistResponse, "Nephrologist");
+
+                ThisMessageJSON.NephrologistResponse = message.formattedNephrologistResponse;
+                ConversationLog[ConversationLog.length - 1] = ThisMessageJSON;
+                follow_up_questions = "";
+                sources = "";
+            }
+            else {
+
+                let AssistantResponse = await getChatGPTAssistantResponse(chatGPTAssistantThreadID, userMessage);
+                AssistantResponse = AssistantResponse[0];
+
+                console.log(AssistantResponse);
+
+                if(AssistantResponse.role === "assistant" && AssistantResponse.content[0].text.annotations.length > 0){
+
+                    let AssistantAnnotatedResponseText  = await injectAssistantAnnotationsIntoText(AssistantResponse.content[0].text.value, AssistantResponse.content[0].text.annotations)
+
+                    AssistantAnnotatedResponseText = formatMessageMarkdown(AssistantAnnotatedResponseText);
+
+                    var finalFormattedText = await OpenAINephrologistFormattedMessage(AssistantAnnotatedResponseText);
+
+                    console.log(finalFormattedText);
+
                     var message = JSON.parse(finalFormattedText.message);
-
+    
+                    removeLoadingDots();
                     await playOnTtsAudioPlayer(message.formattedNephrologistResponse, "Nephrologist");
     
                     ThisMessageJSON.NephrologistResponse = message.formattedNephrologistResponse;
                     ConversationLog[ConversationLog.length - 1] = ThisMessageJSON;
                     follow_up_questions = "";
                     sources = "";
+                    
                 }
                 else{
+                    removeLoadingDots();
+                    await playOnTtsAudioPlayer("<p>This one’s a little outside my typical clinical knowledge, so I’m referencing trusted online medical sources to provide a well-informed answer.</p><br>", "Nephrologist");
 
+                    appendLoadingDots("Alex", "looking for information online");
                     let data = await getNephrologistResponse(ConversationLog, InteractionType);
                     let NephrologistResponse = JSON.parse(data.message);
-
+    
+                    console.log(NephrologistResponse.answer);
+    
                     var formattedMessage = formatMessageMarkdown(NephrologistResponse.answer);
-
+    
+                    console.log(formattedMessage);
+    
                     var finalFormattedText = await OpenAINephrologistFormattedMessage(formattedMessage);
+    
+                    console.log(finalFormattedText);
                     var message = JSON.parse(finalFormattedText.message);
-
+    
                     removeLoadingDots();
+                    // await playOnTtsAudioPlayer("<p>This one’s a little outside my typical clinical knowledge, so I’m referencing trusted online medical sources to provide a well-informed answer.</p><br>" +  message.formattedNephrologistResponse, "Nephrologist");
+    
                     await playOnTtsAudioPlayer(message.formattedNephrologistResponse, "Nephrologist");
 
                     ThisMessageJSON.NephrologistResponse = message.formattedNephrologistResponse;
                     ConversationLog[ConversationLog.length - 1] = ThisMessageJSON;
                     follow_up_questions = NephrologistResponse.follow_up_questions;
                     sources = NephrologistResponse.sources;
+
                 }
+            }
         }
     }
 }
@@ -263,7 +316,7 @@ export function streamPatientAudio(InputMessage) {
 
     // Create an audio element
     const audioElement = document.getElementById("tts-audio-player");
-    
+
     // Set the audio source to the backend streaming URL with the message as a query parameter
     audioElement.src = `/OpenAIVoicePatient?Message=${encodeURIComponent(InputMessage)}`;
 
@@ -286,7 +339,7 @@ export async function appendAlexMessage(message, typingSpeed = 15, isVideo = fal
     avatarImg.src = `/profile_pics/${type}.png`; // Replace with your image path
     avatarImg.alt = 'Alex';
     avatarImg.className = 'alex-icon pulse-orange';
-    if(isVideo){
+    if (isVideo) {
         avatarImg.classList.add("alex-icon-video");
     }
 
@@ -376,14 +429,40 @@ function formatMessageMarkdown(message) {
     // Convert **bold** to <strong>
     let formatted = message.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
 
+    // Convert [text](url) to <a href="url">text</a>
     formatted = formatted.replace(
-        /\(\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)\)\n*/g,
-        '<a href="$2" target="_blank">[$1]</a><br><br>'
+        /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g,
+        '<a href="$2" target="_blank">[$1]</a>'
     );
 
-    // Convert remaining \n to <br>
-    formatted = formatted.replace(/\n/g, '<br>');
+    // Convert line breaks to <br>
+    formatted = formatted.replace(/\n/g, '<br><br>');
 
     return formatted;
 }
+
+export async function injectAssistantAnnotationsIntoText(text, annotations) {
+    if (!text || !Array.isArray(annotations)) return text;
+  
+    let result = text;
+  
+    for (const ann of annotations) {
+      const matchText = ann.text;
+      const fileId = ann.file_citation?.file_id || '';
+      if (!fileId) continue;
+  
+      try {
+        const fileNameRes = await fetch(`/api/files/${fileId}/name`);
+        const { fileName } = await fileNameRes.json();
+  
+        const replacement = `<br><br>  [<a href="https://national-kidney-foundation.s3.amazonaws.com/NKF_Resources/${fileName}" target="_blank" style="color:blue; text-decoration:underline;">${fileName}</a>] <br>`;
+        result = result.split(matchText).join(replacement);
+      } catch (err) {
+        console.error(`Failed to inject for file ID ${fileId}`, err);
+      }
+    }
+  
+    return result;
+  }
+  
 

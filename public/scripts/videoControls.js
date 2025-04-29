@@ -4,9 +4,15 @@ var type = document.body.getAttribute("type-variable");
 var nextPage = document.body.getAttribute("next-page-variable");
 var playButton = document.getElementById("playButton");
 var VideoArrayIndex = 1;
-var hasPlayedChatbotInitVideo = false;
-var chatbotVideo = document.getElementById("chatgptVideo");
 
+var hasPlayedChatbotInitVideo = sessionStorage.getItem('hasPlayedChatbotInitVideo') === null 
+  ? false 
+  : Boolean(JSON.parse(sessionStorage.getItem('hasPlayedChatbotInitVideo')));
+if (hasPlayedChatbotInitVideo === false) {
+  sessionStorage.setItem('hasPlayedChatbotInitVideo', JSON.stringify(false));
+}
+
+var chatbotVideo = document.getElementById("chatgptVideo");
 
 const userInput = document.getElementById('user-input');
 const sendButton = document.getElementById('send-btn');
@@ -23,6 +29,23 @@ function clearUserInput(){
 }
 
 const urlParams = new URLSearchParams(window.location.search);
+
+
+const chatBox = document.getElementById('chat-interface');
+
+// Stopwatch variables
+let stopwatchInterval;
+let stopwatchTime = 0; // in seconds
+
+// Function to monitor the textarea value changes
+function monitorTextareaChanges() {
+  const textarea = document.getElementById('user-input');
+  if (textarea) {
+    textarea.addEventListener('input', () => {
+      resetStopwatch(); // Reset stopwatch on any change in the textarea
+    });
+  }
+}
 
 ifInvalidSessionTaketoHomePage();
 
@@ -174,6 +197,7 @@ function showChatInterface(module){
   if(!hasPlayedChatbotInitVideo || Math.random() <= 0.3){
     ShowAndPlayChatbotInitVideo(`https://national-kidney-foundation.s3.amazonaws.com/${type}/chatbotVideo.mp4`);
     hasPlayedChatbotInitVideo = true;
+    sessionStorage.setItem('hasPlayedChatbotInitVideo', JSON.stringify(hasPlayedChatbotInitVideo));
   }
   else{
     PlayIdleVideo();
@@ -483,3 +507,76 @@ function HideElement(idName){
 function ShowElement(idName, displayType){
   document.getElementById(idName).style.display = displayType;
 }
+
+// Function to start the stopwatch
+async function startStopwatch() {
+  stopwatchTime = 0;
+  stopwatchRunning = true;
+
+  while (stopwatchRunning && document.getElementById('user-input').disabled === false) {
+    await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1 second
+    stopwatchTime++;
+    console.log('Stopwatch time:', stopwatchTime);
+
+    if (stopwatchTime > 20) {
+      stopwatchRunning = false; // Stop the loop to avoid repeating
+      await playOnTtsAudioPlayer(
+        "<p>Alright, it seems like everything's making sense so far. I’ll go ahead and move on to the next topic, but if any questions pop up while we’re talking, don’t hesitate to ask the next time the chatbox appears.</p><br>",
+        "Other"
+      );
+      PreviousNextButtonFunction(1, false);
+    }
+  }
+}
+
+// Function to reset the stopwatch
+function resetStopwatch() {
+  stopwatchTime = 0;
+  console.log('Stopwatch reset');
+}
+
+// Function to stop the stopwatch
+function stopStopwatch() {
+  clearInterval(stopwatchInterval);
+  console.log('Stopwatch stopped');
+}
+
+const resetStopwatchOnActivity = async () => {
+  await resetStopwatch(); // Ensure resetStopwatch is awaited if it's async
+};
+
+// Watch for the display: block change
+const observer = new MutationObserver(async (mutationsList) => {
+  for (let mutation of mutationsList) {
+    if (mutation.type === 'attributes' && mutation.attributeName === 'style') {
+      const displayStyle = chatBox.style.display;
+
+      var ttsPlayer = document.getElementById("tts-audio-player");
+
+      // When chat interface becomes visible
+      if (displayStyle === 'block') {
+        console.log('Chat interface is visible');
+        startStopwatch(); // Start the stopwatch, ensure async is handled
+        monitorTextareaChanges(); // Monitor textarea for changes
+
+        // Add event listeners for touch and mouse activity
+        document.addEventListener('touchstart', resetStopwatchOnActivity); // For touch devices
+        document.addEventListener('mousedown', resetStopwatchOnActivity); // For mouse clicks
+      } else {
+        // Remove event listeners when chat interface is hidden
+        document.removeEventListener('touchstart', resetStopwatchOnActivity); // For touch devices
+        document.removeEventListener('mousedown', resetStopwatchOnActivity); // For mouse clicks
+        stopStopwatch(); // Stop the stopwatch if chat interface is hidden
+      }
+    }
+  }
+});
+
+// Configuration to observe changes to the 'style' attribute
+const config = {
+  attributes: true,
+  attributeFilter: ['style'],
+};
+
+// Start observing the chat interface
+observer.observe(chatBox, config);
