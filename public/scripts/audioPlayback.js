@@ -19,8 +19,8 @@ export async function playOnTtsAudioPlayer(InputMessage, WhoIsIt) {
     console.log(MessageStrippedCitations);
 
     if (WhoIsIt === "Nephrologist" || WhoIsIt === "Other") {
-        // source = `/ElevenLabsVoiceNephrologistStream?Message=${encodeURIComponent(InputMessage)}`;
-        source = `/OpenAIVoiceNephrologistStream?Message=${encodeURIComponent(MessageStrippedCitations)}`;
+        source = `/ElevenLabsVoiceNephrologistStream?Message=${encodeURIComponent(MessageStrippedCitations)}`;
+        // source = `/OpenAIVoiceNephrologistStream?Message=${encodeURIComponent(MessageStrippedCitations)}`;
     } else if (WhoIsIt === "Ex-patient") {
         source = `/OpenAIVoicePatientStream?Message=${encodeURIComponent(MessageStrippedCitations)}`;
     }
@@ -67,6 +67,33 @@ export async function playOnTtsAudioPlayer(InputMessage, WhoIsIt) {
         
     } catch (error) {
         console.error("Error playing audio:", error);
+
+        //Play with fallback OpenAI voice.
+        source = `/OpenAIVoiceNephrologistStream?Message=${encodeURIComponent(MessageStrippedCitations)}`;
+        ttsAudioPlayer.src = source;
+        HideElement("generatedVideo");
+
+        await ttsAudioPlayer.play(); // Wait for the audio to start playing
+        console.log("Audio started playing...");
+        
+        ShowElement("chatgptVideo", "flex");
+        await loadWallaVideo(WhoIsIt);
+        
+        if (WhoIsIt === "Nephrologist") {
+            appendAlexMessage(InputMessage, 80, true);
+        } else if (WhoIsIt === "Ex-patient") {
+            appendJohnMessage(InputMessage, 80, true);
+        }
+
+        // Wait for the audio to finish playing
+        await new Promise((resolve) => {
+            ttsAudioPlayer.onended = resolve;
+        });
+
+        console.log("Audio playback finished.");
+        unloadVideo();
+        PlayIdleVideo();
+
     }
 }
 

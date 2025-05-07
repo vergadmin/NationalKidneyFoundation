@@ -153,6 +153,7 @@ export function appendUserMessage(message) {
 
 export async function sendMessage(Buttontext) {
     stopStopwatch();
+
     let InteractionType = "NephrologistOnly";
 
     var userMessage
@@ -217,6 +218,7 @@ export async function sendMessage(Buttontext) {
 
         const chatBox = document.getElementById('chat-box');
         chatBox.scrollTop = chatBox.scrollHeight; // Scroll to bottom
+
 
         enableInput();
         clearUserInput();
@@ -455,7 +457,8 @@ export async function injectAssistantAnnotationsIntoText(text, annotations) {
         const fileNameRes = await fetch(`/api/files/${fileId}/name`);
         const { fileName } = await fileNameRes.json();
   
-        const replacement = `<br><br>  [<a href="https://national-kidney-foundation.s3.amazonaws.com/NKF_Resources/${fileName}" target="_blank" style="color:blue; text-decoration:underline;">${fileName}</a>] <br>`;
+        const encodedFileName = encodeURIComponent(fileName).replace(/%20/g, '+');
+        const replacement = `<br><br>  [<a href="https://national-kidney-foundation.s3.amazonaws.com/NKF_Resources/${encodedFileName}" target="_blank" style="color:blue; text-decoration:underline;">${fileName}</a>] <br>`;
         result = result.split(matchText).join(replacement);
       } catch (err) {
         console.error(`Failed to inject for file ID ${fileId}`, err);

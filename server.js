@@ -534,6 +534,7 @@ app.post('/OpenAIRedactedText', async (req, res)=> {
         model: "tts-1",
         voice: "ash",
         input: message,
+        // instructions: `Voice Affect: Confident, professional, and approachable; convey trustworthiness and competence while maintaining warmth and relatability.\n\nTone: Warm and engaging, yet authoritative. Use a tone that inspires confidence while remaining friendly and personable.\n\nPacing: Balanced and measured—slightly steady, allowing for clarity in complex medical explanations, while still maintaining a human connection.\n\nEmotion: Empathetic and compassionate, especially when discussing sensitive health matters; convey care and attentiveness in every word.\n\nPronunciation: Clear and direct, with a smooth cadence. Ensure medical terms are pronounced accurately, but with a tone that is welcoming and easy to understand.\n\nPauses: Well-timed pauses, particularly when explaining important medical concepts or giving patients a moment to absorb information, ensuring they feel heard and understood.`,
         format: "opus",
       });
   
@@ -572,7 +573,7 @@ app.post('/OpenAIRedactedText', async (req, res)=> {
       const stream = await elevenLabs.textToSpeech.convertAsStream("K8Xci0GnZUSchP20TdtO", {
         text: message,
         output_format: "mp3_44100_128",
-        model_id: "eleven_multilingual_v2",
+        model_id: "eleven_flash_v2_5",
       });
   
       res.writeHead(200, {
