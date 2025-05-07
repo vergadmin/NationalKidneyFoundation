@@ -243,27 +243,36 @@ export async function getChatGPTAssistantThreadID() {
     }
 }
 
-export async function getChatGPTAssistantResponse(threadId, userMessage) {
-    try {
-        const res = await fetch('/ChatGPTAssistantResponse', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                threadId,
-                userMessage,
-            }),
-        });
+export async function getChatGPTAssistantResponse(threadId, userMessage, retries = 3, delay = 1000) {
+    for (let attempt = 1; attempt <= retries; attempt++) {
+        try {
+            const res = await fetch('/ChatGPTAssistantResponse', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    threadId,
+                    userMessage,
+                }),
+            });
 
-        if (!res.ok) {
-            throw new Error('Failed to get assistant response');
+            if (!res.ok) {
+                throw new Error(`Fetch failed with status ${res.status}`);
+            }
+
+            const data = await res.json();
+            return data.messages;
+        } catch (error) {
+            console.error(`Attempt ${attempt} failed:`, error);
+
+            if (attempt === retries) {
+                throw new Error('All attempts to get assistant response failed.');
+            }
+
+            // Optional: Wait before retrying
+            await new Promise(res => setTimeout(res, delay));
         }
-
-        const data = await res.json();
-        return data.messages; // full message array including annotations, etc.
-    } catch (error) {
-        console.error('Error getting assistant response:', error);
-        throw error;
     }
 }
+
