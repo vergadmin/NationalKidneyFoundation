@@ -43,7 +43,7 @@ export async function playOnTtsAudioPlayer(InputMessage, WhoIsIt) {
 
     try {
         HideElement("generatedVideo");
-
+        scrollToTopOfPage();
         await ttsAudioPlayer.play(); // Wait for the audio to start playing
         console.log("Audio started playing...");
         
@@ -144,3 +144,10 @@ export function PlayIdleVideo(){
     chatbotVideo.loop = true;
     chatbotVideo.play();
   }
+
+export function scrollToTopOfPage() {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+}
