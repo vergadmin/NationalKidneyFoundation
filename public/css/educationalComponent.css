@@ -250,8 +250,8 @@ button {
 
 @media (max-width: 768px) {
     .chat-box {
-        height: 500px;
-        display: none;
+        height: 160px;
+        display: block;
     }
 }
 
@@ -299,7 +299,7 @@ button {
 
 @media (max-width: 768px) {
     .user-input {
-        height: 160px;
+        height: 40px;
     }
 }
 
