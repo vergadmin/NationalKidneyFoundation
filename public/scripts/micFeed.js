@@ -8,8 +8,8 @@ let isRecording = false;
 let audioStream;
 let recognition;
 let liveTranscript = ""; // Variable to store transcribed text
-let lastSpeechTime = Date.now(); // Track last speech timestamp
-let silenceTimeout;
+var lastSpeechTime = null; // Track last speech timestamp
+let silenceCheckInterval;
 
 window.toggleMic = toggleMic;
 
@@ -92,14 +92,17 @@ export async function toggleMic() {
             
                 // Reset last speech timestamp
                 lastSpeechTime = Date.now();
-                resetSilenceTimer(); // Restart silence timer
+                resetStopwatchOnActivity();
+                startSilenceMonitor();// Restart silence timer
             };
                         
 
             recognition.start(); // Start real-time transcription
-
+            if(lastSpeechTime === null){
+                lastSpeechTime = Date.now();
+            }
             // Set up silence detection timer
-            resetSilenceTimer();
+            startSilenceMonitor();
 
             micButton.innerHTML = 
             `push to stop talking
@@ -132,7 +135,7 @@ function stopRecording() {
         recognition.stop();
     }
 
-    clearTimeout(silenceTimeout); // Clear silence detection timeout
+    clearTimeout(silenceCheckInterval); // Clear silence detection timeout
 
     const micButton = document.getElementById("mic-toggleButton");
     micButton.innerHTML = 
@@ -142,17 +145,19 @@ function stopRecording() {
         </span></button>`;
     
     isRecording = false;
+    lastSpeechTime = null;
 }
 
 // Function to reset silence timer
-function resetSilenceTimer() {
-    clearTimeout(silenceTimeout);
-    silenceTimeout = setTimeout(() => {
+function startSilenceMonitor() {
+    clearInterval(silenceCheckInterval);
+    silenceCheckInterval = setInterval(() => {
         const now = Date.now();
-        if (now - lastSpeechTime >= 3000) { // Adjust threshold (4000ms = 4 seconds)
+        if (lastSpeechTime && now - lastSpeechTime >= 3000) {
             stopRecording();
             unloadVideo();
             PlayIdleVideo();
+            clearInterval(silenceCheckInterval); // Stop checking after triggering
         }
-    }, 1000); // Check every 4 seconds
+    }, 1000); // Check every 1 second
 }
