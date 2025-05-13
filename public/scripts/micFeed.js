@@ -149,7 +149,7 @@ function resetSilenceTimer() {
     clearTimeout(silenceTimeout);
     silenceTimeout = setTimeout(() => {
         const now = Date.now();
-        if (now - lastSpeechTime >= 4000) { // Adjust threshold (4000ms = 4 seconds)
+        if (now - lastSpeechTime >= 3000) { // Adjust threshold (4000ms = 4 seconds)
             stopRecording();
             unloadVideo();
             PlayIdleVideo();
