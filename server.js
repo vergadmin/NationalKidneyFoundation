@@ -539,7 +539,7 @@ app.post('/OpenAIRedactedText', async (req, res)=> {
       });
   
       res.writeHead(200, {
-        "Content-Type": "audio/ogg",
+        "Content-Type": "audio/mpeg",
         "Transfer-Encoding": "chunked",
       });
   
