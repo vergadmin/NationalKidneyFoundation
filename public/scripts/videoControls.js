@@ -166,6 +166,7 @@ function ShowAndPlayChatbotInitVideo(source){
   ShowElement('chatgptVideo', "flex");
   chatbotVideo.src = source;
   chatbotVideo.loop = false;
+  chatbotVideo.muted = false; 
   chatbotVideo.play();
 }
 
@@ -174,6 +175,7 @@ function PlayIdleVideo(){
   ShowElement('chatgptVideo', "flex");
   chatbotVideo.src = `https://national-kidney-foundation.s3.amazonaws.com/${type}/chatbotIdleVideo.mp4`;
   chatbotVideo.loop = true;
+  chatbotVideo.muted = true; // Mute the video to avoid autoplay issues
   chatbotVideo.play();
 }
 

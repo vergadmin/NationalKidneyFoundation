@@ -103,6 +103,7 @@ async function loadWallaVideo() {
         VideoPlayer = document.getElementById("chatgptVideo");
         VideoPlayer.src = `https://national-kidney-foundation.s3.amazonaws.com/${type}/Alex_Walla.mp4`;
         VideoPlayer.loop = true;
+        VideoPlayer.muted = true; // Mute the video to avoid autoplay issue
         await VideoPlayer.play(); // Ensure it starts playing properly
     } catch (error) {
         console.error("Error loading or playing video:", error);
@@ -123,6 +124,7 @@ export async function MakeAgentListen(){
         VideoPlayer = document.getElementById("chatgptVideo");
         VideoPlayer.src = `https://national-kidney-foundation.s3.amazonaws.com/${type}/Alex_Listening.mp4`;
         VideoPlayer.loop = true;
+        VideoPlayer.muted = true; // Mute the video to avoid autoplay issues
         await VideoPlayer.play(); // Ensure it starts playing properly
     } catch (error) {
         console.error("Error loading or playing video:", error);
@@ -142,6 +144,7 @@ export function PlayIdleVideo(){
     ShowElement('chatgptVideo', "flex");
     chatbotVideo.src = `https://national-kidney-foundation.s3.amazonaws.com/${type}/chatbotIdleVideo.mp4`;
     chatbotVideo.loop = true;
+    chatbotVideo.muted = true; // Mute the video to avoid autoplay issues
     chatbotVideo.play();
   }
 
