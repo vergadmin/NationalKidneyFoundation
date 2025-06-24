@@ -329,7 +329,16 @@ async function ResetSession() {
       window.location.href = `https://google.com/`;
     }
     else{
-    window.location.href = `https://wharton.qualtrics.com/jfe/form/SV_ah5rKWqpP5xIn78?ID=${participantID}`;
+      let Source = new URLSearchParams(window.location.search).get("Source")
+      if(Source === "VUMC"){
+        let PostSurveyURL = new URLSearchParams(window.location.search).get("PostSurveyURL");
+        if(PostSurveyURL){
+          window.location.href = `${PostSurveyURL}`;
+        }
+      }
+      else if(Source === "UPENN" || Source === null){
+         window.location.href = `https://wharton.qualtrics.com/jfe/form/SV_ah5rKWqpP5xIn78?ID=${participantID}`;
+      }
     }
   }
   else{

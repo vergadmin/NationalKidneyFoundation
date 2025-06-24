@@ -89,6 +89,7 @@ async function UploadToDatabase(data) {
 
     var participantData = {
         ParticipantID: data.id,
+        Source: data.Source,
         Platform: data.platform,
         OperatingSystem: data.operatingSystem,
         Browser: data.browser,
@@ -164,7 +165,7 @@ app.post('/submitData', (req, res) => {
 });
 
 async function addParticipantVisit(data) {
-    const { ParticipantID, Platform, OperatingSystem, Browser, CharacterSelected, InterventionStartTime, InterventionEndTime, TotalTimeSpentOnIntervention, NumberOfModulesInteracted, KidneyTransplantResponse, OverviewUsefulnessCheckinResponse } = data;
+    const { ParticipantID, Source, Platform, OperatingSystem, Browser, CharacterSelected, InterventionStartTime, InterventionEndTime, TotalTimeSpentOnIntervention, NumberOfModulesInteracted, KidneyTransplantResponse, OverviewUsefulnessCheckinResponse } = data;
   
     const getNextVisitIDQuery = `SELECT COUNT(*) AS visitCount FROM ParticipantVisits WHERE ParticipantID = @ParticipantID`;
   
@@ -177,10 +178,11 @@ async function addParticipantVisit(data) {
   
       const insertQuery = `
         INSERT INTO ParticipantVisits 
-        (ParticipantID, VisitID, Platform, OperatingSystem, Browser, CharacterSelected, InterventionStartTime, InterventionEndTime, TotalTimeSpentOnIntervention, NumberOfModulesInteracted, KidneyTransplantResponse, OverviewUsefulnessCheckinResponse) 
-        VALUES (@ParticipantID, @VisitID, @Platform, @OperatingSystem, @Browser, @CharacterSelected, @InterventionStartTime, @InterventionEndTime, @TotalTimeSpentOnIntervention, @NumberOfModulesInteracted, @KidneyTransplantResponse, @OverviewUsefulnessCheckinResponse)`;
+        (ParticipantID, VisitID, Source, Platform, OperatingSystem, Browser, CharacterSelected, InterventionStartTime, InterventionEndTime, TotalTimeSpentOnIntervention, NumberOfModulesInteracted, KidneyTransplantResponse, OverviewUsefulnessCheckinResponse) 
+        VALUES (@ParticipantID, @VisitID, @Source, @Platform, @OperatingSystem, @Browser, @CharacterSelected, @InterventionStartTime, @InterventionEndTime, @TotalTimeSpentOnIntervention, @NumberOfModulesInteracted, @KidneyTransplantResponse, @OverviewUsefulnessCheckinResponse)`;
   
       request.input('VisitID', sql.Int, VisitID);
+      request.input('Source', sql.VarChar, Source || null);
       request.input('Platform', sql.VarChar, Platform);
       request.input('OperatingSystem', sql.VarChar, OperatingSystem);
       request.input('Browser', sql.VarChar, Browser);

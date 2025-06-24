@@ -12,6 +12,18 @@ let PageName = "Homepage";
     let dateTime = ""
     // var type = document.URL.split('/').reverse()[0]
     // var id = document.URL.split('/').reverse()[1]
+
+    // Set image source based on "Source" query parameter
+    const source = new URLSearchParams(window.location.search).get("Source");
+    const logoImg = document.getElementById("UniversityLogo");
+
+    if (logoImg) {
+        if (source === "VUMC") {
+        logoImg.src = "https://national-kidney-foundation.s3.amazonaws.com/Assets/VUMC_Logo.jpg";
+        } else if (source === "UPENN" || source === null) {
+        logoImg.src = "https://national-kidney-foundation.s3.amazonaws.com/Assets/UPENN+Logo.png";
+        }
+    }
 });
 
 async function sendGeneralData(browserInfo, dateTime) {
@@ -78,6 +90,9 @@ async function ContinueOrResetSession(character){
     }
     var id = sessionStorage.getItem("id");
 
+    var source = new URLSearchParams(window.location.search).get("Source");
+    sessionStorage.setItem("Source", source);
+
     if(character !== sessionStorage.getItem("type")){    
         if(sessionStorage.getItem('setupTime') !== null){
             await fetch('/submitData', {
@@ -88,9 +103,10 @@ async function ContinueOrResetSession(character){
                 body: JSON.stringify(sessionStorage)
             });
         }
-        sessionStorage.clear()
-        sessionStorage.setItem("id", id)
-        sessionStorage.setItem("type", character)
+        sessionStorage.clear();
+        sessionStorage.setItem("id", id);
+        sessionStorage.setItem("type", character);
+        sessionStorage.setItem("Source", source);
     
         additionalInformationTopics = {
             "Benefits of kidney transplant": false,
