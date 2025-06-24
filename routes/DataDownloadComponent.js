@@ -24,7 +24,7 @@ const config = {
 router.get('/downloadParticipantVisitsData', async (req, res) => {
     try {
         console.log("Processing ParticipantVisits data...");
-        const source = req.query.source; // Get 'source' from query parameters
+        const source = req.query.Source; // Get 'source' from query parameters
         await handleExportDataRequest(res, 'ParticipantVisits', 'ParticipantVisits.xlsx', source);
     } catch (err) {
         console.error('Error processing ParticipantVisits request:', err);
@@ -35,7 +35,7 @@ router.get('/downloadParticipantVisitsData', async (req, res) => {
 router.get('/downloadPageVisitsData', async (req, res) => {
     try {
         console.log("Processing PageVisits data...");
-        const source = req.query.source; // Get 'source' from query parameters
+        const source = req.query.Source; // Get 'source' from query parameters
         await handleExportDataRequest(res, 'PageVisits', 'PageVisits.xlsx', source);
     } catch (err) {
         console.error('Error processing PageVisits request:', err);
