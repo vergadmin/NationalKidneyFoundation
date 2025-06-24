@@ -24,7 +24,8 @@ const config = {
 router.get('/downloadParticipantVisitsData', async (req, res) => {
     try {
         console.log("Processing ParticipantVisits data...");
-        await handleExportDataRequest(res, 'ParticipantVisits', 'ParticipantVisits.xlsx');
+        const source = req.query.source; // Get 'source' from query parameters
+        await handleExportDataRequest(res, 'ParticipantVisits', 'ParticipantVisits.xlsx', source);
     } catch (err) {
         console.error('Error processing ParticipantVisits request:', err);
         res.status(500).send('Error processing ParticipantVisits request.');
@@ -34,7 +35,8 @@ router.get('/downloadParticipantVisitsData', async (req, res) => {
 router.get('/downloadPageVisitsData', async (req, res) => {
     try {
         console.log("Processing PageVisits data...");
-        await handleExportDataRequest(res, 'PageVisits', 'PageVisits.xlsx');
+        const source = req.query.source; // Get 'source' from query parameters
+        await handleExportDataRequest(res, 'PageVisits', 'PageVisits.xlsx', source);
     } catch (err) {
         console.error('Error processing PageVisits request:', err);
         res.status(500).send('Error processing PageVisits request.');
@@ -42,45 +44,53 @@ router.get('/downloadPageVisitsData', async (req, res) => {
 });
 
   
-async function handleExportDataRequest(res, tableName, fileName) {
+async function handleExportDataRequest(res, tableName, fileName, source) {
     try {
         // Connect to the database
         await connectToDatabase();
-  
-        // Query to fetch all data from the table
-        const queryString = `SELECT * FROM ${tableName}`;
-  
+
+        // Build the query string with optional filtering by 'source'
+        let queryString = `SELECT * FROM ${tableName}`;
+        if (source) {
+            queryString += ` WHERE Source = @source`;
+        }
+
         // Create a new request object
         const request = new sql.Request();
-  
+
+        // Add the 'source' parameter if provided
+        if (source) {
+            request.input('source', sql.VarChar, source);
+        }
+
         // Execute the query
         const result = await request.query(queryString);
-  
+
         if (!result.recordset || result.recordset.length === 0) {
             throw new Error(`No data found in the table: ${tableName}`);
         }
-  
+
         // Create a new workbook and worksheet
         const workbook = new ExcelJS.Workbook();
         const worksheet = workbook.addWorksheet(tableName);
-  
+
         // Add column headers based on the database column names
         worksheet.columns = Object.keys(result.recordset[0]).map(key => ({ header: key, key: key }));
-  
+
         // Add rows from the result set
         result.recordset.forEach(row => {
             worksheet.addRow(row);
         });
-  
+
         // Set the response headers to indicate a file attachment with an Excel MIME type
         res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         res.setHeader('Content-Disposition', `attachment; filename=${fileName}`);
-  
+
         // Stream the workbook to the response
         await workbook.xlsx.write(res);
-  
+
         console.log(`Data for ${tableName} streamed successfully to the client.`);
-  
+
         // Close the database connection
         await closeDatabaseConnection();
     } catch (err) {
