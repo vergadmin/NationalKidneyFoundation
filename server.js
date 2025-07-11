@@ -115,6 +115,7 @@ async function UploadToDatabase(data) {
                         PageName: innerKey,
                         ParticipantID: data.id,
                         VisitID: visitID,
+                        Source: data.Source,
                         PageVisited: tempData.PageVisited,
                         PageFirstVisitedTimeStamp: tempData.PageFirstVisitedTimeStamp,
                         PageLastVisitedTimeStamp: tempData.PageLastVisitedTimeStamp,
@@ -134,6 +135,7 @@ async function UploadToDatabase(data) {
                     PageName: outerKey,
                     ParticipantID: data.id,
                     VisitID: visitID,
+                    Source: data.Source,
                     PageVisited: tempData.PageVisited,
                     PageFirstVisitedTimeStamp: tempData.PageFirstVisitedTimeStamp,
                     PageLastVisitedTimeStamp: tempData.PageLastVisitedTimeStamp,
@@ -202,18 +204,19 @@ async function addParticipantVisit(data) {
     }
   }
   async function addPageVisit(data) {
-    const { ParticipantID, VisitID, PageName, PageVisited, PageFirstVisitedTimeStamp, PageLastVisitedTimeStamp, NumberOfTimesPageVisited, TimeSpentOnPage, ActiveOrPassiveRedirectionToPage, MoreInformationRequested } = data;
+    const { ParticipantID, VisitID, PageName, Source, PageVisited, PageFirstVisitedTimeStamp, PageLastVisitedTimeStamp, NumberOfTimesPageVisited, TimeSpentOnPage, ActiveOrPassiveRedirectionToPage, MoreInformationRequested } = data;
 
     const insertQuery = `
         INSERT INTO PageVisits 
-        (ParticipantID, VisitID, PageName, PageVisited, PageFirstVisitedTimeStamp, PageLastVisitedTimeStamp, NumberOfTimesPageVisited, TimeSpentOnPage, ActiveOrPassiveRedirectionToPage, MoreInformationRequested) 
-        VALUES (@ParticipantID, @VisitID, @PageName, @PageVisited, @PageFirstVisitedTimeStamp, @PageLastVisitedTimeStamp, @NumberOfTimesPageVisited, @TimeSpentOnPage, @ActiveOrPassiveRedirectionToPage, @MoreInformationRequested)`;
+        (ParticipantID, VisitID, PageName, Source, PageVisited, PageFirstVisitedTimeStamp, PageLastVisitedTimeStamp, NumberOfTimesPageVisited, TimeSpentOnPage, ActiveOrPassiveRedirectionToPage, MoreInformationRequested) 
+        VALUES (@ParticipantID, @VisitID, @PageName, @Source, @PageVisited, @PageFirstVisitedTimeStamp, @PageLastVisitedTimeStamp, @NumberOfTimesPageVisited, @TimeSpentOnPage, @ActiveOrPassiveRedirectionToPage, @MoreInformationRequested)`;
 
     try {
         const request = new sql.Request();
         request.input('ParticipantID', sql.VarChar, ParticipantID);
         request.input('VisitID', sql.Int, VisitID);
         request.input('PageName', sql.VarChar, PageName);
+        request.input('Source', sql.VarChar, Source || null);
         request.input('PageVisited', sql.Bit, PageVisited);
         request.input('PageFirstVisitedTimeStamp', sql.DateTime, PageFirstVisitedTimeStamp);
         request.input('PageLastVisitedTimeStamp', sql.DateTime, PageLastVisitedTimeStamp);
