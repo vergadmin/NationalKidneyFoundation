@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Participant Data Validation</title>
+    <link rel="stylesheet" href="/css/dashboard-validation.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <h1>Participant Data Validation</h1>
+        <button onclick="window.location.href='/dashboard'" class="back-button">← Back to Filter</button>
+        
+        <div id="validationContent">
+            <!-- Validation results will be populated by JavaScript -->
+        </div>
+        
+        <div class="button-container" id="proceedContainer" style="display: none;">
+            <button type="button" id="proceedButton" class="proceed-button">Proceed to Analytics</button>
+        </div>
+    </div>
+
+    <script src="/js/dashboard-validation.js"></script>
+</body>
+</html>

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Participant Dashboard</title>
+    <link rel="stylesheet" href="/css/dashboard.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <h1>Participant Data Dashboard</h1>
+        
+        <form id="dashboardForm">
+            <div class="form-group">
+                <label for="source">Filter by Source:</label>
+                <select id="source" name="source">
+                    <option value="">All Sources</option>
+                    <option value="VUMC">VUMC</option>
+                    <option value="UPENN">UPENN</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="participantIds">Participant IDs:</label>
+                <textarea 
+                    id="participantIds" 
+                    name="participantIds" 
+                    placeholder="Enter Participant IDs (one per line, or separated by commas)&#10;Example:&#10;participant001&#10;participant002&#10;participant003"
+                ></textarea>
+                <div class="help-text">
+                    You can paste a list of Participant IDs separated by new lines, commas, or spaces. Leave empty to include all participants.
+                </div>
+            </div>
+            
+            <div class="button-container">
+                <button type="submit" id="nextButton">Next</button>
+            </div>
+        </form>
+        
+        <div id="result" class="result"></div>
+    </div>
+
+    <script src="/js/dashboard.js"></script>
+</body>
+</html>

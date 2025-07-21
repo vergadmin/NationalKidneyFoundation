@@ -2,12 +2,21 @@
 var slider = document.getElementById("slider");
 // Get the span element that will display the slider value
 var sliderNumber = document.getElementById("slider-number");
-var sliderValue = parseInt(sessionStorage.getItem("sliderResponse"));
+var sliderValue;
 
+// Initialize slider value - use stored value if exists, otherwise default to 50
 if (sessionStorage.getItem("sliderResponse")) {
+  sliderValue = parseInt(sessionStorage.getItem("sliderResponse"));
   slider.value = sliderValue;
-  UpdateSliderValue();
+} else {
+  // Set default value to 50 and store it in session storage
+  sliderValue = 50;
+  slider.value = sliderValue;
+  sessionStorage.setItem("sliderResponse", sliderValue);
 }
+
+// Update the display with the current value
+UpdateSliderValue();
 
 // Update the slider value display when the slider is moved
 function UpdateSliderValue() {

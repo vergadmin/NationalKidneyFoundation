@@ -2,55 +2,25 @@ const express = require('express')
 const session = require('express-session');
 const cors = require('cors');
 const stringSimilarity = require('string-similarity');
+const { initializePool, getPool, sql } = require('./database');
 
 const app = express()
 const CryptoJS = require("crypto-js");
 
 require('dotenv').config()
-// console.log(process.env)
 
 app.set('view engine', 'ejs')
 app.use(express.static(__dirname + '/public'));
 app.use(cors());
 app.use(express.json())
-var sql = require("mssql");
 
 var userInfo = []
 
-const config = {
-    user: 'VergAdmin',
-    password: process.env.PASSWORD,
-    server: process.env.SERVER,
-    port: parseInt(process.env.DBPORT, 10), 
-    database: process.env.DATABASE,
-    pool: {
-      max: 10,
-      min: 0,
-      idleTimeoutMillis: 30000
-    },
-    options: {
-      encrypt: true, // for azure
-      trustServerCertificate: true // change to true for local dev / self-signed certs
-    }
-}
-
-async function connectToDatabase() {
-    try {
-      await sql.connect(config);
-      console.log('Connected to the database.');
-    } catch (err) {
-      console.error('Database connection failed: ', err);
-    }
-}
-  
-  async function closeDatabaseConnection() {
-    try {
-      await sql.close();
-      console.log('Database connection closed.');
-    } catch (err) {
-      console.error('Error closing database connection: ', err);
-    }
-}
+// Initialize database pool
+initializePool().catch(err => {
+    console.error('Failed to initialize database pool:', err);
+    process.exit(1);
+});
 
 app.use(session({
     secret: process.env.SESSION_KEY,
@@ -59,7 +29,7 @@ app.use(session({
     rolling: true,
     cookie: {
         maxAge: 1000 * 60 * 15,
-        secure: true, // switch to true
+        secure: true,
     }
 }))
 
@@ -74,7 +44,6 @@ app.get('/favicon.ico', (req, res) => res.status(204));
 const EducationalComponentRouter = require('./routes/EducationalComponent');
 app.use('/EducationalComponent', function(req,res,next) {
     req.id = id;
-    //req.type = type
     req.userInfo = userInfo
     next();
 }, EducationalComponentRouter)
@@ -82,11 +51,12 @@ app.use('/EducationalComponent', function(req,res,next) {
 const downloadRouter = require('./routes/DataDownloadComponent');
 app.use('/download', downloadRouter);
 
+const dashboardRouter = require('./routes/Dashboard');
+app.use('/dashboard', dashboardRouter);
 
 async function UploadToDatabase(data) {
-
-    await connectToDatabase() ;
-
+    const pool = getPool();
+    
     var participantData = {
         ParticipantID: data.id,
         Source: data.Source,
@@ -103,7 +73,7 @@ async function UploadToDatabase(data) {
     };
     
     try {
-        var visitID = await addParticipantVisit(participantData);
+        var visitID = await addParticipantVisit(participantData, pool);
         console.log(participantData)
         console.log(`Participant visit inserted with VisitID: ${visitID}`);
 
@@ -126,7 +96,7 @@ async function UploadToDatabase(data) {
                     if(outerKey === "subTopics"){
                         pageVisitData.MoreInformationRequested = JSON.parse(data.additionalInformationTopics)[innerKey];
                     }
-                    await addPageVisit(pageVisitData);
+                    await addPageVisit(pageVisitData, pool);
                 }
             }
             else{
@@ -143,22 +113,20 @@ async function UploadToDatabase(data) {
                     TimeSpentOnPage: tempData.TimeSpentOnPage,
                     ActiveOrPassiveRedirectionToPage: tempData.ActiveOrPassiveRedirectionToPage,
                     };
-                await addPageVisit(pageVisitData);
+                await addPageVisit(pageVisitData, pool);
             }
         }
         console.log('Page visit data inserted successfully.');
     } catch (err) {
         console.error('Error during data insertion: ', err);
-    } finally {
-        await closeDatabaseConnection();
+        throw err;
     }
 }
 
-// Set up an endpoint to trigger this function
-app.post('/submitData', (req, res) => {
+app.post('/submitData', async (req, res) => {
     try {
-        const requestData = req.body; // Access the data sent from the client
-        UploadToDatabase(requestData); // Pass the data to your function
+        const requestData = req.body;
+        await UploadToDatabase(requestData);
         res.send('Function executed successfully');
     } catch (error) {
         console.error('Error processing request:', error);
@@ -166,13 +134,13 @@ app.post('/submitData', (req, res) => {
     }
 });
 
-async function addParticipantVisit(data) {
+async function addParticipantVisit(data, pool) {
     const { ParticipantID, Source, Platform, OperatingSystem, Browser, CharacterSelected, InterventionStartTime, InterventionEndTime, TotalTimeSpentOnIntervention, NumberOfModulesInteracted, KidneyTransplantResponse, OverviewUsefulnessCheckinResponse } = data;
   
     const getNextVisitIDQuery = `SELECT COUNT(*) AS visitCount FROM ParticipantVisits WHERE ParticipantID = @ParticipantID`;
   
     try {
-      const request = new sql.Request();
+      const request = pool.request();
       request.input('ParticipantID', sql.VarChar, ParticipantID);
       
       const result = await request.query(getNextVisitIDQuery);
@@ -203,7 +171,8 @@ async function addParticipantVisit(data) {
       throw err;
     }
   }
-  async function addPageVisit(data) {
+
+async function addPageVisit(data, pool) {
     const { ParticipantID, VisitID, PageName, Source, PageVisited, PageFirstVisitedTimeStamp, PageLastVisitedTimeStamp, NumberOfTimesPageVisited, TimeSpentOnPage, ActiveOrPassiveRedirectionToPage, MoreInformationRequested } = data;
 
     const insertQuery = `
@@ -212,7 +181,7 @@ async function addParticipantVisit(data) {
         VALUES (@ParticipantID, @VisitID, @PageName, @Source, @PageVisited, @PageFirstVisitedTimeStamp, @PageLastVisitedTimeStamp, @NumberOfTimesPageVisited, @TimeSpentOnPage, @ActiveOrPassiveRedirectionToPage, @MoreInformationRequested)`;
 
     try {
-        const request = new sql.Request();
+        const request = pool.request();
         request.input('ParticipantID', sql.VarChar, ParticipantID);
         request.input('VisitID', sql.Int, VisitID);
         request.input('PageName', sql.VarChar, PageName);
