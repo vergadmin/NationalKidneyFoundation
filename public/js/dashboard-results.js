@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     renderAnalytics(analyticsData);
     setupDownloadButton(analyticsData);
+    setupVisualizationButton(analyticsData);
 });
 
 function setupDownloadButton(analyticsData) {
@@ -49,6 +50,38 @@ function setupDownloadButton(analyticsData) {
             downloadButton.innerHTML = '📊 Download Excel Report';
         }
     });
+}
+
+function setupVisualizationButton(analyticsData) {
+    const visualizationButton = document.getElementById('showVisualizationsButton');
+    const modal = document.getElementById('visualizationModal');
+    const closeBtn = modal.querySelector('.close');
+    
+    visualizationButton.addEventListener('click', function() {
+        modal.style.display = 'block';
+        generateVisualizations(analyticsData.analytics);
+    });
+    
+    closeBtn.addEventListener('click', function() {
+        modal.style.display = 'none';
+    });
+    
+    window.addEventListener('click', function(event) {
+        if (event.target === modal) {
+            modal.style.display = 'none';
+        }
+    });
+}
+
+function generateVisualizations(analytics) {
+    generateCharacterDistributionChart(analytics.characters);
+    generateKnowledgeDistributionChart(analytics.knowledgeRating);
+    generateModuleHeatmap(analytics.modules);
+    generateKnowledgeBoxPlot(analytics);
+    generateKnowledgeScatterPlot(analytics);
+    generateModuleVisitChart(analytics.modules);
+    generateModulesInteractedChart(analytics.characters);
+    generateTimeSpentChart(analytics.characters);
 }
 
 function renderAnalytics(data) {
@@ -277,7 +310,7 @@ function renderKnowledgeRating(ratings) {
 }
 
 function renderUsefulnessStats(usefulnessStats) {
-    console.log('Usefulness stats received:', usefulnessStats); // Debug log
+    // console.log('Usefulness stats received:', usefulnessStats); // Debug log
     
     if (!usefulnessStats || usefulnessStats.length === 0) {
         return `
@@ -290,7 +323,7 @@ function renderUsefulnessStats(usefulnessStats) {
 
     // Get all unique usefulness levels from the actual data
     const usefulnessLevels = [...new Set(usefulnessStats.map(s => s.UsefulnessResponse))].sort();
-    console.log('Found usefulness levels:', usefulnessLevels); // Debug log
+    // console.log('Found usefulness levels:', usefulnessLevels); // Debug log
     
     const totalResponses = usefulnessStats.reduce((sum, stat) => sum + stat.count, 0);
     

@@ -110,6 +110,34 @@ router.post('/download-excel', async (req, res) => {
     }
 });
 
+router.post('/visualization-data', async (req, res) => {
+    try {
+        const { source, selectedVisits } = req.body;
+
+        if (!selectedVisits || selectedVisits.length === 0) {
+            return res.status(400).json({ error: 'No visits provided' });
+        }
+
+        const analytics = await generateAnalyticsFromVisits(source, selectedVisits);
+        const timeSeriesData = await getTimeSeriesData(selectedVisits, source);
+        const detailedModuleData = await getDetailedModuleData(selectedVisits, source);
+
+        res.json({
+            success: true,
+            analytics: analytics,
+            timeSeries: timeSeriesData,
+            detailedModules: detailedModuleData
+        });
+
+    } catch (error) {
+        console.error('Error generating visualization data:', error);
+        res.status(500).json({
+            success: false,
+            error: error.message
+        });
+    }
+});
+
 async function validateParticipants(source, participantIds) {
     const pool = getPool();
     const request = pool.request();
@@ -200,7 +228,7 @@ async function generateAnalyticsFromVisits(source, selectedVisits) {
         throw new Error('No visits provided for analytics generation');
     }
 
-    console.log('Generating analytics for visits:', selectedVisits);
+    // console.log('Generating analytics for visits:', selectedVisits);
 
     const overallStats = await getOverallStatsForVisits(selectedVisits, source);
     const characterStats = await getCharacterStatsForVisits(selectedVisits, source);
@@ -208,6 +236,7 @@ async function generateAnalyticsFromVisits(source, selectedVisits) {
     const knowledgeRating = await getKnowledgeRatingForVisits(selectedVisits, source);
     const usefulnessStats = await getUsefulnessStatsForVisits(selectedVisits, source);
     const completionStats = await getCompletionStatsForVisits(selectedVisits, source);
+    const rawParticipantData = await getRawParticipantDataForVisits(selectedVisits, source);
     
     return {
         overall: overallStats,
@@ -215,8 +244,47 @@ async function generateAnalyticsFromVisits(source, selectedVisits) {
         modules: moduleStats,
         knowledgeRating: knowledgeRating,
         usefulness: usefulnessStats,
-        completion: completionStats
+        completion: completionStats,
+        rawData: rawParticipantData
     };
+}
+
+async function getRawParticipantDataForVisits(selectedVisits, source) {
+    const pool = getPool();
+    const request = pool.request();
+    
+    // Add input parameters for selected visits
+    selectedVisits.forEach((visit, index) => {
+        request.input(`participantId${index}`, sql.VarChar, visit.ParticipantID);
+        request.input(`visitId${index}`, sql.Int, visit.VisitID);
+    });
+
+    const visitConditions = selectedVisits.map((visit, index) => {
+        return `(ParticipantID = @participantId${index} AND VisitID = @visitId${index})`;
+    });
+
+    let sourceClause = "";
+    if (source && source !== "All Sources" && source.trim() !== "") {
+        request.input('source', sql.VarChar, source);
+        sourceClause = " AND Source = @source";
+    }
+
+    const whereClause = `WHERE (${visitConditions.join(' OR ')})${sourceClause}`;
+
+    const query = `
+        SELECT 
+            ParticipantID,
+            CharacterSelected,
+            TotalTimeSpentOnIntervention,
+            NumberOfModulesInteracted,
+            KidneyTransplantResponse
+        FROM ParticipantVisits 
+        ${whereClause}
+        ORDER BY CharacterSelected, ParticipantID
+    `;
+    
+    const result = await request.query(query);
+    return result.recordset;
 }
 
 async function getOverallStatsForVisits(selectedVisits, source) {
@@ -462,9 +530,9 @@ async function getUsefulnessStatsForVisits(selectedVisits, source) {
         ORDER BY OverviewUsefulnessCheckinResponse, CharacterSelected
     `;
     
-    console.log('Usefulness query:', query); // Debug log
+    // console.log('Usefulness query:', query); // Debug log
     const result = await request.query(query);
-    console.log('Usefulness results:', result.recordset); // Debug log
+    // console.log('Usefulness results:', result.recordset); // Debug log
     return result.recordset;
 }
 
@@ -988,6 +1056,89 @@ async function getPageVisitData(selectedVisits, source) {
         ORDER BY ParticipantID, VisitID, PageName
     `;
 
+    const result = await request.query(query);
+    return result.recordset;
+}
+
+async function getTimeSeriesData(selectedVisits, source) {
+    const pool = getPool();
+    const request = pool.request();
+    
+    // Add input parameters for selected visits
+    selectedVisits.forEach((visit, index) => {
+        request.input(`participantId${index}`, sql.VarChar, visit.ParticipantID);
+        request.input(`visitId${index}`, sql.Int, visit.VisitID);
+    });
+
+    const visitConditions = selectedVisits.map((visit, index) => {
+        return `(ParticipantID = @participantId${index} AND VisitID = @visitId${index})`;
+    });
+
+    let sourceClause = "";
+    if (source && source !== "All Sources" && source.trim() !== "") {
+        request.input('source', sql.VarChar, source);
+        sourceClause = " AND Source = @source";
+    }
+
+    const whereClause = `WHERE (${visitConditions.join(' OR ')})${sourceClause}`;
+
+    const query = `
+        SELECT 
+            CAST(InterventionStartTime AS DATE) as StartDate,
+            COUNT(*) as ParticipantCount,
+            AVG(CAST(TotalTimeSpentOnIntervention AS FLOAT)) as AvgTime,
+            AVG(CAST(NumberOfModulesInteracted AS FLOAT)) as AvgModules
+        FROM ParticipantVisits 
+        ${whereClause}
+        AND InterventionStartTime IS NOT NULL
+        GROUP BY CAST(InterventionStartTime AS DATE)
+        ORDER BY StartDate
+    `;
+    
+    const result = await request.query(query);
+    return result.recordset;
+}
+
+async function getDetailedModuleData(selectedVisits, source) {
+    const pool = getPool();
+    const request = pool.request();
+    
+    // Add input parameters for selected visits
+    selectedVisits.forEach((visit, index) => {
+        request.input(`participantId${index}`, sql.VarChar, visit.ParticipantID);
+        request.input(`visitId${index}`, sql.Int, visit.VisitID);
+    });
+
+    const visitConditions = selectedVisits.map((visit, index) => {
+        return `(pv.ParticipantID = @participantId${index} AND pv.VisitID = @visitId${index})`;
+    });
+
+    let sourceClause = "";
+    if (source && source !== "All Sources" && source.trim() !== "") {
+        request.input('source', sql.VarChar, source);
+        sourceClause = " AND pv.Source = @source";
+    }
+
+    const whereClause = `WHERE (${visitConditions.join(' OR ')})${sourceClause}`;
+
+    const query = `
+        SELECT 
+            pg.PageName,
+            pv.CharacterSelected,
+            AVG(CAST(pg.TimeSpentOnPage AS FLOAT)) as avgTimeSpent,
+            AVG(CAST(pg.NumberOfTimesPageVisited AS FLOAT)) as avgVisits,
+            COUNT(*) as totalVisitors,
+            SUM(CASE WHEN pg.PageVisited = 1 THEN 1 ELSE 0 END) as actualVisitors,
+            SUM(CASE WHEN pg.MoreInformationRequested = 1 THEN 1 ELSE 0 END) as moreInfoRequested,
+            SUM(CASE WHEN pg.ActiveOrPassiveRedirectionToPage = 'Active' THEN 1 ELSE 0 END) as activeVisits,
+            SUM(CASE WHEN pg.ActiveOrPassiveRedirectionToPage = 'Passive' THEN 1 ELSE 0 END) as passiveVisits
+        FROM PageVisits pg
+        JOIN ParticipantVisits pv ON pg.ParticipantID = pv.ParticipantID AND pg.VisitID = pv.VisitID
+        ${whereClause}
+        GROUP BY pg.PageName, pv.CharacterSelected
+        ORDER BY pg.PageName, pv.CharacterSelected
+    `;
+    
     const result = await request.query(query);
     return result.recordset;
 }

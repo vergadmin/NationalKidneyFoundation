@@ -160,7 +160,7 @@ function setupProceedButton(data) {
     proceedButton.addEventListener('click', async function() {
         const selectedVisits = getSelectedVisits(data);
         
-        console.log('Selected visits for analytics:', selectedVisits); // Debug log
+        // console.log('Selected visits for analytics:', selectedVisits); // Debug log
         
         if (selectedVisits.length === 0) {
             alert('No participants available for analytics.');
@@ -176,7 +176,7 @@ function setupProceedButton(data) {
                 selectedVisits: selectedVisits
             };
             
-            console.log('Sending payload to analytics:', payload); // Debug log
+            // console.log('Sending payload to analytics:', payload); // Debug log
 
             const response = await fetch('/dashboard/generate-analytics', {
                 method: 'POST',
@@ -188,7 +188,7 @@ function setupProceedButton(data) {
 
             const responseData = await response.json();
             
-            console.log('Analytics response:', responseData); // Debug log
+            // console.log('Analytics response:', responseData); // Debug log
 
             if (responseData.success) {
                 sessionStorage.setItem('dashboardAnalytics', JSON.stringify(responseData));

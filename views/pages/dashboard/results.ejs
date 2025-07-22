@@ -5,6 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Analytics Dashboard</title>
     <link rel="stylesheet" href="/css/dashboard-results.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Individual Chart Scripts -->
+    <script src="/js/charts/character-distribution-chart.js"></script>
+    <script src="/js/charts/knowledge-distribution-chart.js"></script>
+    <script src="/js/charts/module-heatmap.js"></script>
+    <script src="/js/charts/knowledge-box-plot.js"></script>
+    <script src="/js/charts/knowledge-scatter-plot.js"></script>
+    <script src="/js/charts/module-visit-chart.js"></script>
+    <script src="/js/charts/modules-interacted-chart.js"></script>
+    <script src="/js/charts/time-spent-chart.js"></script>
+
+    <!-- Main Dashboard Script -->
+    <script src="/js/dashboard-results.js"></script>
 </head>
 <body>
     <div class="dashboard-container">
@@ -12,13 +27,58 @@
         <div class="action-buttons">
             <button onclick="window.location.href='/dashboard'" class="back-button">← Back to Filter</button>
             <button id="downloadExcelButton" class="download-button">📊 Download Excel Report</button>
+            <button id="showVisualizationsButton" class="visualization-button">📈 Show Data Visualizations</button>
         </div>
         
         <div id="analyticsContent">
             <!-- Analytics tables will be populated by JavaScript -->
         </div>
-    </div>
 
-    <script src="/js/dashboard-results.js"></script>
+        <!-- Visualization Modal -->
+        <div id="visualizationModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Data Visualizations</h2>
+                    <span class="close">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <div class="chart-grid">
+                        <div class="chart-container">
+                            <h3>Character Selection Distribution</h3>
+                            <canvas id="characterChart"></canvas>
+                        </div>
+                        <div class="chart-container">
+                            <h3>Knowledge Rating Distribution</h3>
+                            <canvas id="knowledgeChart"></canvas>
+                        </div>
+                        <div class="chart-container">
+                            <h3>Module Engagement Heatmap</h3>
+                            <canvas id="heatmapChart"></canvas>
+                        </div>
+                        <div class="chart-container">
+                            <h3>Knowledge Confidence Box Plot</h3>
+                            <canvas id="knowledgeBoxPlotChart"></canvas>
+                        </div>
+                        <div class="chart-container">
+                            <h3>Knowledge Confidence Scatter Plot</h3>
+                            <canvas id="knowledgeScatterChart"></canvas>
+                        </div>
+                        <div class="chart-container">
+                            <h3>Module Visit Frequency</h3>
+                            <canvas id="moduleVisitChart"></canvas>
+                        </div>
+                        <div class="chart-container">
+                            <h3>Modules Interacted Scatter Plot</h3>
+                            <canvas id="modulesInteractedChart"></canvas>
+                        </div>
+                        <div class="chart-container">
+                            <h3>Time Spent Scatter Plot</h3>
+                            <canvas id="timeSpentChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
