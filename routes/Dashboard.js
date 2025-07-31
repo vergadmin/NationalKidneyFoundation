@@ -8,14 +8,14 @@ const moduleVideoLengths = {
     'Benefits of kidney transplant': 55.0,
     'Who can get a kidney transplant': 49.0,
     'The transplant work-up': 55.0,
-    'Overview - The waiting list': 50.0,
+    'Overview - The waiting list': 65.0,
     'Living donor transplant': 60.0,
     'Getting a transplant sooner': 54.0,
     'How long do kidney transplants last': 60.0,
     'The risks of kidney transplant': 65.0,
     'Choosing a transplant center': 92.0,
     'Who can be a living kidney donor': 56.0,
-    'Talking to your doctor': 28.0
+    'Talking to your doctor': 50.0
 };
 
 router.get('/', (req, res) => {
@@ -33,7 +33,7 @@ router.get('/validation', (req, res) => {
 router.post('/process', async (req, res) => {
     try {
         const { source, participantIds } = req.body;
-        
+
         // Parse participant IDs
         let participantIdList = [];
         if (participantIds && participantIds.trim()) {
@@ -94,10 +94,10 @@ router.post('/download-excel', async (req, res) => {
         }
 
         const workbook = await generateExcelReport(source, selectedVisits);
-        
+
         res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         res.setHeader('Content-Disposition', `attachment; filename=nkf-analytics-report-${new Date().toISOString().split('T')[0]}.xlsx`);
-        
+
         await workbook.xlsx.write(res);
         res.end();
 
@@ -141,7 +141,7 @@ router.post('/visualization-data', async (req, res) => {
 async function validateParticipants(source, participantIds) {
     const pool = getPool();
     const request = pool.request();
-    
+
     // Build WHERE clause for source filter
     let sourceClause = "";
     if (source && source !== "All Sources" && source.trim() !== "") {
@@ -237,7 +237,7 @@ async function generateAnalyticsFromVisits(source, selectedVisits) {
     const usefulnessStats = await getUsefulnessStatsForVisits(selectedVisits, source);
     const completionStats = await getCompletionStatsForVisits(selectedVisits, source);
     const rawParticipantData = await getRawParticipantDataForVisits(selectedVisits, source);
-    
+
     return {
         overall: overallStats,
         characters: characterStats,
@@ -252,7 +252,7 @@ async function generateAnalyticsFromVisits(source, selectedVisits) {
 async function getRawParticipantDataForVisits(selectedVisits, source) {
     const pool = getPool();
     const request = pool.request();
-    
+
     // Add input parameters for selected visits
     selectedVisits.forEach((visit, index) => {
         request.input(`participantId${index}`, sql.VarChar, visit.ParticipantID);
@@ -282,7 +282,7 @@ async function getRawParticipantDataForVisits(selectedVisits, source) {
         ${whereClause}
         ORDER BY CharacterSelected, ParticipantID
     `;
-    
+
     const result = await request.query(query);
     return result.recordset;
 }
@@ -290,7 +290,7 @@ async function getRawParticipantDataForVisits(selectedVisits, source) {
 async function getOverallStatsForVisits(selectedVisits, source) {
     const pool = getPool();
     const request = pool.request();
-    
+
     // Add input parameters for selected visits
     selectedVisits.forEach((visit, index) => {
         request.input(`participantId${index}`, sql.VarChar, visit.ParticipantID);
@@ -338,7 +338,7 @@ async function getOverallStatsForVisits(selectedVisits, source) {
             (SELECT TOP 1 medianKnowledge FROM Medians) as medianKnowledge
         FROM Stats s
     `;
-    
+
     const result = await request.query(query);
     return result.recordset[0];
 }
@@ -346,7 +346,7 @@ async function getOverallStatsForVisits(selectedVisits, source) {
 async function getCharacterStatsForVisits(selectedVisits, source) {
     const pool = getPool();
     const request = pool.request();
-    
+
     // Add input parameters for selected visits
     selectedVisits.forEach((visit, index) => {
         request.input(`participantId${index}`, sql.VarChar, visit.ParticipantID);
@@ -399,7 +399,7 @@ async function getCharacterStatsForVisits(selectedVisits, source) {
         FROM CharacterAggregates ca
         LEFT JOIN CharacterMedians cm ON ca.CharacterSelected = cm.CharacterSelected AND cm.rn = 1
     `;
-    
+
     const result = await request.query(query);
     return result.recordset;
 }
@@ -407,7 +407,7 @@ async function getCharacterStatsForVisits(selectedVisits, source) {
 async function getModuleStatsForVisits(selectedVisits, source) {
     const pool = getPool();
     const request = pool.request();
-    
+
     // Add input parameters for selected visits
     selectedVisits.forEach((visit, index) => {
         request.input(`participantId${index}`, sql.VarChar, visit.ParticipantID);
@@ -442,7 +442,7 @@ async function getModuleStatsForVisits(selectedVisits, source) {
         ${whereClause}
         GROUP BY pg.PageName, pv.CharacterSelected
     `;
-    
+
     const result = await request.query(query);
     return result.recordset;
 }
@@ -450,7 +450,7 @@ async function getModuleStatsForVisits(selectedVisits, source) {
 async function getKnowledgeRatingForVisits(selectedVisits, source) {
     const pool = getPool();
     const request = pool.request();
-    
+
     // Add input parameters for selected visits
     selectedVisits.forEach((visit, index) => {
         request.input(`participantId${index}`, sql.VarChar, visit.ParticipantID);
@@ -492,7 +492,7 @@ async function getKnowledgeRatingForVisits(selectedVisits, source) {
             END,
             CharacterSelected
     `;
-    
+
     const result = await request.query(query);
     return result.recordset;
 }
@@ -500,7 +500,7 @@ async function getKnowledgeRatingForVisits(selectedVisits, source) {
 async function getUsefulnessStatsForVisits(selectedVisits, source) {
     const pool = getPool();
     const request = pool.request();
-    
+
     // Add input parameters for selected visits
     selectedVisits.forEach((visit, index) => {
         request.input(`participantId${index}`, sql.VarChar, visit.ParticipantID);
@@ -529,7 +529,7 @@ async function getUsefulnessStatsForVisits(selectedVisits, source) {
         GROUP BY OverviewUsefulnessCheckinResponse, CharacterSelected
         ORDER BY OverviewUsefulnessCheckinResponse, CharacterSelected
     `;
-    
+
     // console.log('Usefulness query:', query); // Debug log
     const result = await request.query(query);
     // console.log('Usefulness results:', result.recordset); // Debug log
@@ -539,7 +539,7 @@ async function getUsefulnessStatsForVisits(selectedVisits, source) {
 async function getCompletionStatsForVisits(selectedVisits, source) {
     const pool = getPool();
     const request = pool.request();
-    
+
     // Add input parameters for selected visits
     selectedVisits.forEach((visit, index) => {
         request.input(`participantId${index}`, sql.VarChar, visit.ParticipantID);
@@ -567,36 +567,36 @@ async function getCompletionStatsForVisits(selectedVisits, source) {
         ${whereClause}
         GROUP BY CharacterSelected
     `;
-    
+
     const result = await request.query(query);
     return result.recordset;
 }
 
 async function generateExcelReport(source, selectedVisits) {
     const workbook = new ExcelJS.Workbook();
-    
+
     // Generate analytics data
     const analytics = await generateAnalyticsFromVisits(source, selectedVisits);
-    
+
     // Get raw data for export
     const participantData = await getParticipantData(selectedVisits, source);
     const pageVisitData = await getPageVisitData(selectedVisits, source);
-    
+
     // Create Analysis sheet
     await createAnalysisSheet(workbook, analytics, source);
-    
+
     // Create ParticipantVisits sheet
     await createParticipantVisitsSheet(workbook, participantData);
-    
+
     // Create PageVisits sheet
     await createPageVisitsSheet(workbook, pageVisitData);
-    
+
     return workbook;
 }
 
 async function createAnalysisSheet(workbook, analytics, source) {
     const worksheet = workbook.addWorksheet('Analysis');
-    
+
     // Set column widths
     worksheet.columns = [
         { header: 'Metric', key: 'metric', width: 50 },
@@ -616,7 +616,7 @@ async function createAnalysisSheet(workbook, analytics, source) {
     // Add overall statistics
     const overallStats = analytics.overall;
     const characterStats = analytics.characters;
-    
+
     const getCharacterValue = (characters, charName, field) => {
         const char = characters.find(c => c.CharacterSelected === charName);
         return char ? (char[field] || 0).toFixed(1) : 0;
@@ -714,11 +714,11 @@ async function createAnalysisSheet(workbook, analytics, source) {
     ];
 
     const knowledgeRating = analytics.knowledgeRating;
-    
+
     knowledgeCategories.forEach(category => {
         const categoryRatings = knowledgeRating.filter(r => r.KnowledgeCategory === category);
         const total = categoryRatings.reduce((sum, r) => sum + r.count, 0);
-        
+
         const charCounts = {
             'Character_a': categoryRatings.find(r => r.CharacterSelected === 'Character_a')?.count || 0,
             'Character_b': categoryRatings.find(r => r.CharacterSelected === 'Character_b')?.count || 0,
@@ -742,7 +742,7 @@ async function createAnalysisSheet(workbook, analytics, source) {
     const charSelectionHeader = worksheet.addRow(['Character Selection', 'Number of participants', 'Percentage', '', '', '', '']);
     charSelectionHeader.font = { bold: true };
     charSelectionHeader.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFE6E6FA' } };
-    
+
     const total = characterStats.reduce((sum, char) => sum + char.count, 0);
     characterStats.forEach(char => {
         const percentage = total > 0 ? ((char.count / total) * 100).toFixed(1) : 0;
@@ -775,7 +775,7 @@ async function createAnalysisSheet(workbook, analytics, source) {
         const actualVisitors = pageModules.reduce((sum, m) => sum + (m.actualVisitors || 0), 0);
         const activeVisits = pageModules.reduce((sum, m) => sum + (m.activeVisits || 0), 0);
         const passiveVisits = pageModules.reduce((sum, m) => sum + (m.passiveVisits || 0), 0);
-        
+
         const videoLength = moduleVideoLengths[pageName] || 0;
         const watchRatio = videoLength > 0 ? (avgTimeSpent / videoLength) : 0;
         const moreInfoPercentage = totalVisitors > 0 ? ((totalMoreInfo / totalVisitors) * 100) : 0;
@@ -799,7 +799,7 @@ async function createAnalysisSheet(workbook, analytics, source) {
     // Add character-specific module breakdowns
     ['Character_a', 'Character_b', 'Character_c', 'Character_d'].forEach(character => {
         const characterModules = moduleStats.filter(m => m.CharacterSelected === character);
-        
+
         if (characterModules.length > 0) {
             worksheet.addRow([]); // Empty row
             const charModuleHeader = worksheet.addRow([`${character} - Module Wise Breakdown`, 'Avg Time (sec)', 'Video Length', 'Watch Ratio', 'Avg Visits', 'More Info Req', '% More Info', 'Visitors', '% Visited', 'Active Visits', 'Passive Visits']);
@@ -823,7 +823,7 @@ async function createAnalysisSheet(workbook, analytics, source) {
                 const actualVisitors = pageModules.reduce((sum, m) => sum + (m.actualVisitors || 0), 0);
                 const activeVisits = pageModules.reduce((sum, m) => sum + (m.activeVisits || 0), 0);
                 const passiveVisits = pageModules.reduce((sum, m) => sum + (m.passiveVisits || 0), 0);
-                
+
                 const videoLength = moduleVideoLengths[pageName] || 0;
                 const watchRatio = videoLength > 0 ? (avgTimeSpent / videoLength) : 0;
                 const moreInfoPercentage = totalVisitors > 0 ? ((totalMoreInfo / totalVisitors) * 100) : 0;
@@ -888,10 +888,10 @@ async function createAnalysisSheet(workbook, analytics, source) {
     // Calculate usefulness response statistics
     const usefulnessStats = analytics.usefulness || [];
     const totalUsefulnessResponses = usefulnessStats.reduce((sum, stat) => sum + stat.count, 0);
-    
+
     // Get actual usefulness levels from the data instead of hardcoded ones
     const usefulnessLevels = [...new Set(usefulnessStats.map(s => s.UsefulnessResponse))].sort();
-    
+
     if (usefulnessLevels.length === 0) {
         worksheet.addRow(['No usefulness response data available', '', '', '', '', '', '']);
     } else {
@@ -899,7 +899,7 @@ async function createAnalysisSheet(workbook, analytics, source) {
             const levelResponses = usefulnessStats.filter(s => s.UsefulnessResponse === level);
             const totalCount = levelResponses.reduce((sum, r) => sum + r.count, 0);
             const percentage = totalUsefulnessResponses > 0 ? ((totalCount / totalUsefulnessResponses) * 100).toFixed(1) : '0.0';
-            
+
             const charCounts = {
                 'Character_a': levelResponses.find(r => r.CharacterSelected === 'Character_a')?.count || 0,
                 'Character_b': levelResponses.find(r => r.CharacterSelected === 'Character_b')?.count || 0,
@@ -917,7 +917,7 @@ async function createAnalysisSheet(workbook, analytics, source) {
                 charCounts['Character_d']
             ]);
         });
-        
+
         if (totalUsefulnessResponses > 0) {
             worksheet.addRow([
                 'Total participants that answered question',
@@ -944,7 +944,7 @@ async function createAnalysisSheet(workbook, analytics, source) {
 
 async function createParticipantVisitsSheet(workbook, participantData) {
     const worksheet = workbook.addWorksheet('ParticipantVisits');
-    
+
     if (participantData.length === 0) {
         worksheet.addRow(['No participant data found']);
         return;
@@ -971,7 +971,7 @@ async function createParticipantVisitsSheet(workbook, participantData) {
 
 async function createPageVisitsSheet(workbook, pageVisitData) {
     const worksheet = workbook.addWorksheet('PageVisits');
-    
+
     if (pageVisitData.length === 0) {
         worksheet.addRow(['No page visit data found']);
         return;
@@ -999,7 +999,7 @@ async function createPageVisitsSheet(workbook, pageVisitData) {
 async function getParticipantData(selectedVisits, source) {
     const pool = getPool();
     const request = pool.request();
-    
+
     // Add input parameters for selected visits
     selectedVisits.forEach((visit, index) => {
         request.input(`participantId${index}`, sql.VarChar, visit.ParticipantID);
@@ -1031,7 +1031,7 @@ async function getParticipantData(selectedVisits, source) {
 async function getPageVisitData(selectedVisits, source) {
     const pool = getPool();
     const request = pool.request();
-    
+
     // Add input parameters for selected visits
     selectedVisits.forEach((visit, index) => {
         request.input(`participantId${index}`, sql.VarChar, visit.ParticipantID);
@@ -1063,7 +1063,7 @@ async function getPageVisitData(selectedVisits, source) {
 async function getTimeSeriesData(selectedVisits, source) {
     const pool = getPool();
     const request = pool.request();
-    
+
     // Add input parameters for selected visits
     selectedVisits.forEach((visit, index) => {
         request.input(`participantId${index}`, sql.VarChar, visit.ParticipantID);
@@ -1094,7 +1094,7 @@ async function getTimeSeriesData(selectedVisits, source) {
         GROUP BY CAST(InterventionStartTime AS DATE)
         ORDER BY StartDate
     `;
-    
+
     const result = await request.query(query);
     return result.recordset;
 }
@@ -1102,7 +1102,7 @@ async function getTimeSeriesData(selectedVisits, source) {
 async function getDetailedModuleData(selectedVisits, source) {
     const pool = getPool();
     const request = pool.request();
-    
+
     // Add input parameters for selected visits
     selectedVisits.forEach((visit, index) => {
         request.input(`participantId${index}`, sql.VarChar, visit.ParticipantID);
@@ -1138,7 +1138,7 @@ async function getDetailedModuleData(selectedVisits, source) {
         GROUP BY pg.PageName, pv.CharacterSelected
         ORDER BY pg.PageName, pv.CharacterSelected
     `;
-    
+
     const result = await request.query(query);
     return result.recordset;
 }

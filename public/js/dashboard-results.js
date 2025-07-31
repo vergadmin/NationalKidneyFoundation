@@ -1,6 +1,6 @@
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     const analyticsData = JSON.parse(sessionStorage.getItem('dashboardAnalytics'));
-    
+
     if (!analyticsData) {
         document.getElementById('analyticsContent').innerHTML = '<p>No analytics data found. Please go back and generate the report.</p>';
         return;
@@ -13,11 +13,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function setupDownloadButton(analyticsData) {
     const downloadButton = document.getElementById('downloadExcelButton');
-    
-    downloadButton.addEventListener('click', async function() {
+
+    downloadButton.addEventListener('click', async function () {
         downloadButton.disabled = true;
         downloadButton.innerHTML = '⏳ Generating Excel...';
-        
+
         try {
             const response = await fetch('/dashboard/download-excel', {
                 method: 'POST',
@@ -56,17 +56,17 @@ function setupVisualizationButton(analyticsData) {
     const visualizationButton = document.getElementById('showVisualizationsButton');
     const modal = document.getElementById('visualizationModal');
     const closeBtn = modal.querySelector('.close');
-    
-    visualizationButton.addEventListener('click', function() {
+
+    visualizationButton.addEventListener('click', function () {
         modal.style.display = 'block';
         generateVisualizations(analyticsData.analytics);
     });
-    
-    closeBtn.addEventListener('click', function() {
+
+    closeBtn.addEventListener('click', function () {
         modal.style.display = 'none';
     });
-    
-    window.addEventListener('click', function(event) {
+
+    window.addEventListener('click', function (event) {
         if (event.target === modal) {
             modal.style.display = 'none';
         }
@@ -86,28 +86,28 @@ function generateVisualizations(analytics) {
 
 function renderAnalytics(data) {
     const container = document.getElementById('analyticsContent');
-    
+
     // Overall Statistics
     container.innerHTML += renderOverallStats(data.analytics.overall);
-    
+
     // Populate character-specific data in the overall stats table
     populateCharacterStatsInOverallTable(data.analytics.characters);
-    
+
     // Character Statistics  
     container.innerHTML += renderCharacterStats(data.analytics.characters);
-    
+
     // Knowledge Rating Distribution
     container.innerHTML += renderKnowledgeRating(data.analytics.knowledgeRating);
-    
+
     // Usefulness Statistics
     container.innerHTML += renderUsefulnessStats(data.analytics.usefulness);
-    
+
     // Completion Statistics
     container.innerHTML += renderCompletionStats(data.analytics.completion);
-    
+
     // Module Statistics
     container.innerHTML += renderModuleStats(data.analytics.modules, 'All Characters');
-    
+
     // Character-specific module stats
     const characters = ['Character_a', 'Character_b', 'Character_c', 'Character_d'];
     characters.forEach(character => {
@@ -215,14 +215,14 @@ function renderOverallStats(stats) {
 
 function renderCharacterStats(characters) {
     const total = characters.reduce((sum, char) => sum + char.count, 0);
-    
+
     const characterImages = {
         'Character_a': 'https://national-kidney-foundation.s3.amazonaws.com/Assets/a_henry_image.png',
         'Character_b': 'https://national-kidney-foundation.s3.amazonaws.com/Assets/b_will_image.png',
         'Character_c': 'https://national-kidney-foundation.s3.amazonaws.com/Assets/c_olivia_image.png',
         'Character_d': 'https://national-kidney-foundation.s3.amazonaws.com/Assets/d_tilly_image.png'
     };
-    
+
     let html = `
         <div class="analytics-section">
             <h2>Character Selection</h2>
@@ -237,7 +237,7 @@ function renderCharacterStats(characters) {
                 </thead>
                 <tbody>
     `;
-    
+
     characters.forEach(char => {
         const percentage = total > 0 ? ((char.count / total) * 100).toFixed(1) : 0;
         const imageUrl = characterImages[char.CharacterSelected] || '';
@@ -250,13 +250,13 @@ function renderCharacterStats(characters) {
             </tr>
         `;
     });
-    
+
     html += `
                 </tbody>
             </table>
         </div>
     `;
-    
+
     return html;
 }
 
@@ -268,7 +268,7 @@ function renderKnowledgeRating(ratings) {
         'I think I know a lot',
         'I know a lot'
     ];
-    
+
     let html = `
         <div class="analytics-section">
             <h2>Knowledge Rating Distribution</h2>
@@ -285,33 +285,33 @@ function renderKnowledgeRating(ratings) {
                 </thead>
                 <tbody>
     `;
-    
+
     categories.forEach(category => {
         const categoryRatings = ratings.filter(r => r.KnowledgeCategory === category);
         const total = categoryRatings.reduce((sum, r) => sum + r.count, 0);
-        
+
         html += `<tr><td>${category}</td><td class="metric-value">${total}</td>`;
-        
+
         ['Character_a', 'Character_b', 'Character_c', 'Character_d'].forEach(char => {
             const charRating = categoryRatings.find(r => r.CharacterSelected === char);
             html += `<td class="metric-value">${charRating ? charRating.count : 0}</td>`;
         });
-        
+
         html += '</tr>';
     });
-    
+
     html += `
                 </tbody>
             </table>
         </div>
     `;
-    
+
     return html;
 }
 
 function renderUsefulnessStats(usefulnessStats) {
     // console.log('Usefulness stats received:', usefulnessStats); // Debug log
-    
+
     if (!usefulnessStats || usefulnessStats.length === 0) {
         return `
             <div class="analytics-section">
@@ -324,9 +324,9 @@ function renderUsefulnessStats(usefulnessStats) {
     // Get all unique usefulness levels from the actual data
     const usefulnessLevels = [...new Set(usefulnessStats.map(s => s.UsefulnessResponse))].sort();
     // console.log('Found usefulness levels:', usefulnessLevels); // Debug log
-    
+
     const totalResponses = usefulnessStats.reduce((sum, stat) => sum + stat.count, 0);
-    
+
     let html = `
         <div class="analytics-section">
             <h2>Transplant Waiting List Module Usefulness</h2>
@@ -344,12 +344,12 @@ function renderUsefulnessStats(usefulnessStats) {
                 </thead>
                 <tbody>
     `;
-    
+
     usefulnessLevels.forEach(level => {
         const levelResponses = usefulnessStats.filter(s => s.UsefulnessResponse === level);
         const totalCount = levelResponses.reduce((sum, r) => sum + r.count, 0);
         const percentage = totalResponses > 0 ? ((totalCount / totalResponses) * 100).toFixed(1) : 0;
-        
+
         const charCounts = {
             'Character_a': levelResponses.find(r => r.CharacterSelected === 'Character_a')?.count || 0,
             'Character_b': levelResponses.find(r => r.CharacterSelected === 'Character_b')?.count || 0,
@@ -384,7 +384,7 @@ function renderUsefulnessStats(usefulnessStats) {
             </table>
         </div>
     `;
-    
+
     return html;
 }
 
@@ -441,7 +441,7 @@ function renderCompletionStats(completionStats) {
             </table>
         </div>
     `;
-    
+
     return html;
 }
 
@@ -450,14 +450,14 @@ function renderModuleStats(modules, title) {
         'Benefits of kidney transplant': 55.0,
         'Who can get a kidney transplant': 49.0,
         'The transplant work-up': 55.0,
-        'Overview - The waiting list': 50.0,
+        'Overview - The waiting list': 65.0,
         'Living donor transplant': 60.0,
         'Getting a transplant sooner': 54.0,
         'How long do kidney transplants last': 60.0,
         'The risks of kidney transplant': 65.0,
         'Choosing a transplant center': 92.0,
         'Who can be a living kidney donor': 56.0,
-        'Talking to your doctor': 28.0
+        'Talking to your doctor': 50.0
     };
 
     // Group modules by page name
@@ -500,7 +500,7 @@ function renderModuleStats(modules, title) {
         const actualVisitors = pageModules.reduce((sum, m) => sum + (m.actualVisitors || 0), 0);
         const activeVisits = pageModules.reduce((sum, m) => sum + (m.activeVisits || 0), 0);
         const passiveVisits = pageModules.reduce((sum, m) => sum + (m.passiveVisits || 0), 0);
-        
+
         const videoLength = moduleVideoLengths[pageName] || 0;
         const watchRatio = videoLength > 0 ? (avgTimeSpent / videoLength) : 0;
         const moreInfoPercentage = totalVisitors > 0 ? ((totalMoreInfo / totalVisitors) * 100) : 0;
